@@ -1,0 +1,30 @@
+{"Notify":"# Waiting for IPC Requests ..."}
+{"Notify":"[Main] Start receiving trans thread"}
+"Initialized"
+{"ChainStatus":{"#blocks":"1","#orphans":"0","finalized_id":"0","root_id":"0","working_depth":"0","working_id":"0"}}
+{"NetStatus":{"#address":"ip: 127.0.0.1 port: 9011","#recv_msg":"0","#send_msg":"0"}}
+{"MinerStatus":{"#thread":"0","difficulty":"0","is_running":"false"}}
+{"TxPoolStatus":{"#pool_tx_map":"0"}}
+{"AddressBalance":["MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",299792458]}
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+{"ChainStatus":{"#blocks":"1","#orphans":"0","finalized_id":"0","root_id":"0","working_depth":"0","working_id":"0"}}
+{"NetStatus":{"#address":"ip: 127.0.0.1 port: 9011","#recv_msg":"0","#send_msg":"0"}}
+{"MinerStatus":{"#thread":"0","difficulty":"0","is_running":"false"}}
+{"TxPoolStatus":{"#pool_tx_map":"10"}}
+{"AddressBalance":["MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",299792458]}
+"Quitting"
+

@@ -1,0 +1,27 @@
+{
+    "neighbors": [
+        {
+            "ip": "127.0.0.1",
+            "port": 9011
+        },
+        {
+            "ip": "127.0.0.1",
+            "port": 9012
+        },
+        {
+            "ip": "127.0.0.1",
+            "port": 9014
+        }
+    ],
+    "addr": {
+        "ip": "127.0.0.1",
+        "port": 9013
+    },
+    "miner_thread_count": 2,
+    "nonce_len": 10,
+    "difficulty_leading_zero_len": 5,
+    "difficulty_leading_zero_len_acc": 5,
+    "miner_thread_0_seed": 342,
+    "mining_reward_receiver": "MDgCMQDeoEeA8OtGME/SRwp+ASKVOnjlEUHYvQfo0FLp3+fwVi/SztDdJskjzCRasGk06UUCAwEAAQ==",
+    "max_tx_in_one_block": 4
+}

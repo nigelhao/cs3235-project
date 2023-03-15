@@ -1,0 +1,14 @@
+{
+  "user_name": "Alice",
+  "neighbors": [],
+  "addr": {
+    "ip": "127.0.0.1",
+    "port": 9001
+  },
+  "miner_thread_count": 4,
+  "nonce_len": 6,
+  "difficulty_leading_zero_len": 5,
+  "difficulty_leading_zero_len_acc": 3,
+  "miner_thread_0_seed": 42,
+  "max_tx_in_one_block": 100
+}

@@ -1,0 +1,39 @@
+{
+    "all_blocks": {
+        "0": {
+            "header": {
+                "parent": "0",
+                "merkle_root": "0",
+                "timestamp": 0,
+                "block_id": "0",
+                "nonce": "0",
+                "reward_receiver": "GENESIS"
+            },
+            "transactions_block": {
+                "merkle_tree": {
+                    "hashes": []
+                },
+                "transactions": [
+                    {
+                        "sender": "GENESIS",
+                        "receiver": "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",
+                        "message": "SEND $299792458",
+                        "sig": "GENESIS"
+                    }
+                ]
+            }
+        }
+    },
+    "children_map": {},
+    "block_depth": {
+        "0": 0
+    },
+    "root_id": "0",
+    "working_block_id": "0",
+    "orphans": {},
+    "finalized_block_id": "0",
+    "finalized_balance_map": {
+        "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==": 299792458
+    },
+    "finalized_tx_ids": []
+}

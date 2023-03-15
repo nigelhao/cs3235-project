@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "bin_nakamoto", 
+    "bin_client", 
+    "bin_wallet", 
+    "lib_chain", 
+    "lib_miner", 
+    "lib_network", 
+    "lib_tx_pool"
+]

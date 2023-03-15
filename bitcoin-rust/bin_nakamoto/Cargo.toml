@@ -1,0 +1,20 @@
+[package]
+name = "bin_nakamoto"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "bin_nakamoto"
+path = "./src/main.rs"
+
+[dependencies]
+lib_network = { path = "../lib_network" }
+lib_miner = { path = "../lib_miner" }
+lib_chain = { path = "../lib_chain" }
+lib_tx_pool = { path = "../lib_tx_pool" }
+
+seccompiler = {version = "0.3.0", features = ["json"]}
+serde = { version = "1.0", features = ["derive", "rc"] }
+serde_json = "1.0"
