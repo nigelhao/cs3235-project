@@ -7,7 +7,6 @@
 // You can see detailed instructions in the comments below.
 // You can also look at the unit tests in ./lib.rs to understand the expected behavior of the miner.
 
-use hex;
 use rand::{
     distributions::{Alphanumeric, DistString},
     Rng, SeedableRng,
@@ -81,18 +80,18 @@ impl Miner {
         // Additionally, if the cancellation_token is set to true, all threads should stop.
         // The purpose of the cancellation_token is to allow the miner to stop the computation when other nodes have already solved the exact same puzzle.
 
-        println!("The value of puzzle is {}", puzzle);
-        println!("The value of nonce_len is {}", nonce_len);
-        println!("The value of leading_zero_len is {}", leading_zero_len);
-        println!("The value of thread_count is {}", thread_count);
-        println!("The value of thread_0_seed is {}", thread_0_seed);
-
-        let mut threads = Vec::new();
+        let mut threads = Vec::with_capacity(thread_count as usize);
+        let found_token = Arc::new(Mutex::new(false));
 
         for thread_id in 0..thread_count {
             let puzzle = puzzle.clone();
+            let found_token = Arc::clone(&found_token);
+            let cancellation_token = Arc::clone(&cancellation_token);
+
+            let mut thread_seed = thread_0_seed + thread_id as u64;
+
             let thread = thread::spawn(move || loop {
-                let thread_rng = Pcg32::from_entropy();
+                let thread_rng = Pcg32::seed_from_u64(thread_seed);
                 let nonce: String = thread_rng
                     .sample_iter(&Alphanumeric)
                     .take(nonce_len as usize)
@@ -100,30 +99,45 @@ impl Miner {
                     .collect();
 
                 let challenge = format!("{}{}", nonce, puzzle);
+
                 let mut hash = Sha256::new();
                 hash.update(challenge);
 
-                let answer = hex::encode(hash.finalize());
+                let answer = format!("{:x}", hash.finalize());
 
-                if answer.starts_with(&"0".repeat(leading_zero_len as usize)) {
-                    let ps = PuzzleSolution {
-                        puzzle: puzzle.clone(),
-                        nonce: nonce,
-                        hash: answer,
-                    };
-                    println!(
-                        "Thread ID: {}, Puzzle: {}, Nonce: {}, Hash: {}",
-                        thread_id, ps.puzzle, ps.nonce, ps.hash
-                    );
+                let mut is_found = found_token.lock().unwrap();
+                let is_cancel = cancellation_token.read().unwrap();
+
+                if !(*is_cancel || *is_found) {
+                    if answer.starts_with(&"0".repeat(leading_zero_len as usize)) {
+                        let ps = PuzzleSolution {
+                            puzzle: puzzle,
+                            nonce: nonce,
+                            hash: answer,
+                        };
+
+                        *is_found = true;
+
+                        return Some(ps);
+                    }
+                } else {
+                    return None;
                 }
+
+                thread_seed += thread_count as u64;
             });
 
             threads.push(thread);
         }
 
-        loop {}
+        for thread in threads {
+            if let Some(solution) = thread.join().unwrap() {
+                return Some(solution);
+            }
+        }
 
-        todo!();
+        // None of the threads found a solution
+        None
     }
 
     /// Get status information of the miner for debug printing.
