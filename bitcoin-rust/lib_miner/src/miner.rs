@@ -83,10 +83,22 @@ impl Miner {
         let mut threads = Vec::with_capacity(thread_count as usize);
         let found_token = Arc::new(Mutex::new(false));
 
+        {
+            let mut miner = miner_p.lock().unwrap();
+            miner.leading_zero_len = leading_zero_len;
+            miner.is_running = true;
+        }
+
         for thread_id in 0..thread_count {
             let puzzle = puzzle.clone();
+
+            let miner_p = Arc::clone(&miner_p);
             let found_token = Arc::clone(&found_token);
             let cancellation_token = Arc::clone(&cancellation_token);
+
+            {
+                miner_p.lock().unwrap().thread_count += 1;
+            }
 
             let mut thread_seed = thread_0_seed + thread_id as u64;
 
@@ -118,9 +130,11 @@ impl Miner {
 
                         *is_found = true;
 
+                        miner_p.lock().unwrap().thread_count -= 1;
                         return Some(ps);
                     }
                 } else {
+                    miner_p.lock().unwrap().thread_count -= 1;
                     return None;
                 }
 
@@ -132,12 +146,16 @@ impl Miner {
 
         for thread in threads {
             if let Some(solution) = thread.join().unwrap() {
+                miner_p.lock().unwrap().is_running = false;
                 return Some(solution);
             }
         }
 
         // None of the threads found a solution
-        None
+        miner_p.lock().unwrap().is_running = false;
+        return None;
+
+        todo!();
     }
 
     /// Get status information of the miner for debug printing.
@@ -145,6 +163,17 @@ impl Miner {
         // Please fill in the blank
         // For debugging purpose, you can return any dictionary of strings as the status of the miner.
         // It should be displayed in the Client UI eventually.
+
+        let mut map = BTreeMap::new();
+        map.insert("thread_count".to_string(), self.thread_count.to_string());
+        map.insert(
+            "leading_zero_len".to_string(),
+            self.leading_zero_len.to_string(),
+        );
+        map.insert("is_running".to_string(), self.is_running.to_string());
+
+        return map;
+
         todo!();
     }
 }
