@@ -1,18 +1,17 @@
-// This file is part of the project for the module CS3235 by Prateek 
+// This file is part of the project for the module CS3235 by Prateek
 // Copyright 2023 Ruishi Li, Bo Wang, and Prateek Saxena.
 // Please do not distribute.
 
 pub mod miner;
 
-
 #[cfg(test)]
 mod tests {
+    use std::sync::{Arc, Mutex, RwLock};
     use std::thread;
-    use std::sync::{Arc, RwLock, Mutex};
     use std::time::Duration;
-    
+
     use crate::miner::{Miner, PuzzleSolution};
-    use sha2::{Sha256, Digest};
+    use sha2::{Digest, Sha256};
 
     // Testing the correctness. To start a multi-threaded and solve the puzzle.
     #[test]
@@ -20,14 +19,14 @@ mod tests {
         let miner_p = Arc::new(Mutex::new(Miner::new()));
         let puzzle = "RANDOM_STRING_ANYTHING".to_owned();
         let cancellation_token = Arc::new(RwLock::new(false));
-        let solution = Miner::solve_puzzle(
-            miner_p,
-            puzzle.clone(),
-            16, 3, 6, 43,  
-            cancellation_token
-        ).unwrap();
+        let solution =
+            Miner::solve_puzzle(miner_p, puzzle.clone(), 16, 5, 6, 43, cancellation_token).unwrap();
 
-        let PuzzleSolution { puzzle, nonce, hash } = solution;
+        let PuzzleSolution {
+            puzzle,
+            nonce,
+            hash,
+        } = solution;
         let mut hasher = Sha256::new();
         hasher.update(&nonce);
         hasher.update(&puzzle);
@@ -37,8 +36,7 @@ mod tests {
         println!("HASH: {}\nNONCE: {}\nPUZZLE: {}", hash, nonce, puzzle);
     }
 
-   
-   // Testing cancellation. To start a multi-threaded miner and solve a very hard puzzle and cancel it after 4 secs.
+    // Testing cancellation. To start a multi-threaded miner and solve a very hard puzzle and cancel it after 4 secs.
     #[test]
     fn test_miner_cancellation() {
         let miner_p = Arc::new(Mutex::new(Miner::new()));
@@ -58,29 +56,32 @@ mod tests {
         });
 
         // start mining with the cancellation token
-        let solution = Miner::solve_puzzle(
-            miner_p,
-            puzzle.clone(),
-            16, 8, 2, 43,  
-            cancellation_token
-        );
+        let solution =
+            Miner::solve_puzzle(miner_p, puzzle.clone(), 16, 8, 2, 43, cancellation_token);
 
         // The execution should reach here after 4s even if solution is not found!
         // check if solved or cancelled
         match solution {
-            Some(PuzzleSolution { puzzle, nonce, hash }) => {println!("Solution Found! HASH: {}\nNONCE: {}\nPUZZLE: {}", hash, nonce, puzzle);},
-            None => {println!("Miner returns None. Expected.");}
+            Some(PuzzleSolution {
+                puzzle,
+                nonce,
+                hash,
+            }) => {
+                println!(
+                    "Solution Found! HASH: {}\nNONCE: {}\nPUZZLE: {}",
+                    hash, nonce, puzzle
+                );
+            }
+            None => {
+                println!("Miner returns None. Expected.");
+            }
         };
         _cancel_timer.join().unwrap();
     }
-
 
     /// Your own additional test that tests your implementation more throughly (e.g. any performance issue in multi-threading)
     #[test]
     fn test_miner_additional() {
         // Please fill in the blank
-        
     }
-
 }
-
