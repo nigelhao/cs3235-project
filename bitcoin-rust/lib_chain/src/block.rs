@@ -148,8 +148,9 @@ impl Transaction {
         // verify the signature using the sender_id as the public key (you might need to change the format into PEM)
         // You can look at the `verify` function in `bin_wallet` for reference. They should have the same functionality.
         
+        // Format the public key to be in PEM format
         let begin_rsa_pub_key = String::from("-----BEGIN RSA PUBLIC KEY-----\n");
-        let end_rsa_pub_key = String::from("\n-----END RSA PUBLIC KEY-----");
+        let end_rsa_pub_key = String::from("\n-----END RSA PUBLIC KEY-----\n");
         
         let first_half = self.sender.get(0..64).unwrap();
         let second_half = self.sender.get(64..80).unwrap();
@@ -159,9 +160,15 @@ impl Transaction {
         let public_key = rsa::RsaPublicKey::from_pkcs1_pem(&sender_id_pem).unwrap();
         let verifying_key = VerifyingKey::<Sha256>::new(public_key);
 
+        // Craft msg
+        let msg: String = String::from("[\"") + &self.sender + "\",\"" + &self.receiver + "\",\"" + &self.message + "\"]";
+        
+        // Obtain signature
         let signature = Base64::decode_vec(&self.sig).unwrap();
         let verify_signature = RsaSignature::from_bytes(&signature).unwrap();
-        let verify_result = verifying_key.verify(&self.message.as_bytes(), &verify_signature);
+
+        // Verify the message using public key, signature, and msg
+        let verify_result = verifying_key.verify(&msg.as_bytes(), &verify_signature);
 
         return match verify_result {
             Ok(()) => true,
