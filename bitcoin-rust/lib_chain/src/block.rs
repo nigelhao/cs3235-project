@@ -7,9 +7,14 @@
 /// The longest path in the BlockTree is the main chain. It is the chain from the root to the working_block_id.
 
 use core::panic;
-use std::{collections::{BTreeMap, HashMap, HashSet}, convert};
+use std::{collections::{BTreeMap, HashMap, HashSet}, convert, str::Bytes};
 use serde::{Serialize, Deserialize};
 use sha2::{Sha256, Digest, digest::block_buffer::Block};
+
+use rsa::pkcs1::{DecodeRsaPublicKey};
+use rsa::pkcs1v15::{VerifyingKey};
+use base64ct::{Base64, Encoding};
+use rsa::signature::{Signature as RsaSignature, Verifier};
 
 pub type UserId = String;
 pub type BlockId = String;
@@ -27,6 +32,7 @@ pub struct MerkleTree {
 }
 
 impl MerkleTree {    
+    
     /// Create a merkle tree from a list of transactions.
     /// The merkle tree is a list of lists of hashes, 
     /// where the first list is the list of hashes of the transactions.
@@ -34,18 +40,56 @@ impl MerkleTree {
     /// - `txs`: a list of transactions
     /// - The return value is the root hash of the merkle tree
     pub fn create_merkle_tree (txs: Vec<Transaction>) -> (String, MerkleTree) {
+        
+        // If the transaction vector is empty, panic uwu
         if txs.len() == 0 {
             panic!("create_merkel_tree get empty Transaction Vector.");
         }
-        // Please fill in the blank
-        todo!();
+
+        // Create the first level of hashes from the transaction vector
+        let mut hashes: Vec<Vec<String>> = vec![txs.iter().map(|tx| tx.gen_hash()).collect()];
+
+        // Keep hashing pairs of hashes together until there is only one hash remaining
+        while hashes.last().unwrap().len() > 1 {
+            let mut new_level: Vec<String> = vec![];
+
+            // Get the last level of hashes
+            let last_level = hashes.last().unwrap();
+
+            // Hash pairs of hashes together to create a new level of hashes
+            for chunk in last_level.chunks_exact(2) {
+                let mut hasher = Sha256::new();
+                hasher.update(chunk.get(0).unwrap());
+                hasher.update(chunk.get(1).unwrap_or(&chunk[0]));
+
+                new_level.push(format!("{:x}", hasher.finalize()));
+            }
+
+            // If there is an odd number of hashes, duplicate the last hash and hash it with itself to
+            // create a new hash
+            if last_level.len() % 2 == 1 {
+                let last_hash = last_level.last().unwrap().to_owned();
+                let mut hasher = Sha256::new();
+                hasher.update(last_hash.as_bytes());
+                hasher.update(last_hash.as_bytes());
+
+                new_level.push(format!("{:x}", hasher.finalize()));
+            }
+
+            // Add the new level of hashes to the list of hashes
+            hashes.push(new_level);
+        }
+
+        // The last hash in the last level of hashes is the root hash of the Merkle tree
+        let root_hash = hashes.last().unwrap()[0].to_owned();
+        
+        // Return the root hash and the MerkleTree
+        (root_hash, MerkleTree { hashes })
         
     }
-
-    // Please fill in the blank
-    // Depending on your implementation, you may need additional functions here.
     
 }
+
 
 /// The struct containing a list of transactions and the merkle tree of the transactions. 
 /// Each block will contain one `Transactions` struct.
@@ -99,10 +143,43 @@ impl Transaction {
 
     /// Verify the signature of the transaction. Return true if the signature is valid, and false otherwise.
     pub fn verify_sig(&self) -> bool {
+        
         // Please fill in the blank
         // verify the signature using the sender_id as the public key (you might need to change the format into PEM)
         // You can look at the `verify` function in `bin_wallet` for reference. They should have the same functionality.
-        todo!();
+        
+        // Format the public key to be in PEM format
+        let begin_rsa_pub_key = String::from("-----BEGIN RSA PUBLIC KEY-----\n");
+        let end_rsa_pub_key = String::from("\n-----END RSA PUBLIC KEY-----\n");
+        
+        let first_half = self.sender.get(0..64).unwrap();
+        let second_half = self.sender.get(64..80).unwrap();
+
+        let sender_id_pem = begin_rsa_pub_key + &first_half + "\n" + &second_half + &end_rsa_pub_key;
+        
+        let public_key = rsa::RsaPublicKey::from_pkcs1_pem(&sender_id_pem).unwrap();
+        let verifying_key = VerifyingKey::<Sha256>::new(public_key);
+
+        // Craft msg
+        let msg: String = String::from("[\"") + &self.sender + "\",\"" + &self.receiver + "\",\"" + &self.message + "\"]";
+        
+        // Obtain signature
+        let signature = Base64::decode_vec(&self.sig).unwrap();
+        let verify_signature = RsaSignature::from_bytes(&signature).unwrap();
+
+        // Verify the message using public key, signature, and msg
+        let verify_result = verifying_key.verify(&msg.as_bytes(), &verify_signature);
+
+        return match verify_result {
+            Ok(()) => true,
+            Err(e) => {
+                println!("Signature generated: {}", verify_signature);
+                println!("Message: {}", self.message);
+                println!("[Signature verification failed]: {}", e);
+                false
+            }
+        }
+
         
     }
 }
