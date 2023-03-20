@@ -7,7 +7,7 @@
 /// The longest path in the BlockTree is the main chain. It is the chain from the root to the working_block_id.
 
 use core::panic;
-use std::{collections::{BTreeMap, HashMap, HashSet}, convert, str::Bytes};
+use std::{collections::{BTreeMap, HashMap, HashSet}, convert, str::Bytes, thread::current};
 use serde::{Serialize, Deserialize};
 use sha2::{Sha256, Digest, digest::block_buffer::Block};
 
@@ -258,23 +258,98 @@ impl BlockTree {
     pub fn add_block(&mut self, block: BlockNode, leading_zero_len: u16) -> () {
         
         // Please fill in the blank
-        
-        // 1. The block must have a valid nonce and the hash in the puzzle solution satisfies the difficulty requirement.
-       
-       
-        //    The Puzzle struct represents a puzzle for the miner to solve. The puzzle is to find a nonce such that when concatenated
-        //    with the serialized json string of this `Puzzle` struct, the sha256 hash of the result has the required leading zero length.
-        //    the block_id of the block is the sha256 hash of the concatination of the nonce and a `Puzzle` derived from the block
-        //    The nonce is the solution found by the miner for the `Puzzle` derived from this block.
 
-        println!("{:?}", block.transactions_block.transactions);
+        // Cloned stuff. We'll need these later in part 5.
+        let mut parent_id = block.header.parent.clone();
+        let entered_block = block.clone();
+        let entered_block2 = block.clone();
+        let entered_block3 = block.clone();
         
+
+        // 1. The block must have a valid nonce and the hash in the puzzle solution satisfies the difficulty requirement.
+        //    UNSURE: HOW TO VERIFY IF A NONCE IS VALID?
+
         let difficulty_requirement: String = "0".repeat(leading_zero_len.into());
         if &block.header.block_id[0..leading_zero_len.into()] != difficulty_requirement {
-            
             return;
         }
 
+
+        // 2. The block_id of the block must be equal to the computed hash in the puzzle solution.
+
+        let puzzle = Puzzle {
+            parent: block.header.parent,
+            merkle_root: block.header.merkle_root,
+            reward_receiver: block.header.reward_receiver
+        };
+
+        let puzzle_serialized = serde_json::to_string(&puzzle).unwrap();
+        let concatenated_string = block.header.nonce + &puzzle_serialized;
+
+        let mut hasher = Sha256::new();
+        hasher.update(concatenated_string);
+        let computed_hash = hasher.finalize();
+        let final_hash = format!("{:x}", computed_hash);
+
+        if final_hash != block.header.block_id {
+            return;
+        }
+        
+
+        // 3. The block does not exist in the block tree or the orphan map.
+
+        if self.all_blocks.contains_key(&block.header.block_id) || 
+           self.orphans.contains_key(&block.header.block_id) {
+            return;
+        }
+
+
+        // 4. The transactions in the block must be valid. See the `verify_sig` function in the `Transaction` struct for details.
+
+        let transactions_vector = block.transactions_block.transactions;
+        for transaction in transactions_vector.iter() {
+            if transaction.verify_sig() == true {
+                continue;
+            } else {
+                return;
+            }
+        }
+
+        
+        // 5. The parent of the block must exist in the block tree. 
+        //     Otherwise, it will be bookkeeped in the orphans map. 
+        //     When the parent block is added to the block tree, the block will be removed from the orphan map and checked against the conditions again.
+        //     UNSURE: HOW TO IMPLEMENT THE LAST SENTENCE?
+
+        if !self.all_blocks.contains_key(&parent_id) {
+            self.orphans.insert(block.header.block_id, entered_block);
+        } 
+        
+
+        // 6. The transactions in the block must not be duplicated with any transactions in its ancestor blocks.
+        //    IF I UNDERSTAND THIS CORRECTLY, THIS MEANS THAT EVERY PARENT BLOCK MUST NOT HAVE THE SAME LIST OF TRANSACTIONS AS THIS BLOCK.
+        //    MY CODE TRAVERSES THE TREE UPWARDS UNTIL IT REACHES THE ROOT. 
+        //    IT COMPARES THE ADDED BLOCK WITH ALL ITS ANCESTOR BLOCKS TO CHECK IF THERE ARE ANY BLOCKS THAT HAVE THE SAME LIST OF TRANSACTIONS.
+        let mut current_block = entered_block2;
+        while (&parent_id != &self.root_id) {
+            let parent_block: BlockNode = self.get_block(parent_id.clone()).unwrap();
+            if (entered_block3.transactions_block == parent_block.transactions_block) {
+                return;
+            }
+            current_block = self.get_block(parent_id.clone()).unwrap();
+            parent_id = current_block.header.parent;
+        }
+        if (current_block.transactions_block == self.get_block(self.root_id.clone()).unwrap().transactions_block) {
+            return;
+        }
+
+
+        // 7. Each sender in the txs in the block must have enough balance to pay for the transaction.
+        //    Conceptually, the balance of one address is the sum of the money sent to the address minus the money sent from the address 
+        //    when walking from the genesis block to this block, according to the order of the txs in the blocks.
+        //    Mining reward is a constant of $10 (added to the reward_receiver address **AFTER** considering transactions in the block).
+
+        
         
 
     }
@@ -283,8 +358,7 @@ impl BlockTree {
     /// Get the block node by the block id if exists. Otherwise, return None.
     pub fn get_block(&self, block_id: BlockId) -> Option<BlockNode> {
         // Please fill in the blank
-        todo!();
-        
+        return self.all_blocks.get(&block_id).cloned();
     }
 
     /// Get the finalized blocks on the longest path after the given block id, from the oldest to the most recent.
