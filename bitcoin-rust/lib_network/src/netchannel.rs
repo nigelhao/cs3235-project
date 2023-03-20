@@ -1,4 +1,4 @@
-// This file is part of the project for the module CS3235 by Prateek 
+// This file is part of the project for the module CS3235 by Prateek
 // Copyright 2023 Ruishi Li, Bo Wang, and Prateek Saxena.
 // Please do not distribute.
 
@@ -8,14 +8,14 @@
 // You can see detailed instructions in the comments below.
 // You can also look at the unit tests in ./lib.rs to understand the expected behavior of the NetChannelTCP.
 
-
-use std::{io::BufRead};
-use lib_chain::block::{BlockNode, Transaction, BlockId};
-use std::{hash::Hash};
-use serde::{Serialize, Deserialize};
-use std::net::{TcpStream};
-use std::io::{Read, Write};
+use lib_chain::block::{BlockId, BlockNode, Transaction};
+use serde::{Deserialize, Serialize};
+use std::hash::Hash;
+use std::io::BufRead;
 use std::io::BufReader;
+use std::io::{Read, Write};
+use std::net::TcpListener;
+use std::net::TcpStream;
 
 /// The struct to represent a network address.
 #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Serialize, Deserialize, Debug)]
@@ -23,7 +23,7 @@ pub struct NetAddress {
     /// the ip address. Example: "127.0.0.1"
     pub ip: String,
     /// the port number. Example: 8000
-    pub port: i32
+    pub port: i32,
 }
 
 impl NetAddress {
@@ -31,7 +31,6 @@ impl NetAddress {
         NetAddress { ip, port }
     }
 }
-
 
 /// The enum to represent a network message that is sent or received using `NetChannelTCP`.
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
@@ -43,7 +42,7 @@ pub enum NetMessage {
     /// The message to request a block (i.e. missing in the local block tree) from neighbor.
     RequestBlock(BlockId),
     /// The message to represent other temporary messages (e.g. for debugging).
-    Unknown(String)
+    Unknown(String),
 }
 
 /// The struct to represent a network channel that is used to send and receive messages to a neighbor node.
@@ -51,24 +50,26 @@ pub struct NetChannelTCP {
     /// The TCP stream
     stream: TcpStream,
     /// The reader to read from the TCP stream
-    reader: BufReader<TcpStream>
+    reader: BufReader<TcpStream>,
 }
 
 impl NetChannelTCP {
     /// Create a new NetChannelTCP from a NetAddress and establish the TCP connection.
     /// Return an error string if the connection fails.
-    pub fn from_addr(addr: &NetAddress) -> Result<Self,String> {
+    pub fn from_addr(addr: &NetAddress) -> Result<Self, String> {
         // Please fill in the blank
-        todo!();
-        
+        let addr_port = format!("{}:{}", addr.ip, addr.port);
+        let stream = TcpStream::connect(&addr_port);
+        let reader = BufReader::new(tcp_stream.clone()?);
+
+        NetChannelTCP { stream, reader };
     }
 
-    /// Create a new NetChannelTCP from a TcpStream. 
+    /// Create a new NetChannelTCP from a TcpStream.
     /// This is useful for creating a NetChannelTCP instance from the listener side.
     pub fn from_stream(stream: TcpStream) -> Self {
         // Please fill in the blank
         todo!();
-        
     }
 
     /// Clone the NetChannelTCP instance.
@@ -76,7 +77,6 @@ impl NetChannelTCP {
     pub fn clone_channel(&mut self) -> Self {
         // Please fill in the blank
         todo!();
-        
     }
 
     /// Read one line of message from the TCP stream.
@@ -85,16 +85,11 @@ impl NetChannelTCP {
     pub fn read_msg(&mut self) -> Option<NetMessage> {
         // Please fill in the blank
         todo!();
-        
     }
 
     /// Write a NetMessage to the TCP stream.
     /// The message is serialized to a one-line JSON string and a newline is appended in the end.
     pub fn write_msg(&mut self, msg: NetMessage) -> () {
         // Please fill in the blank
-        
     }
 }
-
-
-
