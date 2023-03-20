@@ -256,9 +256,27 @@ impl BlockTree {
     /// When a block is successfully added to the block tree, update the related fields in the BlockTree struct 
     /// (e.g., working_block_id, finalized_block_id, finalized_balance_map, finalized_tx_ids, block_depth, children_map, all_blocks, etc)
     pub fn add_block(&mut self, block: BlockNode, leading_zero_len: u16) -> () {
-        // Please fill in the blank
-        todo!();
         
+        // Please fill in the blank
+        
+        // 1. The block must have a valid nonce and the hash in the puzzle solution satisfies the difficulty requirement.
+       
+       
+        //    The Puzzle struct represents a puzzle for the miner to solve. The puzzle is to find a nonce such that when concatenated
+        //    with the serialized json string of this `Puzzle` struct, the sha256 hash of the result has the required leading zero length.
+        //    the block_id of the block is the sha256 hash of the concatination of the nonce and a `Puzzle` derived from the block
+        //    The nonce is the solution found by the miner for the `Puzzle` derived from this block.
+
+        println!("{:?}", block.transactions_block.transactions);
+        
+        let difficulty_requirement: String = "0".repeat(leading_zero_len.into());
+        if &block.header.block_id[0..leading_zero_len.into()] != difficulty_requirement {
+            
+            return;
+        }
+
+        
+
     }
 
 
