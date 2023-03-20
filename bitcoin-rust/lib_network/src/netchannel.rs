@@ -59,24 +59,37 @@ impl NetChannelTCP {
     pub fn from_addr(addr: &NetAddress) -> Result<Self, String> {
         // Please fill in the blank
         let addr_port = format!("{}:{}", addr.ip, addr.port);
-        let stream = TcpStream::connect(&addr_port);
-        let reader = BufReader::new(tcp_stream.clone()?);
-
-        NetChannelTCP { stream, reader };
+        match TcpStream::connect(&addr_port) {
+            Ok(tcp_stream) => {
+                let buf_reader = BufReader::new(tcp_stream.try_clone().unwrap());
+                let net_channel = NetChannelTCP {
+                    stream: tcp_stream,
+                    reader: buf_reader,
+                };
+                Ok(net_channel)
+            }
+            Err(e) => Err(format!("Failed to connect to {}: {}", addr_port, e)),
+        }
     }
 
     /// Create a new NetChannelTCP from a TcpStream.
     /// This is useful for creating a NetChannelTCP instance from the listener side.
     pub fn from_stream(stream: TcpStream) -> Self {
         // Please fill in the blank
-        todo!();
+        let buf_reader = BufReader::new(stream.try_clone().unwrap());
+
+        NetChannelTCP {
+            stream: stream,
+            reader: buf_reader,
+        }
     }
 
     /// Clone the NetChannelTCP instance.
     /// This is useful if you have multiple threads dealing with reading and writing to the TCP channel.
     pub fn clone_channel(&mut self) -> Self {
         // Please fill in the blank
-        todo!();
+        let cloned_stream = self.stream.try_clone().expect("Failed to clone TCP stream");
+        Self::from_stream(cloned_stream)
     }
 
     /// Read one line of message from the TCP stream.
@@ -84,12 +97,35 @@ impl NetChannelTCP {
     /// Otherwise, parse the line as a NetMessage and return it.
     pub fn read_msg(&mut self) -> Option<NetMessage> {
         // Please fill in the blank
-        todo!();
+
+        let mut line = String::new();
+        match self.reader.read_line(&mut line) {
+            Ok(0) => None, // Stream closed
+            Ok(_) => {
+                let deserialized_msg: Result<NetMessage, serde_json::Error> =
+                    serde_json::from_str(&line);
+                match deserialized_msg {
+                    Ok(msg) => Some(msg),
+                    Err(e) => {
+                        eprintln!("Error deserializing message: {}", e);
+                        None
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Error reading message from stream: {}", e);
+                None
+            }
+        }
     }
 
     /// Write a NetMessage to the TCP stream.
     /// The message is serialized to a one-line JSON string and a newline is appended in the end.
     pub fn write_msg(&mut self, msg: NetMessage) -> () {
         // Please fill in the blank
+        let serialized_msg = format!("{}\n", serde_json::to_string(&msg).unwrap());
+        if let Err(e) = self.stream.write_all(serialized_msg.as_bytes()) {
+            eprintln!("Error writing message to stream: {}", e);
+        }
     }
 }
