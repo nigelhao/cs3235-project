@@ -363,6 +363,7 @@ impl BlockTree {
         }
     
         // Update the finalized_block_id, finalized_balance_map, and finalized_tx_ids
+        // Remember to add reward for miners into their finalized balance
         let (finalized_block_id, finalized_balance_map, finalized_tx_ids) = self.update_finalized_fields();
         self.finalized_block_id = finalized_block_id;
         self.finalized_balance_map = finalized_balance_map;
@@ -376,7 +377,7 @@ impl BlockTree {
         let mut temp_user_sent_hashmap: HashMap<String, i64> = HashMap::new();
         let mut temp_user_received_hashmap: HashMap<String, i64> = HashMap::new();
 
-        // Get all money senders & receivers & miners
+        // Get all money senders & receivers
         // Total all the money they sent and received
         for transaction in block.transactions_block.transactions.iter() {
             
@@ -407,9 +408,6 @@ impl BlockTree {
                 return false;
             }
         }
-
-        // Mining reward is a constant of $10 (added to the reward_receiver address **AFTER** considering transactions in the block).
-        // NOT SURE IF block_tree.finalized_balance_map SHOULD BE UPDATED WITH MINER'S REWARD HERE
         
         true
 
