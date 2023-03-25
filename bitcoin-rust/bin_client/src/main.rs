@@ -33,6 +33,9 @@ use serde_json;
 
 use std::fs;
 
+use std::env;
+use std::path::PathBuf;
+
 mod app;
 
 /// The enum type for the IPC messages (requests) from this client to the bin_nakamoto process.
@@ -117,25 +120,94 @@ fn main() {
     // - `client_seccomp_path`: The path to the seccomp file for this client process for Part B. (You can set this argument to any value during Part A.)
     // - `nakamoto_config_path`: The path to the config folder for the bin_nakamoto process. For example, `./tests/nakamoto_config1`. Your program should read the 3 files in the config folder (`BlockTree.json`, `Config.json`, `TxPool.json`) for initializing bin_nakamoto.
     // - `nakamoto_seccomp_path`: The path to the seccomp file for the bin_nakamoto process for Part B. (You can set this argument to any value during Part A.)
-    // - `wallet_config_path`: The path to the config file for the bin_wallet process. For example, `./tests/_secrets/Walley.A.json`. Your program should read the file for initializing bin_wallet.
+    // - `wallet_config_path`: The path to the config file for the bin_wallet process. For example, `./tests/_secrets/Wallet.A.json`. Your program should read the file for initializing bin_wallet.
     // - `wallet_seccomp_path`: The path to the seccomp file for the bin_wallet process for Part B. (You can set this argument to any value during Part A.)
     // - [`bot_command_path`]: *Optional* argument. The path to the file or named pipe for the bot commands. If this argument is provided, your program should read commands line-by-line from the file.
     //                         an example file of the bot commands can be found at `./tests/_bots/botA-0.jsonl`. You can also look at `run_four.sh` for an example of using the named pipe version of this argument.
     //                         The bot commands are executed by the client in the order they are read from the file or the named pipe. 
     //                         The bot commands should be executed in a separate thread so that the UI thread can still be responsive.
-    // Please fill in the blank
-    // - Create bin_nakamoto process:  Command::new("./target/debug/bin_nakamoto")...
-    // - Create bin_wallet process:  Command::new("./target/debug/bin_wallet")...
-    // - Get stdin and stdout of those processes
-    // - Create buffer readers if necessary
-    // - Send initialization requests to bin_nakamoto and bin_wallet
     
+    // Please fill in the blank
+    // add in variables to keep the arguments provided when the program starts?
+    let command_line_args: Vec<String> = env::args().collect();
+
+    if command_line_args.len() < 6 {
+        panic!("not enough arguments")
+    }
+    let client_seccomp_path = command_line_args[1];
+    let nakamoto_config_path = command_line_args[2];
+    let nakamoto_seccomp_path = command_line_args[3];
+    let wallet_config_path = command_line_args[4];
+    let wallet_seccomp_path = command_line_args[5];
+    let bot_command_path;
+
+    if command_line_args.len() == 7 {
+        bot_command_path = command_line_args[6];
+    }
+
+    // - Create bin_nakamoto process:  Command::new("./target/debug/bin_nakamoto")...
+    let mut nakamoto_process = Command::new("cd ../.. ; cargo run --bin bin_nakamoto") // TODO check, current is assuming client run in bin_client/src folder
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("failed to start nakamoto_process"); 
+    
+    // - Create bin_wallet process:  Command::new("./target/debug/bin_wallet")...
+    let mut bin_wallet_process = Command::new("cd ../.. ; cargo run --bin bin_wallet") // TODO check, current is assuming client run in bin_client/src folder
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("failed to start wallet_process"); 
+    
+    // - Get stdin and stdout of those processes
+    let nakamoto_stdin_mutex = Arc::new(Mutex::new(nakamoto_process.stdin.take().unwrap()));
+    let nakamoto_stdout_mutex = Arc::new(Mutex::new(BufReader::new(nakamoto_process.stdout.take().unwrap())));
+    let nakamoto_stderr_mutex = Arc::new(Mutex::new(BufReader::new(nakamoto_process.stderr.take().unwrap())));
+    let wallet_stdin_mutex = Arc::new(Mutex::new(bin_wallet_process.stdin.take().unwrap()));
+    let wallet_stdout_mutex = Arc::new(Mutex::new(BufReader::new(bin_wallet_process.stdout.take().unwrap())));
+    let wallet_stderr_mutex = Arc::new(Mutex::new(BufReader::new(bin_wallet_process.stderr.take().unwrap())));
+    
+    // - Create buffer readers if necessary
+    let mut buffer_reader_nakamoto = BufReader::new(nakamoto_stdout_mutex);
+    let mut buffer_reader_wallet = BufReader::new(wallet_stdout_mutex);
+    
+    // - Send initialization requests to bin_nakamoto and bin_wallet:
+    // send initialize request to bin_nakamoto
+    let nakamoto_initialization_message = IPCMessageReqNakamoto::Initialize((nakamoto_config_path + "BlockTree.A.json").to_string(), (nakamoto_config_path + "Config.A.json").to_string(), (nakamoto_config_path + "TxPool.A.json").to_string()); 
+    // TODO check whether config_path need to push a "/"
+    let mut nakamoto_json = serde_json::to_string(&nakamoto_initialization_message).unwrap();
+    nakamoto_stdin_mutex.write_all(nakamoto_json.as_bytes()).unwrap(); 
+   
+    // Nakamoto IPC response
+    let mut nakamoto_buffer = String::new();
+    buffer_reader_nakamoto.read_line(&mut nakamoto_buffer).unwrap();
+    let mut nakamoto_status: IPCMessageRespNakamoto = serde_json::from_str(&nakamoto_buffer).unwrap(); // TODO not sure
+    // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
+    buffer_reader_nakamoto.consume(8000); // to clear the buffer..?
+
+    // send initialize request to bin_wallet
+    let wallet_initialization_message = IPCMessageReqWallet::Initialize((wallet_config_path + "Wallet.A.json").to_string());
+    // TODO ^ check whether config_path need to push a "/"
+    let mut wallet_json = serde_json::to_string(&wallet_initialization_message).unwrap();
+    wallet_stdin_mutex.write_all(wallet_json.as_bytes()).unwrap();
+    
+    // Wallet IPC response
+    let mut wallet_buffer = String::new(); // TODO not sure
+    buffer_reader_wallet.read_line(&mut wallet_buffer).unwrap();
+    let mut wallet_status: IPCMessageRespWallet = serde_json::from_str(&wallet_buffer).unwrap(); // TODO not sure
+    // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
+    buffer_reader_wallet.consume(8000); // to clear the buffer..?
 
 
+    
+    // The path to the seccomp file for this client process for Part B. (You can set this argument to any value during Part A.)
     let client_seccomp_path = std::env::args().nth(1).expect("Please specify client seccomp path");
     // Please fill in the blank
     // sandboxing the bin_client (For part B). Leave it blank for part A.
     
+    //TODO after completing part A
 
 
 
@@ -143,7 +215,19 @@ fn main() {
     let user_id: String;
     // Please fill in the blank
     // Read the user info from wallet
-    
+    // send get user info request to bin_wallet
+    let wallet_get_info_message = IPCMessageReqWallet::GetUserInfo;
+    wallet_json = serde_json::to_string(&wallet_initialization_message).unwrap();
+    wallet_stdin_mutex.write_all(wallet_json.as_bytes()).unwrap();
+
+    // recieve wallet IPC reponse
+    wallet_buffer = String::new();
+    buffer_reader_wallet.read_line(&mut wallet_buffer).unwrap();
+    let wallet_user_info = serde_json::from_str(&wallet_buffer).unwrap();
+    if let IPCMessageRespWallet::UserInfo(userName, userId) = wallet_user_info {
+        user_name = userName;
+        user_id = userId;
+    }
 
 
     // Create the Terminal UI app
@@ -171,7 +255,25 @@ fn main() {
         // Notice that the `SleepMs(1000)` doesn't mean that the all threads in the whole process should sleep for 1000ms. It means that 
         // The next bot command that fakes the user interaction should be processed 1000ms later. 
         // It should not block the execution of any other threads or the main thread.
-        
+
+        // link and open the bot file as stated in `bot_command_path`
+        let mut path = PathBuf::from("../..");
+        // TODO check whether config_path need to push a "/"
+        path.push(bot_command_path); // TODO check, current is assuming client run in bin_client/src folder
+        let bot_file = File::open(path).unwrap(); 
+        let reader = BufReader::new(bot_file);
+        // create thread
+        let handle = thread::spawn(move || {
+            // thread to read bot commands from `bot_command_path`
+            for line in reader.lines() {
+                let command = line.unwrap();
+                // execute the commands
+                Command::new(command);
+                // TODO update the UI? 
+            }
+        });
+
+        handle.join().unwrap();
     }
 
 
@@ -180,12 +282,38 @@ fn main() {
     // - You should request for status update from bin_nakamoto periodically (every 500ms at least) to update the App (UI struct) accordingly.
     // - You can also create threads to read from stderr of bin_nakamoto/bin_wallet and add those lines to the UI (app.stderr_log) for easier debugging.
     
+    // bin_nakamoto thread
+    let handle_nakamoto = thread::spawn(move|| {
+        let tick_rate = Duration::from_millis(500);
+        fn nakamoto_loop() -> std::io::Result<()> {
+        // let nakamoto_loop {
+            let mut last_tick = Instant::now();
+            loop {
+                let timeout = tick_rate
+                    .checked_sub(last_tick.elapsed())
+                    .unwrap_or_else(|| Duration::from_millis(100));
+                
+                if crossterm::event::poll(timeout).unwrap() {
+                    // request for update
+                    //let wallet_status = IPCMessageReqNakamoto::
+                    // receive update
+                    last_tick = Instant::now();
+                }
+            }
+        };
+        nakamoto_loop().unwrap();
+    });
+    handle_nakamoto.join().unwrap();
 
+    // bin_wallet thread
+  
 
     // UI thread. Modify it to suit your needs. 
     let app_ui_ref = app_arc.clone();
-    let bin_wallet_stdin_p_cloned = bin_wallet_stdin_p.clone();
-    let nakamoto_stdin_p_cloned = nakamoto_stdin_p.clone();
+    // let bin_wallet_stdin_p_cloned = bin_wallet_stdin_p.clone();
+    // let nakamoto_stdin_p_cloned = nakamoto_stdin_p.clone();
+    let bin_wallet_stdin_p_cloned = wallet_stdin_mutex.clone();
+    let nakamoto_stdin_p_cloned = nakamoto_stdin_mutex.clone();
     let handle_ui = thread::spawn(move || {
         let tick_rate = Duration::from_millis(200);
         if NO_UI_DEBUG_NODE {
@@ -271,8 +399,10 @@ fn main() {
     handle_ui.join().unwrap();
     
     eprintln!("--- Sending \"Quit\" command...");
-    nakamoto_stdin_p.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
-    bin_wallet_stdin_p.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
+    // nakamoto_stdin_p.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
+    // bin_wallet_stdin_p.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
+    nakamoto_stdin_mutex.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
+    wallet_stdin_mutex.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
 
     // Please fill in the blank
     // Wait for the IPC threads to finish
