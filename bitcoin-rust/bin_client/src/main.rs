@@ -162,6 +162,7 @@ fn main() {
         .expect("failed to start wallet_process"); 
     
     // - Get stdin and stdout of those processes
+    // - Create buffer readers if necessary
     let nakamoto_stdin_mutex = Arc::new(Mutex::new(nakamoto_process.stdin.take().unwrap()));
     let nakamoto_stdout_mutex = Arc::new(Mutex::new(BufReader::new(nakamoto_process.stdout.take().unwrap())));
     let nakamoto_stderr_mutex = Arc::new(Mutex::new(BufReader::new(nakamoto_process.stderr.take().unwrap())));
@@ -169,39 +170,50 @@ fn main() {
     let wallet_stdout_mutex = Arc::new(Mutex::new(BufReader::new(bin_wallet_process.stdout.take().unwrap())));
     let wallet_stderr_mutex = Arc::new(Mutex::new(BufReader::new(bin_wallet_process.stderr.take().unwrap())));
     
-    // - Create buffer readers if necessary
-    let mut buffer_reader_nakamoto = BufReader::new(nakamoto_stdout_mutex);
-    let mut buffer_reader_wallet = BufReader::new(wallet_stdout_mutex);
-    
+    let nakamoto_stdin_clone = nakamoto_stdin_mutex.clone();
+    let nakamoto_stdout_clone = nakamoto_stdout_mutex.clone();
+    let wallet_stdin_clone = wallet_stdin_mutex.clone();
+    let wallet_stdout_clone = wallet_stdout_mutex.clone();
+
     // - Send initialization requests to bin_nakamoto and bin_wallet:
-    // send initialize request to bin_nakamoto
-    let nakamoto_initialization_message = IPCMessageReqNakamoto::Initialize((nakamoto_config_path + "BlockTree.A.json").to_string(), (nakamoto_config_path + "Config.A.json").to_string(), (nakamoto_config_path + "TxPool.A.json").to_string()); 
-    // TODO check whether config_path need to push a "/"
-    let mut nakamoto_json = serde_json::to_string(&nakamoto_initialization_message).unwrap();
-    nakamoto_stdin_mutex.write_all(nakamoto_json.as_bytes()).unwrap(); 
-   
-    // Nakamoto IPC response
-    let mut nakamoto_buffer = String::new();
-    buffer_reader_nakamoto.read_line(&mut nakamoto_buffer).unwrap();
-    let mut nakamoto_status: IPCMessageRespNakamoto = serde_json::from_str(&nakamoto_buffer).unwrap(); // TODO not sure
-    // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
-    buffer_reader_nakamoto.consume(8000); // to clear the buffer..?
+    let initialize_nakamoto_thread = thread::spawn(move || {
+        let mut stdin = nakamoto_stdin_clone.lock().unwrap();
+        let mut stdout = nakamoto_stdout_clone.lock().unwrap();
 
-    // send initialize request to bin_wallet
-    let wallet_initialization_message = IPCMessageReqWallet::Initialize((wallet_config_path + "Wallet.A.json").to_string());
-    // TODO ^ check whether config_path need to push a "/"
-    let mut wallet_json = serde_json::to_string(&wallet_initialization_message).unwrap();
-    wallet_stdin_mutex.write_all(wallet_json.as_bytes()).unwrap();
-    
-    // Wallet IPC response
-    let mut wallet_buffer = String::new(); // TODO not sure
-    buffer_reader_wallet.read_line(&mut wallet_buffer).unwrap();
-    let mut wallet_status: IPCMessageRespWallet = serde_json::from_str(&wallet_buffer).unwrap(); // TODO not sure
-    // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
-    buffer_reader_wallet.consume(8000); // to clear the buffer..?
+        // send initialize request to bin_nakamoto
+        let nakamoto_initialization_message = IPCMessageReqNakamoto::Initialize((nakamoto_config_path + "BlockTree.A.json").to_string(), (nakamoto_config_path + "Config.A.json").to_string(), (nakamoto_config_path + "TxPool.A.json").to_string()); 
+        // TODO check whether config_path need to push a "/"
+        let nakamoto_json = serde_json::to_string(&nakamoto_initialization_message).unwrap();
+        stdin.write_all(nakamoto_json.as_bytes()).unwrap(); 
+
+        // Nakamoto IPC response
+        let nakamoto_buffer = String::new();
+        stdout.read_line(&mut nakamoto_buffer).unwrap();
+        let nakamoto_status: IPCMessageRespNakamoto = serde_json::from_str(&nakamoto_buffer).unwrap();
+            // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
+        stdout.consume(8000); // to clear the buffer..?
+    });
 
 
-    
+    let initialize_wallet_thread = thread::spawn(move || {
+        let mut stdin = wallet_stdin_clone.lock().unwrap();
+        let mut stdout = wallet_stdout_clone.lock().unwrap();
+
+        // send initialize request to bin_wallet
+        let wallet_initialization_message = IPCMessageReqWallet::Initialize((wallet_config_path + "Wallet.A.json").to_string());
+        // TODO ^ check whether config_path need to push a "/"
+        let wallet_json = serde_json::to_string(&wallet_initialization_message).unwrap();
+        stdin.write_all(wallet_json.as_bytes()).unwrap();
+
+        // wallet IPC response
+        let wallet_buffer = String::new(); // TODO not sure
+        stdout.read_line(&mut wallet_buffer).unwrap();
+        let wallet_status: IPCMessageRespWallet = serde_json::from_str(&wallet_buffer).unwrap(); // TODO not sure
+        // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
+        stdout.consume(8000); // to clear the buffer..?
+    });
+
+
     // The path to the seccomp file for this client process for Part B. (You can set this argument to any value during Part A.)
     let client_seccomp_path = std::env::args().nth(1).expect("Please specify client seccomp path");
     // Please fill in the blank
@@ -210,25 +222,29 @@ fn main() {
     //TODO after completing part A
 
 
-
     let user_name: String;
     let user_id: String;
     // Please fill in the blank
     // Read the user info from wallet
     // send get user info request to bin_wallet
-    let wallet_get_info_message = IPCMessageReqWallet::GetUserInfo;
-    wallet_json = serde_json::to_string(&wallet_initialization_message).unwrap();
-    wallet_stdin_mutex.write_all(wallet_json.as_bytes()).unwrap();
 
-    // recieve wallet IPC reponse
-    wallet_buffer = String::new();
-    buffer_reader_wallet.read_line(&mut wallet_buffer).unwrap();
-    let wallet_user_info = serde_json::from_str(&wallet_buffer).unwrap();
-    if let IPCMessageRespWallet::UserInfo(userName, userId) = wallet_user_info {
-        user_name = userName;
-        user_id = userId;
-    }
+    let get_wallet_info_thread = thread::spawn(move || {
+        let mut stdin = wallet_stdin_clone.lock().unwrap();
+        let mut stdout = wallet_stdout_clone.lock().unwrap();
 
+        let wallet_get_info_message = IPCMessageReqWallet::GetUserInfo;
+        let wallet_json = serde_json::to_string(&wallet_get_info_message).unwrap();
+        stdin.write_all(wallet_json.as_bytes()).unwrap();
+
+        // recieve wallet IPC reponse
+        let wallet_buffer = String::new();
+        stdout.read_line(&mut wallet_buffer).unwrap();
+        let wallet_user_info = serde_json::from_str(&wallet_buffer).unwrap();
+        if let IPCMessageRespWallet::UserInfo(userName, userId) = wallet_user_info {
+            user_name = userName;
+            user_id = userId;
+        }
+    });
 
     // Create the Terminal UI app
     let app_arc = Arc::new(Mutex::new(app::App::new(
