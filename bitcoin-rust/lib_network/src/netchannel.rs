@@ -14,7 +14,6 @@ use std::hash::Hash;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::{Read, Write};
-use std::net::TcpListener;
 use std::net::TcpStream;
 
 /// The struct to represent a network address.
