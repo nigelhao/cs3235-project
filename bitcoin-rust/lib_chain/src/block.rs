@@ -7,11 +7,11 @@
 /// The longest path in the BlockTree is the main chain. It is the chain from the root to the working_block_id.
 
 use core::panic;
-use std::{collections::{BTreeMap, HashMap, HashSet}, convert, str::Bytes};
+use std::{collections::{BTreeMap, HashMap, HashSet}, convert, str::Bytes, thread::current, borrow::Borrow};
 use serde::{Serialize, Deserialize};
 use sha2::{Sha256, Digest, digest::block_buffer::Block};
 
-use rsa::pkcs1::{DecodeRsaPublicKey};
+use rsa::{pkcs1::{DecodeRsaPublicKey}, rand_core::block};
 use rsa::pkcs1v15::{VerifyingKey};
 use base64ct::{Base64, Encoding};
 use rsa::signature::{Signature as RsaSignature, Verifier};
@@ -256,17 +256,219 @@ impl BlockTree {
     /// When a block is successfully added to the block tree, update the related fields in the BlockTree struct 
     /// (e.g., working_block_id, finalized_block_id, finalized_balance_map, finalized_tx_ids, block_depth, children_map, all_blocks, etc)
     pub fn add_block(&mut self, block: BlockNode, leading_zero_len: u16) -> () {
-        // Please fill in the blank
-        todo!();
         
+        // Please fill in the blank
+
+        // Cloned stuff. We'll need these later in part 5.
+        let mut parent_id = block.header.parent.clone();
+        let mut cloned_block = block.clone();
+        let mut cloned_block2 = block.clone();
+        let mut cloned_block3 = block.clone();
+        let mut cloned_block4 = block.clone();
+        
+
+        // 1. The block must have a valid nonce and the hash in the puzzle solution satisfies the difficulty requirement.
+        //    UNSURE: HOW TO VERIFY IF A NONCE IS VALID?
+        let difficulty_requirement: String = "0".repeat(leading_zero_len.into());
+        if &block.header.block_id[0..leading_zero_len.into()] != difficulty_requirement {
+            return;
+        }
+
+
+        // 2. The block_id of the block must be equal to the computed hash in the puzzle solution.
+        let puzzle = Puzzle {
+            parent: block.header.parent,
+            merkle_root: block.header.merkle_root,
+            reward_receiver: block.header.reward_receiver
+        };
+
+        let puzzle_serialized = serde_json::to_string(&puzzle).unwrap();
+        let concatenated_string = block.header.nonce + &puzzle_serialized;
+
+        let mut hasher = Sha256::new();
+        hasher.update(concatenated_string);
+        let computed_hash = hasher.finalize();
+        let final_hash = format!("{:x}", computed_hash);
+
+        if final_hash != block.header.block_id {
+            return;
+        }
+        
+
+        // 3. The block does not exist in the block tree or the orphan map.
+        if self.all_blocks.contains_key(&block.header.block_id) || 
+           self.orphans.contains_key(&block.header.block_id) {
+            return;
+        }
+
+
+        // 4. The transactions in the block must be valid. See the `verify_sig` function in the `Transaction` struct for details.
+        let transactions_vector = block.transactions_block.transactions;
+        for transaction in transactions_vector.iter() {
+            if transaction.verify_sig() == true {
+                continue;
+            } else {
+                return;
+            }
+        }
+
+
+        // 5. Check that the parent of the block exists in the block tree
+        if let Some(parent) = self.all_blocks.get(&parent_id) {
+        
+        // 6. Check that the transactions in the block are not duplicated with any transactions in its ancestor blocks
+            if parent.have_duplicate_transactions(cloned_block, &self) {
+                return;
+            }
+
+            // 7. Each sender in the txs in the block must have enough balance to pay for the transaction.
+            //    Conceptually, the balance of one address is the sum of the money sent to the address minus the money sent from the address 
+            //    when walking from the genesis block to this block, according to the order of the txs in the blocks.
+            //    Mining reward is a constant of $10 (added to the reward_receiver address **AFTER** considering transactions in the block).
+            if !(self.has_enough_balance(&cloned_block2)) {
+                return;
+            }
+
+            // Add the block to the BlockTree
+            // When a block is successfully added to the block tree, update the related fields in the BlockTree struct 
+            // (e.g., working_block_id, finalized_block_id, finalized_balance_map, finalized_tx_ids, block_depth, children_map, all_blocks, etc)
+            self.add_block_to_tree(cloned_block2, self.get_block(cloned_block3.header.parent).unwrap().clone());
+
+        } else {
+            // Bookkeep the block in the orphans map
+            self.orphans.insert(block.header.block_id, cloned_block);
+        }
+        
+        
+
+    }
+    
+    fn add_block_to_tree(&mut self, block: BlockNode, parent: BlockNode) {
+
+        let mut cloned_block = block.clone();
+        let mut cloned_block2 = block.clone();
+        let mut cloned_block3 = block.clone();
+        let mut cloned_block4 = block.clone();
+        let mut cloned_block5 = block.clone();
+        let mut cloned_block6 = block.clone();
+
+        let cloned_parent = parent.clone();
+
+        // Update the block depth and add the block to the block tree
+        let depth = self.block_depth.get(&block.header.parent).unwrap() + 1;
+        self.all_blocks.insert(block.header.block_id, cloned_block);
+        self.block_depth.insert(cloned_block2.header.block_id, depth);
+    
+        // Add the block to the parent's children map
+        self.children_map.entry(parent.header.block_id.to_string()).or_insert_with(Vec::new).push(cloned_block3.header.block_id);
+    
+        // Update the working_block_id if the new block has a greater depth
+        if depth > *self.block_depth.get(&self.working_block_id).unwrap() {
+            self.working_block_id = cloned_block4.header.block_id;
+        }
+    
+        // Check if any orphan have this block as their parent, and add them to the tree if so
+        // for (orphanId, orphanNode) in self.orphans.iter_mut() {
+        //     if orphanNode.header.parent == cloned_block5.header.block_id {
+        //         self.add_block_to_tree(orphanNode.clone(), cloned_block6.clone());
+        //     }
+        // }
+
+        let mut orphans_to_add = Vec::new();
+        for (orphan_id, orphan_node) in self.orphans.iter() {
+            if orphan_node.header.parent == cloned_block5.header.block_id {
+                orphans_to_add.push((orphan_node.clone(), cloned_block6.clone()));
+            }
+        }
+        for (orphan_node, orphan_parent) in orphans_to_add {
+            self.add_block_to_tree(orphan_node, orphan_parent);
+        }
+
+        // Update the finalized_block_id, finalized_balance_map, and finalized_tx_ids
+        // Remember to add reward for miners into their finalized balance
+        let (finalized_block_id, finalized_balance_map, finalized_tx_ids) = self.update_finalized_fields();
+        self.finalized_block_id = finalized_block_id;
+        self.finalized_balance_map = finalized_balance_map;
+        self.finalized_tx_ids = finalized_tx_ids;
     }
 
+    fn update_finalized_fields(&self) -> (String, HashMap<String, i64>, HashSet<String>) {
+        
+        let mut finalized_block_id: String = "".to_string();
+        let mut finalized_balance_map: HashMap<String, i64> = HashMap::new();
+        let mut finalized_tx_ids: HashSet<String> = HashSet::new();
+        
+        // Traverse from genesis block to working block and update the balance map
+        let mut current_node = &self.all_blocks[&self.working_block_id];
+        while let Some(parent_node) = self.all_blocks.get(&current_node.header.parent) {
+            
+            // Add reward to miner's balance
+            let miner_address = &current_node.header.reward_receiver;
+            *finalized_balance_map.entry(miner_address.to_string()).or_insert(0) += 10; // Reward for miner = $10
+    
+            // Add transactions to the finalized_tx_ids
+            // Note that transaction id is produced by the gen_hash() function of a Transaction
+            for tx_id in &current_node.transactions_block.transactions {
+                finalized_tx_ids.insert(tx_id.gen_hash());
+            }
+    
+            // Update finalized_block_id
+            finalized_block_id = current_node.header.block_id.to_string();
+    
+            current_node = parent_node;
+        }
+    
+        return (finalized_block_id, finalized_balance_map, finalized_tx_ids);
+
+    }
+
+
+    fn has_enough_balance(&self, block: &BlockNode) -> bool {
+        
+        let mut users_whose_balances_got_updated: Vec<String> = Vec::new();
+        let mut temp_user_sent_hashmap: HashMap<String, i64> = HashMap::new();
+        let mut temp_user_received_hashmap: HashMap<String, i64> = HashMap::new();
+
+        // Get all money senders & receivers
+        // Total all the money they sent and received
+        for transaction in block.transactions_block.transactions.iter() {
+            
+            // If user not in temp vectors, append them to the temp vectors
+            if !users_whose_balances_got_updated.contains(&transaction.sender) {
+                users_whose_balances_got_updated.push(transaction.sender.clone());
+            }
+
+            if !users_whose_balances_got_updated.contains(&transaction.receiver) {
+                users_whose_balances_got_updated.push(transaction.receiver.clone());
+            }
+
+            // Extract money sent & received from message in the transaction 
+            let send_part: Vec<&str> = transaction.message.split("//").collect();
+            let money_sent: Vec<&str> = send_part[0].split(" $").collect();
+            let money_sent = money_sent[1].parse::<i64>().unwrap();
+
+            // Update the temp_user_sent_hashmap and temp_user_received_hashmap
+            temp_user_sent_hashmap.insert(transaction.sender.clone(), money_sent);
+            temp_user_received_hashmap.insert(transaction.receiver.clone(), money_sent);
+
+        }
+
+        // Have a list of the users whose balance got updated, and check if each of them have negative value in their accounts
+        for user in users_whose_balances_got_updated.iter() {
+            let net_change = temp_user_received_hashmap.get(user).unwrap() - temp_user_sent_hashmap.get(user).unwrap();
+            if (self.finalized_balance_map.get(user).unwrap() + net_change < 0) {
+                return false;
+            }
+        }
+        
+        true
+
+    }
 
     /// Get the block node by the block id if exists. Otherwise, return None.
     pub fn get_block(&self, block_id: BlockId) -> Option<BlockNode> {
         // Please fill in the blank
-        todo!();
-        
+        return self.all_blocks.get(&block_id).cloned();
     }
 
     /// Get the finalized blocks on the longest path after the given block id, from the oldest to the most recent.
@@ -353,6 +555,16 @@ impl BlockNode {
             header,
             transactions_block,
         }
+    }
+    
+    pub fn have_duplicate_transactions(&self, mut block: BlockNode, block_tree: &BlockTree) -> bool {
+        while (block.header.parent != "0") {
+            if self.transactions_block == block.transactions_block {
+                return true;
+            }
+            block = block_tree.get_block(block.header.parent).unwrap();
+        }
+        false
     }
 
     /// Check for block validity based solely on this block (not considering its validity inside a block tree).
