@@ -261,7 +261,10 @@ impl BlockTree {
 
         // Cloned stuff. We'll need these later in part 5.
         let mut parent_id = block.header.parent.clone();
-        let block_tree = self.clone();
+        let mut cloned_block = block.clone();
+        let mut cloned_block2 = block.clone();
+        let mut cloned_block3 = block.clone();
+        let mut cloned_block4 = block.clone();
         
 
         // 1. The block must have a valid nonce and the hash in the puzzle solution satisfies the difficulty requirement.
@@ -314,7 +317,7 @@ impl BlockTree {
         if let Some(parent) = self.all_blocks.get(&parent_id) {
         
         // 6. Check that the transactions in the block are not duplicated with any transactions in its ancestor blocks
-            if parent.have_duplicate_transactions(block, &self) {
+            if parent.have_duplicate_transactions(cloned_block, &self) {
                 return;
             }
 
@@ -322,52 +325,101 @@ impl BlockTree {
             //    Conceptually, the balance of one address is the sum of the money sent to the address minus the money sent from the address 
             //    when walking from the genesis block to this block, according to the order of the txs in the blocks.
             //    Mining reward is a constant of $10 (added to the reward_receiver address **AFTER** considering transactions in the block).
-            if !(self.has_enough_balance(&block)) {
+            if !(self.has_enough_balance(&cloned_block2)) {
                 return;
             }
 
             // Add the block to the BlockTree
             // When a block is successfully added to the block tree, update the related fields in the BlockTree struct 
             // (e.g., working_block_id, finalized_block_id, finalized_balance_map, finalized_tx_ids, block_depth, children_map, all_blocks, etc)
-            self.add_block_to_tree(block, &self.get_block(block.header.parent).unwrap());
+            self.add_block_to_tree(cloned_block2, self.get_block(cloned_block3.header.parent).unwrap().clone());
 
         } else {
             // Bookkeep the block in the orphans map
-            self.orphans.insert(block.header.block_id, block);
+            self.orphans.insert(block.header.block_id, cloned_block);
         }
         
         
 
     }
     
-    fn add_block_to_tree(&mut self, block: BlockNode, parent: &BlockNode) {
+    fn add_block_to_tree(&mut self, block: BlockNode, parent: BlockNode) {
+
+        let mut cloned_block = block.clone();
+        let mut cloned_block2 = block.clone();
+        let mut cloned_block3 = block.clone();
+        let mut cloned_block4 = block.clone();
+        let mut cloned_block5 = block.clone();
+        let mut cloned_block6 = block.clone();
+
+        let cloned_parent = parent.clone();
 
         // Update the block depth and add the block to the block tree
         let depth = self.block_depth.get(&block.header.parent).unwrap() + 1;
-        self.all_blocks.insert(block.header.block_id, block);
-        self.block_depth.insert(block.header.block_id, depth);
+        self.all_blocks.insert(block.header.block_id, cloned_block);
+        self.block_depth.insert(cloned_block2.header.block_id, depth);
     
         // Add the block to the parent's children map
-        self.children_map.entry(parent.header.block_id).or_insert_with(Vec::new).push(block.header.block_id);
+        self.children_map.entry(parent.header.block_id.to_string()).or_insert_with(Vec::new).push(cloned_block3.header.block_id);
     
         // Update the working_block_id if the new block has a greater depth
         if depth > *self.block_depth.get(&self.working_block_id).unwrap() {
-            self.working_block_id = block.header.block_id;
+            self.working_block_id = cloned_block4.header.block_id;
         }
     
         // Check if any orphan have this block as their parent, and add them to the tree if so
-        for (orphanId, orphanNode) in self.orphans.iter() {
-            if orphanNode.header.parent == block.header.block_id {
-                self.add_block_to_tree(*orphanNode, &block);
+        // for (orphanId, orphanNode) in self.orphans.iter_mut() {
+        //     if orphanNode.header.parent == cloned_block5.header.block_id {
+        //         self.add_block_to_tree(orphanNode.clone(), cloned_block6.clone());
+        //     }
+        // }
+
+        let mut orphans_to_add = Vec::new();
+        for (orphan_id, orphan_node) in self.orphans.iter() {
+            if orphan_node.header.parent == cloned_block5.header.block_id {
+                orphans_to_add.push((orphan_node.clone(), cloned_block6.clone()));
             }
         }
-    
+        for (orphan_node, orphan_parent) in orphans_to_add {
+            self.add_block_to_tree(orphan_node, orphan_parent);
+        }
+
         // Update the finalized_block_id, finalized_balance_map, and finalized_tx_ids
         // Remember to add reward for miners into their finalized balance
         let (finalized_block_id, finalized_balance_map, finalized_tx_ids) = self.update_finalized_fields();
         self.finalized_block_id = finalized_block_id;
         self.finalized_balance_map = finalized_balance_map;
         self.finalized_tx_ids = finalized_tx_ids;
+    }
+
+    fn update_finalized_fields(&self) -> (String, HashMap<String, i64>, HashSet<String>) {
+        
+        let mut finalized_block_id: String = "".to_string();
+        let mut finalized_balance_map: HashMap<String, i64> = HashMap::new();
+        let mut finalized_tx_ids: HashSet<String> = HashSet::new();
+        
+        // Traverse from genesis block to working block and update the balance map
+        let mut current_node = &self.all_blocks[&self.working_block_id];
+        while let Some(parent_node) = self.all_blocks.get(&current_node.header.parent) {
+            
+            // Add reward to miner's balance
+            let miner_address = &current_node.header.reward_receiver;
+            *finalized_balance_map.entry(miner_address.to_string()).or_insert(0) += 10; // Reward for miner = $10
+    
+            // Add transactions to the finalized_tx_ids
+            // Note that transaction id is produced by the gen_hash() function of a Transaction
+            for tx_id in &current_node.transactions_block.transactions {
+                finalized_tx_ids.insert(tx_id.gen_hash());
+            }
+    
+            // Update finalized_block_id
+            finalized_block_id = current_node.header.block_id.to_string();
+    
+            current_node = parent_node;
+        }
+    
+        return (finalized_block_id, finalized_balance_map, finalized_tx_ids);
+
     }
 
 
