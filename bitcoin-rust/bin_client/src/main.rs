@@ -146,7 +146,7 @@ fn main() {
 
     // - Create bin_nakamoto process:  Command::new("./target/debug/bin_nakamoto")...
     // let mut nakamoto_process = Command::new("./target/debug/bin_nakamoto") // TODO check
-    let mut nakamoto_process = Command::new("cargo run --bin bin_nakamoto") // TODO check
+    let mut nakamoto_process = Command::new("cargo run --bin bin_nakamoto") 
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -155,7 +155,7 @@ fn main() {
     
     // - Create bin_wallet process:  Command::new("./target/debug/bin_wallet")...
     // let mut bin_wallet_process = Command::new("./target/debug/bin_wallet") // TODO check
-    let mut bin_wallet_process = Command::new("cargo run --bin bin_wallet") // TODO check
+    let mut bin_wallet_process = Command::new("cargo run --bin bin_wallet") 
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -175,7 +175,6 @@ fn main() {
     // - Send initialization requests to bin_nakamoto and bin_wallet:
     // send initialize request to bin_nakamoto
     let nakamoto_initialization_message = IPCMessageReqNakamoto::Initialize((nakamoto_config_path.to_owned()).to_string(), (nakamoto_config_path.to_owned()).to_string(), (nakamoto_config_path.to_owned()).to_string()); 
-    // TODO check whether config_path need to push a "/"
     let nakamoto_json = serde_json::to_string(&nakamoto_initialization_message).unwrap();
     nakamoto_stdin_mutex.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap(); 
 
@@ -184,11 +183,10 @@ fn main() {
     nakamoto_stdout_mutex.lock().unwrap().read_line(&mut nakamoto_buffer).unwrap();
     let nakamoto_status: IPCMessageRespNakamoto = serde_json::from_str(&nakamoto_buffer).unwrap();
         // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
-    nakamoto_stdout_mutex.lock().unwrap().consume(8000); // to clear the buffer..? 
+    nakamoto_stdout_mutex.lock().unwrap().consume(nakamoto_buffer.len()); // to clear the buffer..? 
 
     // send initialize request to bin_wallet
     let wallet_initialization_message = IPCMessageReqWallet::Initialize((wallet_config_path.to_owned()).to_string());
-    // TODO ^ check whether config_path need to push a "/"
     let wallet_json = serde_json::to_string(&wallet_initialization_message).unwrap();
     wallet_stdin_mutex.lock().unwrap().write_all(wallet_json.as_bytes()).unwrap();
 
@@ -197,7 +195,7 @@ fn main() {
     wallet_stdout_mutex.lock().unwrap().read_line(&mut wallet_buffer).unwrap();
     let wallet_status: IPCMessageRespWallet = serde_json::from_str(&wallet_buffer).unwrap(); // TODO not sure
     // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
-    wallet_stdout_mutex.lock().unwrap().consume(8000); // to clear the buffer..?
+    wallet_stdout_mutex.lock().unwrap().consume(wallet_buffer.len()); // to clear the buffer..?
 
     // The path to the seccomp file for this client process for Part B. (You can set this argument to any value during Part A.)
     let client_seccomp_path = std::env::args().nth(1).expect("Please specify client seccomp path");
@@ -225,7 +223,7 @@ fn main() {
         user_name = username;
         user_id = userid;
     }
-    wallet_stdout_mutex.lock().unwrap().consume(8000); // to clear the buffer..?
+    wallet_stdout_mutex.lock().unwrap().consume(wallet_buffer.len()); // to clear the buffer..?
 
     // Create the Terminal UI app
     let app_arc = Arc::new(Mutex::new(app::App::new(
@@ -274,11 +272,13 @@ fn main() {
                 if let BotCommand::SleepMs(value) = command_enum {
                     thread::sleep(Duration::from_millis(value));
                 } else {
-                    // Send a transaction message from the default user_id of the client to the given receiver_user_id, e.g, Send(`receiver_user_id`, `transaction_message`)
-                    // sign request to wallet
-
-                    // publish transaction to nakamoto
-
+                    if let BotCommand::Send(receiver_id, transaction_message) = command_enum {
+                        // Send a transaction message from the default user_id of the client to the given receiver_user_id, e.g, Send(`receiver_user_id`, `transaction_message`)
+                        let user_id_clone_extra = user_id_clone.clone();
+                        let sign_req_str = create_sign_req (user_id_clone_extra, receiver_id, transaction_message);
+                        // sign request to wallet
+                        wallet_stdin_clone.lock().unwrap().write_all(sign_req_str.as_bytes()).unwrap();
+                    }
                 }
                 // TODO update the UI? 
             }
@@ -296,14 +296,27 @@ fn main() {
     let mut nakamoto_stdout_clone_thread = nakamoto_stdout_mutex.clone();
     let mut user_id_clone2 = user_id.clone();
 
+    let mut wallet_stdin_clone_thread = wallet_stdin_mutex.clone();
+    let mut wallet_stdout_clone_thread = wallet_stdout_mutex.clone();
+
     // thread to communicate with processes, work in progress
     let handle = thread::spawn(move || {
         let tick_rate = Duration::from_millis(500);
         let mut last_tick = Instant::now();
         loop {
             let time_out = tick_rate.checked_sub(last_tick.elapsed()).unwrap_or_else(|| Duration::from_millis(500)); // TODO not sure
+            
+            // read wallet stdout, send to nakamoto accordingly?
 
+            // receive sign response from wallet
+            let mut wallet_buffer = String::new();
+            wallet_stdout_clone_thread.lock().unwrap().read_line(&mut wallet_buffer).unwrap();
+            wallet_stdout_clone_thread.lock().unwrap().consume(8000); // to clear the buffer..?
+        
+
+            // publish transaction to nakamoto? if receive sign response from wallet
             if crossterm::event::poll(time_out).unwrap() {
+
                 // send ipc request message to nakamoto to get address balance
                 let mut nakamoto_ipc_req = IPCMessageReqNakamoto::GetAddressBalance((user_id_clone2).to_string());
                 let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
@@ -312,9 +325,10 @@ fn main() {
                 // recieve ipc response from nakamoto regarding address balance
                 let mut nakamoto_reply = String::new();
                 nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
-                let nakamoto_address_balance: IPCMessageRespNakamoto = serde_json::from_str(&nakamoto_reply).unwrap();
+                let nakamoto_address_balance: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
                 nakamoto_stdout_clone_thread.lock().unwrap().consume(8000) // to clear the buffer..? 
 
+                // get status update from nakamoto
                 // TODO update ui?
             }
         }
