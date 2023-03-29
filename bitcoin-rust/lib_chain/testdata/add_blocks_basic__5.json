@@ -1,0 +1,55 @@
+{
+  "header": {
+    "parent": "00000fdaf625db91f6b3db9610fb373fdd5cdccd2a3d50146b582ffb35727f69",
+    "merkle_root": "b105df261716ce7ad804ced6b31887c0578b6345b222d2f2633ccfaebc38a8b4",
+    "timestamp": 1,
+    "block_id": "000006d31d61b95b8e1bfdbabfe7e0432102af3bdd03432eb11a2a56fadf8f5d",
+    "nonce": "95vL5CxkCr",
+    "reward_receiver": "MDgCMQDOpK8YWmcg8ffNF/O7xlBDq/DBdoUnc4yyWrV0y/X3LF+dddjaGksXzGl3tHskpgkCAwEAAQ=="
+  },
+  "transactions_block": {
+    "merkle_tree": {
+      "hashes": [
+        [
+          "da284d6a893be3ee8be761f5f51acf6cc27c391d56ca2c23eeb4e4a3dfc0c347",
+          "07541d52d7cd1e971b054766f5fbd50578a2e869b3afc02de023a7e220cf7094",
+          "2d316469043259b5983b1db2e48f166b5546402061a0c55637694781eb00ba02",
+          "3628dd32e1a82527ab3247cfc54f73a73c06645fd70d02e4d4cb713d50f3a2e5"
+        ],
+        [
+          "197041f4d46edeb4b181016ea347f5b18351bb3db0bd83a322311164b36977fb",
+          "0304ea203c9945e4817e47ae5593880bac88f33eee725d03f6e5c767eed4c877"
+        ],
+        [
+          "b105df261716ce7ad804ced6b31887c0578b6345b222d2f2633ccfaebc38a8b4"
+        ]
+      ]
+    },
+    "transactions": [
+      {
+        "sender": "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",
+        "receiver": "MDgCMQDZDExOs97sRTnQLYtgFjDKpDzmO7Uo5HPP62u6MDimXBpZtGxtwa8dhJe5NBIsJjUCAwEAAQ==",
+        "message": "SEND $100   // By Alice   // 1678588970541",
+        "sig": "SzPgfb+DEpACHoRzuQja1GHptwnLTHQVLTCoKmIckvImZQ17wvZkUb6b5SjSwpsP"
+      },
+      {
+        "sender": "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",
+        "receiver": "MDgCMQDOpK8YWmcg8ffNF/O7xlBDq/DBdoUnc4yyWrV0y/X3LF+dddjaGksXzGl3tHskpgkCAwEAAQ==",
+        "message": "SEND $300   // By Alice   // 1678588975547",
+        "sig": "ogxs0JUMU0ggKLgeoLoaaz6vGT6Q4r68WtdG29YuwCK5hC05yyENcfARwrJR+ehn"
+      },
+      {
+        "sender": "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",
+        "receiver": "MDgCMQDeoEeA8OtGME/SRwp+ASKVOnjlEUHYvQfo0FLp3+fwVi/SztDdJskjzCRasGk06UUCAwEAAQ==",
+        "message": "SEND $200   // By Alice   // 1678588977550",
+        "sig": "R7Vz6xeE/DmvP8A0e1bGXrRADX9ikMVEBhvY6PJDv3VF33/kPHVaNvMlpyH71Tcp"
+      },
+      {
+        "sender": "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",
+        "receiver": "MDgCMQDeoEeA8OtGME/SRwp+ASKVOnjlEUHYvQfo0FLp3+fwVi/SztDdJskjzCRasGk06UUCAwEAAQ==",
+        "message": "SEND $200   // By Alice   // 1678588980553",
+        "sig": "TbDcUe0LQRo4I+W0mjPeaGjhPWJVXYtwFooVOs+pW69iHROJZvzKYN5TxN4dxftL"
+      }
+    ]
+  }
+}
