@@ -1,0 +1,30 @@
+ let header = block.header.clone();
+        let transactions = block.transactions_block.transactions.clone();
+
+        let puzzle = Puzzle {
+            parent: header.parent.clone(),
+            merkle_root: header.merkle_root.clone(),
+            reward_receiver: header.reward_receiver.clone(),
+        };
+
+        let puzzle_serialized = serde_json::to_string(&puzzle).unwrap();
+        let challenge = header.nonce.to_string() + &puzzle_serialized;
+
+        let computed_block_id = format!("{:x}", Sha256::digest(challenge.as_bytes()));
+
+        let valid_block_id = header.block_id == computed_block_id;
+        let valid_leading_zero_len = header
+            .block_id
+            .starts_with(&"0".repeat(leading_zero_len as usize));
+
+        let block_exist = self.all_blocks.contains_key(&header.block_id)
+            || self.orphans.contains_key(&header.block_id);
+
+        let valid_transactions = transactions.iter().all(|t| t.verify_sig());
+
+        let is_valid =
+            valid_block_id && valid_leading_zero_len && !block_exist && valid_transactions;
+
+        if !is_valid {
+            return;
+        }
