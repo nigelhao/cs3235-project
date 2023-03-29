@@ -122,8 +122,6 @@ mod tests {
         assert!(default_block_tree.working_block_id == "0".to_string());
         assert!(default_block_tree.root_id == "0".to_string());
         assert!(default_block_tree.orphans.len() == 1);
-
-        // println!("{:?}", default_block_tree)
     }
 
     /// Test adding blocks to the blocktree (orphan not considered)
@@ -155,7 +153,6 @@ mod tests {
             default_btree.finalized_block_id
                 == "00000f93bcb625d8181e02c5e952672b3b178ab6cb56c86546b605e8915a1b11"
         );
-        println!("default_btree: {:?}", default_btree.finalized_tx_ids);
     }
 
     /// Test adding blocks to the blocktree (orphan considered)
@@ -193,12 +190,10 @@ mod tests {
     /// Your own test that tests your blocktree implementation more throughly (e.g., orphan, invalid block, etc.)
     #[test]
     fn blocktree_additional_test() {
-        // Please fill in the blank
-        // You can add your own json files and read them for testing
         let mut default_btree = BlockTree::new();
         // print current pwd
         println!("current dir: {:?}", std::env::current_dir());
-        for i in vec![3, 6, 1, 4, 2, 8, 5, 7] {
+        for i in vec![8, 7, 6, 5, 4, 3, 2, 1] {
             // read block from "./testdata/add_block_basic__{i}.json"
             let block_json =
                 read_string_from_file(&format!("./testdata/add_blocks_basic__{}.json", i));
@@ -206,24 +201,11 @@ mod tests {
             default_btree.add_block(block_node, 5);
         }
 
-        // println!("\nDEFUALT TREE: {:?}", default_btree);
-        println!("O_BLK: {:?}\n\n", default_btree.orphans);
-        // assert!(
-        //     default_btree.working_block_id
-        //         == "0000052b06a4d5c725f3713aed93d4b4e1da93a7b4f7cb870ef1f7e6b6b0fcb8".to_string()
-        // );
-        // assert!(default_btree.finalized_balance_map[&"MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==".to_owned()] == 299791558);
-        // assert!(default_btree.finalized_balance_map[&"MDgCMQDZDExOs97sRTnQLYtgFjDKpDzmO7Uo5HPP62u6MDimXBpZtGxtwa8dhJe5NBIsJjUCAwEAAQ==".to_owned()] == 300);
-        // assert!(default_btree.finalized_balance_map[&"MDgCMQDeoEeA8OtGME/SRwp+ASKVOnjlEUHYvQfo0FLp3+fwVi/SztDdJskjzCRasGk06UUCAwEAAQ==".to_owned()] == 20);
-        // assert!(
-        //     default_btree.block_depth
-        //         [&"00000e3737f396b050fd38ed30e8813818229ffa43ce5f77b3781ace835a8db6".to_owned()]
-        //         == 7
-        // );
-
-        // assert!(
-        //     default_btree.finalized_block_id
-        //         == "00000f93bcb625d8181e02c5e952672b3b178ab6cb56c86546b605e8915a1b11"
-        // );
+        println!(
+            "F_BLKS: {:?}",
+            default_btree.get_finalized_blocks_since(
+                "00000f4cfb3b6f2371d3265fbcfc13f2c1c15d6a4e33a2b935a507430e9ecc9f".to_string()
+            )
+        );
     }
 }
