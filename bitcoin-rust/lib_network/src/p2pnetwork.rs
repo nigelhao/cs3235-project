@@ -11,7 +11,8 @@ use crate::netchannel::*;
 use lib_chain::block::{BlockId, BlockNode, Transaction, TxId};
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::convert;
-use std::net::TcpListener;
+use std::io::Read;
+use std::net::{TcpListener, TcpStream};
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
@@ -62,7 +63,84 @@ impl P2PNetwork {
         // 6. create threads to listen to messages from neighbors
         // 7. create threads to distribute received messages (send to channels or broadcast to neighbors)
         // 8. return the created P2PNetwork instance and the mpsc channels
-        todo!();
+            
+
+        // 1. create a P2PNetwork instance
+        let network = Arc::new(Mutex::new(P2PNetwork {
+            send_msg_count: 0,
+            recv_msg_count: 0,
+            address: address.clone(),
+            neighbors: neighbors.clone(),
+        }));
+
+
+        // 2. create mpsc channels for sending and receiving messages
+        let (_, block_node_receiver) = mpsc::channel();
+        let (_, tx_receiver) = mpsc::channel();
+        let (block_node_sender, _) = mpsc::channel();
+        let (tx_sender, _) = mpsc::channel();
+        let (block_id_sender, _) = mpsc::channel();
+
+
+        // 3. create a thread for accepting incoming TCP connections from neighbors
+        let connect_to_neighbours = thread::spawn(move || { 
+
+            // 4. create TCP connections to all neighbors
+            for neighbor in neighbors {
+                
+                match TcpStream::connect(format!("{}:{}", neighbor.ip, neighbor.port)) {
+                   
+                    Ok(stream) => {
+               
+                        let channel = NetChannelTCP::from_stream(stream);
+                        
+                        // 5. create threads for each TCP connection to send messages
+                        thread::spawn(move || {
+                            
+                            // Continuously check for messages to send
+                            // If there is a message to be sent, send the message, then increment send_msg_count
+                            
+                        });
+
+                        // 6. create threads to listen to messages from neighbors
+                        thread::spawn(move || {
+                            
+                            // Continuously check for messages to receive
+                            // If there is a message to be received, receive the message, then increment recv_msg_count
+                            
+                        });
+
+                        // 7. create threads to distribute received messages (send to channels or broadcast to neighbors)
+                        // How is this different from 5?
+                        thread::spawn(move || {
+                            
+                            // Continuously check for messages to broadcast after receiving a message
+                            // If there is a message to be broadcast, broadcast the message, then increment send_msg_count
+                            
+                        });
+
+                    }
+               
+                    Err(e) => {
+                        eprintln!("Failed to connect to {}:{}: {}", neighbor.ip, neighbor.port, e);
+                    }
+                }
+            }
+
+        });
+
+
+        // 8. return the created P2PNetwork instance and the mpsc channels
+        return (
+            network,
+            block_node_receiver,
+            tx_receiver,
+            block_node_sender,
+            tx_sender,
+            block_id_sender,
+        )
+        
+
     }
 
     /// Get status information of the P2PNetwork for debug printing.
