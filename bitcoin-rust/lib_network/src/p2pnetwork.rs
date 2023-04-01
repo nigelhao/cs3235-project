@@ -66,23 +66,24 @@ impl P2PNetwork {
             
 
         // 1. create a P2PNetwork instance
-        let network = Arc::new(Mutex::new(P2PNetwork {
+        let mut network = Arc::new(Mutex::new(P2PNetwork {
             send_msg_count: 0,
             recv_msg_count: 0,
             address: address.clone(),
             neighbors: neighbors.clone(),
         }));
 
+        
 
         // 2. create mpsc channels for sending and receiving messages
         let (block_node_sender, block_node_receiver): (Sender<BlockNode>, Receiver<BlockNode>) = mpsc::channel();
         let (tx_sender, tx_receiver): (Sender<Transaction>, Receiver<Transaction>) = mpsc::channel();
         let (block_id_sender, _): (Sender<BlockId>, Receiver<BlockId>) = mpsc::channel();
-
+        
 
         // 3. create a thread for accepting incoming TCP connections from neighbors
         let connect_to_neighbours = thread::spawn(move || { 
-
+        
             // 4. create TCP connections to all neighbors
             for neighbor in neighbors {
                 
@@ -92,33 +93,50 @@ impl P2PNetwork {
 
                         println!("Connected to {}:{}", neighbor.ip, neighbor.port);
                
-                        let channel = NetChannelTCP::from_stream(stream);
-                        
+                        let mut channel = NetChannelTCP::from_stream(stream);
+                        //let network = Arc::clone(&network);
+
                         // 5. create threads for each TCP connection to send messages
+                        // 6. create threads to listen to messages from neighbors
+                        
                         thread::spawn(move || {
+
+                                println!("[P2PNetwork] Starting processing received messages thread.");
+                                
+                                // Continuously check for messages to receive
+                                // If there is a message to be received, receive the message, then increment recv_msg_count
+                                loop {
+
+                                    let received_message: NetMessage = channel.read_msg().unwrap();
+
+                                    // Check if it is a BlockNode or Tx
+                                    
+
+                                    println!("{:?}", received_message);
+                          
+                                    
+                                }
                             
-                            // Continuously check for messages to send
-                            // If there is a message to be sent, send the message, then increment send_msg_count
+                        });
+
+                        // 7. create threads to distribute received messages (send to channels or broadcast to neighbors)
+                        thread::spawn(move || {
+
+                            println!("[P2PNetwork] Starting broadcasting blocks thread.");
+                            
+                            // Continuously check for messages to broadcast after receiving a message
+                            // If there is a message to be broadcast, broadcast the message, then increment send_msg_count
                             loop {
+
+                                //let send_blocks: NetMessage = channel.write_msg(msg);
                                 
                             }
                             
                         });
 
-                        // 6. create threads to listen to messages from neighbors
                         thread::spawn(move || {
-                            
-                            // Continuously check for messages to receive
-                            // If there is a message to be received, receive the message, then increment recv_msg_count
-                            loop {
 
-                            }
-                            
-                        });
-
-                        // 7. create threads to distribute received messages (send to channels or broadcast to neighbors)
-                        // How is this different from 5?
-                        thread::spawn(move || {
+                            println!("[P2PNetwork] Starting broadcasting transactions thread.");
                             
                             // Continuously check for messages to broadcast after receiving a message
                             // If there is a message to be broadcast, broadcast the message, then increment send_msg_count
@@ -140,7 +158,6 @@ impl P2PNetwork {
             println!("[P2PNetwork] Starting processing received messages thread.");
 
         });
-
 
         // 8. return the created P2PNetwork instance and the mpsc channels
         return (
