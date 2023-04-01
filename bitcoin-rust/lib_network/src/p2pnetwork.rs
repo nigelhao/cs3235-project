@@ -75,11 +75,9 @@ impl P2PNetwork {
 
 
         // 2. create mpsc channels for sending and receiving messages
-        let (_, block_node_receiver) = mpsc::channel();
-        let (_, tx_receiver) = mpsc::channel();
-        let (block_node_sender, _) = mpsc::channel();
-        let (tx_sender, _) = mpsc::channel();
-        let (block_id_sender, _) = mpsc::channel();
+        let (block_node_sender, block_node_receiver): (Sender<BlockNode>, Receiver<BlockNode>) = mpsc::channel();
+        let (tx_sender, tx_receiver): (Sender<Transaction>, Receiver<Transaction>) = mpsc::channel();
+        let (block_id_sender, _): (Sender<BlockId>, Receiver<BlockId>) = mpsc::channel();
 
 
         // 3. create a thread for accepting incoming TCP connections from neighbors
@@ -91,6 +89,8 @@ impl P2PNetwork {
                 match TcpStream::connect(format!("{}:{}", neighbor.ip, neighbor.port)) {
                    
                     Ok(stream) => {
+
+                        println!("Connected to {}:{}", neighbor.ip, neighbor.port);
                
                         let channel = NetChannelTCP::from_stream(stream);
                         
@@ -99,6 +99,9 @@ impl P2PNetwork {
                             
                             // Continuously check for messages to send
                             // If there is a message to be sent, send the message, then increment send_msg_count
+                            loop {
+                                
+                            }
                             
                         });
 
@@ -107,6 +110,9 @@ impl P2PNetwork {
                             
                             // Continuously check for messages to receive
                             // If there is a message to be received, receive the message, then increment recv_msg_count
+                            loop {
+
+                            }
                             
                         });
 
@@ -116,6 +122,9 @@ impl P2PNetwork {
                             
                             // Continuously check for messages to broadcast after receiving a message
                             // If there is a message to be broadcast, broadcast the message, then increment send_msg_count
+                            loop {
+
+                            }
                             
                         });
 
@@ -126,6 +135,9 @@ impl P2PNetwork {
                     }
                 }
             }
+
+            println!("[P2PNetwork] All neighbors connected.");
+            println!("[P2PNetwork] Starting processing received messages thread.");
 
         });
 
