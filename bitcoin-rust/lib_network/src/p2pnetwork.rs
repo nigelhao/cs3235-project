@@ -79,12 +79,14 @@ impl P2PNetwork {
         let tx_sender_return = tx_sender.clone();
         let block_id_sender_return = block_id_sender.clone();
 
-        let shared_block_node_rx = Arc::new(Mutex::new(block_node_receiver));
-        let shared_tx_rx = Arc::new(Mutex::new(tx_receiver));
+        let shared_block_node_rx = Arc::new(Mutex::new(block_node_receiver)).clone();
+        let shared_tx_rx = Arc::new(Mutex::new(tx_receiver)).clone();
 
-        let (_, test_block_node_receiver): (Sender<BlockNode>, Receiver<BlockNode>) = mpsc::channel();
-        let (_, test_tx_receiver): (Sender<Transaction>, Receiver<Transaction>) = mpsc::channel();
+        // let (_, dummy_block_node_receiver): (Sender<BlockNode>, Receiver<BlockNode>) = mpsc::channel();
+        // let (_, dummy_tx_receiver): (Sender<Transaction>, Receiver<Transaction>) = mpsc::channel();
 
+        let (_, dummy_block_node_receiver): (Sender<BlockNode>, Receiver<BlockNode>) = mpsc::channel();
+        let (_, dummy_tx_receiver): (Sender<Transaction>, Receiver<Transaction>) = mpsc::channel();
 
         // 3. create a thread for accepting incoming TCP connections from neighbors
         // 4. create TCP connections to all neighbors
@@ -94,7 +96,7 @@ impl P2PNetwork {
             for stream in listener.incoming() {
                 match stream {
                     Ok(stream) => {
-                        println!("Steam received: {:?}", stream);
+                        println!("Stream received: {:?}", stream);
                     }
                     Err(e) => { 
                         println!("A connection has failed due to this error: {:?}", e); 
@@ -103,24 +105,26 @@ impl P2PNetwork {
             }
         });
 
+        // Connect to each neighbour
+        for neighbor in neighbors {
+            
+            let block_node_sender_clone = block_node_sender.clone();
+            let tx_sender_clone = tx_sender.clone();
+            let block_id_sender_clone = block_id_sender.clone();
 
-        // 5. create threads for each TCP connection to send messages
-        let connect_to_neighbours = thread::spawn(move || { 
-            
-            
-            for neighbor in neighbors {
+            let thread_shared_block_node_rx = Arc::clone(&shared_block_node_rx);
+            let thread_shared_tx_rx = Arc::clone(&shared_tx_rx);
+
+            println!("[NetChannel] Trying to connect to {}:{}", neighbor.ip, neighbor.port);
+
+            // Spawn a thread for each neighbor
+            thread::spawn(move || {
                 
-                println!("Connected to {}:{}", neighbor.ip, neighbor.port);
-
                 let mut channel = NetChannelTCP::from_addr(&neighbor).expect("Failed to create NetChannelTCP");
-                let mut channel_clone = channel.clone_channel();
+                let mut channel_clone1 = channel.clone_channel();
+                let mut channel_clone2 = channel.clone_channel();
 
-                
-                // 6. create threads to listen to messages from neighbors
-                let block_node_sender_clone = block_node_sender.clone();
-                let tx_sender_clone = tx_sender.clone();
-                let block_id_sender_clone = block_id_sender.clone();
-
+                // Thread to receive NetMessages, and send them into mpsc channels
                 thread::spawn(move || {
 
                     // Continuously check for messages to receive
@@ -144,50 +148,48 @@ impl P2PNetwork {
                             },
                         }
                     }
-
                 });
 
-                // 7. create threads to distribute received messages (send to channels or broadcast to neighbors)
-                // Continuously check for messages to broadcast after receiving a message
-                
-                let thread_shared_block_node_rx = Arc::clone(&shared_block_node_rx);
-                let thread_shared_tx_rx = Arc::clone(&shared_tx_rx);
 
-                let handle = thread::spawn(move || {
+                // Thread to broadcast BlockNodes
+                thread::spawn(move || {
                     loop {
-
                         let mut block_node_rx = thread_shared_block_node_rx.lock().unwrap();
-                        let mut tx_rx = thread_shared_tx_rx.lock().unwrap();
 
                         if let Ok(msg) = block_node_rx.recv() {
                             // Broadcast block nodes
-                            channel_clone.write_msg(netchannel::NetMessage::BroadcastBlock(msg.clone()));
-                        } else if let Ok(tx) = tx_rx.recv() {
-                            // Broadcast transactions
-                            channel_clone.write_msg(netchannel::NetMessage::BroadcastTx(tx.clone()));
-                        } else {
-                            // If the channel is closed, break the loop and terminate the thread
-                            break;
+                            channel_clone1.write_msg(netchannel::NetMessage::BroadcastBlock(msg.clone()));
                         }
-
-
                     }
                 });
 
-            }
+                // Thread to broadcast Transactions
+                thread::spawn(move || {
 
-            println!("[P2PNetwork] All neighbors connected.");
-            println!("[P2PNetwork] Starting processing received messages thread.");
+                    loop {
+                        let mut tx_rx = thread_shared_tx_rx.lock().unwrap();
 
-        });
+                        if let Ok(tx) = tx_rx.recv() {
+                            // Broadcast transactions
+                            channel_clone2.write_msg(netchannel::NetMessage::BroadcastTx(tx.clone()));
+                        } 
+                        
+                    }
+                });
 
+            });
+
+        }
+
+        println!("[P2PNetwork] All neighbors connected.");
+        println!("[P2PNetwork] Starting processing received messages thread.");
 
 
         // 8. return the created P2PNetwork instance and the mpsc channels
         return (
             network,
-            test_block_node_receiver,
-            test_tx_receiver,
+            dummy_block_node_receiver,
+            dummy_tx_receiver,
             block_node_sender_return,
             tx_sender_return,
             block_id_sender_return,
