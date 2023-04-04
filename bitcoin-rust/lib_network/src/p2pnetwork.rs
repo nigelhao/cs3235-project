@@ -1,21 +1,20 @@
 // This file is part of the project for the module CS3235 by Prateek
 // Copyright 2023 Ruishi Li, Bo Wang, and Prateek Saxena.
 // Please do not distribute.
-
-use crate::netchannel::*;
+use crate::netchannel::{*, self};
 /// P2PNetwork is a struct that implements a peer-to-peer network.
 /// It is used to send and receive messages to/from neighbors.
 /// It also automatically broadcasts messages.
 // You can see detailed instructions in the comments below.
 // You can also look at the unit tests in ./lib.rs to understand the expected behavior of the P2PNetwork.
-use lib_chain::block::{BlockId, BlockNode, Transaction, TxId};
+use lib_chain::block::{BlockId, BlockNode, Transaction, TxId, self};
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::convert;
-use std::net::TcpListener;
+use std::io::Read;
+use std::net::{TcpListener, TcpStream};
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
-
 /// The struct to represent statistics of a peer-to-peer network.
 pub struct P2PNetwork {
     /// The number of messages sent by this node.
@@ -27,7 +26,6 @@ pub struct P2PNetwork {
     /// The addresses of the neighbors.
     pub neighbors: Vec<NetAddress>,
 }
-
 impl P2PNetwork {
     /// Creates a new P2PNetwork instance and associated FIFO communication channels.
     /// There are 5 FIFO channels.
@@ -62,9 +60,142 @@ impl P2PNetwork {
         // 6. create threads to listen to messages from neighbors
         // 7. create threads to distribute received messages (send to channels or broadcast to neighbors)
         // 8. return the created P2PNetwork instance and the mpsc channels
-        todo!();
-    }
+            
+        // 1. create a P2PNetwork instance
+        let network = Arc::new(Mutex::new(P2PNetwork {
+            send_msg_count: 0,
+            recv_msg_count: 0,
+            address: address.clone(),
+            neighbors: neighbors.clone(),
+        }));
 
+
+        // 2. create mpsc channels for sending and receiving messages
+        let (block_node_sender, block_node_receiver): (Sender<BlockNode>, Receiver<BlockNode>) = mpsc::channel();
+        let (tx_sender, tx_receiver): (Sender<Transaction>, Receiver<Transaction>) = mpsc::channel();
+        let (block_id_sender, _): (Sender<BlockId>, Receiver<BlockId>) = mpsc::channel();
+
+        let block_node_sender_return = block_node_sender.clone();
+        let tx_sender_return = tx_sender.clone();
+        let block_id_sender_return = block_id_sender.clone();
+
+        let shared_block_node_rx = Arc::new(Mutex::new(block_node_receiver)).clone();
+        let shared_tx_rx = Arc::new(Mutex::new(tx_receiver)).clone();
+
+        // let (_, dummy_block_node_receiver): (Sender<BlockNode>, Receiver<BlockNode>) = mpsc::channel();
+        // let (_, dummy_tx_receiver): (Sender<Transaction>, Receiver<Transaction>) = mpsc::channel();
+
+        let (_, dummy_block_node_receiver): (Sender<BlockNode>, Receiver<BlockNode>) = mpsc::channel();
+        let (_, dummy_tx_receiver): (Sender<Transaction>, Receiver<Transaction>) = mpsc::channel();
+
+        // 3. create a thread for accepting incoming TCP connections from neighbors
+        // 4. create TCP connections to all neighbors
+        thread::spawn(move || { 
+            let listener = TcpListener::bind(format!("{}:{}", address.ip, address.port)).unwrap();
+
+            for stream in listener.incoming() {
+                match stream {
+                    Ok(stream) => {
+                        println!("Stream received: {:?}", stream);
+                    }
+                    Err(e) => { 
+                        println!("A connection has failed due to this error: {:?}", e); 
+                    }
+                }
+            }
+        });
+
+        // Connect to each neighbour
+        for neighbor in neighbors {
+            
+            let block_node_sender_clone = block_node_sender.clone();
+            let tx_sender_clone = tx_sender.clone();
+            let block_id_sender_clone = block_id_sender.clone();
+
+            let thread_shared_block_node_rx = Arc::clone(&shared_block_node_rx);
+            let thread_shared_tx_rx = Arc::clone(&shared_tx_rx);
+
+            println!("[NetChannel] Trying to connect to {}:{}", neighbor.ip, neighbor.port);
+
+            // Spawn a thread for each neighbor
+            thread::spawn(move || {
+                
+                let mut channel = NetChannelTCP::from_addr(&neighbor).expect("Failed to create NetChannelTCP");
+                let mut channel_clone1 = channel.clone_channel();
+                let mut channel_clone2 = channel.clone_channel();
+
+                // Thread to receive NetMessages, and send them into mpsc channels
+                thread::spawn(move || {
+
+                    // Continuously check for messages to receive
+                    loop {
+
+                        let received_message: NetMessage = channel.read_msg().unwrap();
+                        let received_message_clone = &received_message;  
+
+                        match received_message {
+                            NetMessage::BroadcastBlock(received_message_clone) => {
+                                block_node_sender_clone.send(received_message_clone);
+                            },
+                            NetMessage::BroadcastTx(received_message_clone) =>{
+                                tx_sender_clone.send(received_message_clone);
+                            },
+                            NetMessage::RequestBlock(received_message_clone) =>{
+                                block_id_sender_clone.send(received_message_clone);
+                            },
+                            NetMessage::Unknown(received_message_clone) =>{
+                                println!("Unknown message received: {:?}", received_message_clone);
+                            },
+                        }
+                    }
+                });
+
+
+                // Thread to broadcast BlockNodes
+                thread::spawn(move || {
+                    loop {
+                        let mut block_node_rx = thread_shared_block_node_rx.lock().unwrap();
+
+                        if let Ok(msg) = block_node_rx.recv() {
+                            // Broadcast block nodes
+                            channel_clone1.write_msg(netchannel::NetMessage::BroadcastBlock(msg.clone()));
+                        }
+                    }
+                });
+
+                // Thread to broadcast Transactions
+                thread::spawn(move || {
+
+                    loop {
+                        let mut tx_rx = thread_shared_tx_rx.lock().unwrap();
+
+                        if let Ok(tx) = tx_rx.recv() {
+                            // Broadcast transactions
+                            channel_clone2.write_msg(netchannel::NetMessage::BroadcastTx(tx.clone()));
+                        } 
+                        
+                    }
+                });
+
+            });
+
+        }
+
+        println!("[P2PNetwork] All neighbors connected.");
+        println!("[P2PNetwork] Starting processing received messages thread.");
+
+
+        // 8. return the created P2PNetwork instance and the mpsc channels
+        return (
+            network,
+            dummy_block_node_receiver,
+            dummy_tx_receiver,
+            block_node_sender_return,
+            tx_sender_return,
+            block_id_sender_return,
+        )
+        
+    }
     /// Get status information of the P2PNetwork for debug printing.
     pub fn get_status(&self) -> BTreeMap<String, String> {
         // Please fill in the blank
