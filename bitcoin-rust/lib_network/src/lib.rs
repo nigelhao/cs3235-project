@@ -1,24 +1,21 @@
-// This file is part of the project for the module CS3235 by Prateek 
+// This file is part of the project for the module CS3235 by Prateek
 // Copyright 2023 Ruishi Li, Bo Wang, and Prateek Saxena.
 // Please do not distribute.
 
 pub mod netchannel;
 pub mod p2pnetwork;
 
-
-
 #[cfg(test)]
 mod tests {
+    use lib_chain::block::{BlockNode, BlockNodeHeader, MerkleTree, Transaction, Transactions};
     use std::io::BufRead;
+    use std::io::{BufReader, Read, Write};
+    use std::net::{TcpListener, TcpStream};
     use std::thread;
     use std::time::Duration;
-    use lib_chain::block::{BlockNode, BlockNodeHeader, Transaction, Transactions, MerkleTree};
-    use std::net::{TcpListener, TcpStream};
-    use std::io::{Read, Write, BufReader};
 
-    use crate::netchannel::{NetAddress, NetMessage, NetChannelTCP};
-    use crate::p2pnetwork::{P2PNetwork};
-
+    use crate::netchannel::{NetAddress, NetChannelTCP, NetMessage};
+    use crate::p2pnetwork::P2PNetwork;
 
     /// Test the NetChannelTCP by creating a fake node that echo messages and connecting to it.
     #[test]
@@ -32,7 +29,7 @@ mod tests {
                 // read and print lines
                 loop {
                     let mut buf = String::new();
-                    let len = reader.read_line(&mut buf).unwrap(); 
+                    let len = reader.read_line(&mut buf).unwrap();
                     if len > 0 {
                         println!("[fake_node1] [Received] {}", &buf);
                         stream.write_all(buf.as_bytes()).unwrap();
@@ -42,13 +39,16 @@ mod tests {
                 }
             }
         });
-        let mut net_channel = NetChannelTCP::from_addr(&NetAddress { ip: "127.0.0.1".to_owned(), port: 9014 }).unwrap();
+        let mut net_channel = NetChannelTCP::from_addr(&NetAddress {
+            ip: "127.0.0.1".to_owned(),
+            port: 9014,
+        })
+        .unwrap();
         net_channel.write_msg(NetMessage::Unknown("hello".to_owned()));
         let msg = net_channel.read_msg().unwrap();
         println!("[Main thread] [Received] {:?}", &msg);
         assert!(msg == NetMessage::Unknown("hello".to_owned()));
     }
-
 
     /// A function for creating a simplified fake neighbor node for testing the P2PNetwork.
     fn fake_neighbor(mut stream: TcpStream) {
@@ -61,7 +61,7 @@ mod tests {
                 sender: "AAA".to_string(),
                 receiver: "DDD".to_string(),
                 message: "good".to_string(),
-                sig: "blabla".to_string()
+                sig: "blabla".to_string(),
             };
             let node_header = BlockNodeHeader {
                 parent: "ZZZZ".to_string(),
@@ -73,14 +73,19 @@ mod tests {
             };
             let block = BlockNode {
                 header: node_header,
-                transactions_block:  Transactions { merkle_tree: MerkleTree {hashes: vec![]}, transactions: vec![]},
+                transactions_block: Transactions {
+                    merkle_tree: MerkleTree { hashes: vec![] },
+                    transactions: vec![],
+                },
             };
 
-            let mut jsonstr: String = serde_json::to_string(&NetMessage::BroadcastTx(transaction.clone())).unwrap();
+            let mut jsonstr: String =
+                serde_json::to_string(&NetMessage::BroadcastTx(transaction.clone())).unwrap();
             jsonstr.push('\n');
             stream.write_all(jsonstr.as_bytes()).unwrap();
 
-            let mut jsonstr: String = serde_json::to_string(&NetMessage::BroadcastBlock(block.clone())).unwrap();
+            let mut jsonstr: String =
+                serde_json::to_string(&NetMessage::BroadcastBlock(block.clone())).unwrap();
             jsonstr.push('\n');
             stream.write_all(jsonstr.as_bytes()).unwrap();
         });
@@ -89,7 +94,7 @@ mod tests {
             println!("[fake_neighbor] [Read thread]");
             loop {
                 let mut buf = String::new();
-                let len = reader.read_line(&mut buf).unwrap(); 
+                let len = reader.read_line(&mut buf).unwrap();
                 if len > 0 {
                     println!("{}", "[handle_client] [Read] ".to_owned() + &buf);
                 } else {
@@ -124,23 +129,30 @@ mod tests {
                 fake_neighbor(stream.unwrap());
             }
         });
-        
+
         let (
             network,
-            upd_block_in_rx, 
+            upd_block_in_rx,
             upd_trans_in_rx,
             block_out_tx,
             trans_out_tx,
             req_block_id_out_tx,
         ) = P2PNetwork::create(
-            NetAddress { ip: "127.0.0.1".to_owned(), port: 9011 },
+            NetAddress {
+                ip: "127.0.0.1".to_owned(),
+                port: 9011,
+            },
             vec![
-                NetAddress { ip: "127.0.0.1".to_owned(), port: 9012 },
-                NetAddress { ip: "127.0.0.1".to_owned(), port: 9013 }
-            ]
+                NetAddress {
+                    ip: "127.0.0.1".to_owned(),
+                    port: 9012,
+                },
+                NetAddress {
+                    ip: "127.0.0.1".to_owned(),
+                    port: 9013,
+                },
+            ],
         );
-
-
 
         let _upd_block_in_listener_handle = thread::spawn(move || {
             for block in upd_block_in_rx {
@@ -154,12 +166,11 @@ mod tests {
             }
         });
 
-
         let transaction = Transaction {
             sender: "hello".to_string(),
             receiver: "hi".to_string(),
             message: "msg".to_string(),
-            sig: "sig".to_string()
+            sig: "sig".to_string(),
         };
         let node_header = BlockNodeHeader {
             parent: "hahaha".to_string(),
@@ -171,7 +182,10 @@ mod tests {
         };
         let node = BlockNode {
             header: node_header,
-            transactions_block:  Transactions { merkle_tree: MerkleTree {hashes: vec![]}, transactions: vec![]},
+            transactions_block: Transactions {
+                merkle_tree: MerkleTree { hashes: vec![] },
+                transactions: vec![],
+            },
         };
         block_out_tx.send(node).unwrap();
         trans_out_tx.send(transaction).unwrap();
@@ -197,21 +211,11 @@ mod tests {
         // [handle_client] [Read] {"BroadcastBlock":{"header":{"parent":"hahaha","merkle_root":"0987","timestamp":123,"block_id":"","nonce":"1111"},"transactions_block":{"merkle_tree":{"hashes":[]},"transactions":[]}}}
         // [handle_client] [Read] {"BroadcastBlock":{"header":{"parent":"hahaha","merkle_root":"0987","timestamp":123,"block_id":"","nonce":"1111"},"transactions_block":{"merkle_tree":{"hashes":[]},"transactions":[]}}}
         // [handle_client] [Read] {"BroadcastTx":{"sender":"hello","receiver":"hi","message":"msg","sig":"sig"}}
-
     }
-
 
     /// Your own additional test that tests your implementation more throughly (e.g. stress-testing your implementation)
     #[test]
     fn test_p2pnetwork_additional() {
         // Please fill in the blank
-        
     }
 }
-
-
-
-
-
-
-

@@ -1,0 +1,31 @@
+{
+  "header": {
+    "parent": "0",
+    "merkle_root": "4ad0755a2e97d3ebfd970bbff88d96641d20c73941850be740193d99422cd992",
+    "timestamp": 1,
+    "block_id": "00000f4cfb3b6f2371d3265fbcfc13f2c1c15d6a4e33a2b935a507430e9ecc9f",
+    "nonce": "xiyxwI6VnG",
+    "reward_receiver": "MDgCMQDeoEeA8OtGME/SRwp+ASKVOnjlEUHYvQfo0FLp3+fwVi/SztDdJskjzCRasGk06UUCAwEAAQ=="
+  },
+  "transactions_block": {
+    "merkle_tree": {
+      "hashes": [
+        [
+          "f3dc0c784f2d1c9f9d1ce1d55cf8528b54361b4fa895e25ae9f3c3db3ae5dfcb",
+          "f3dc0c784f2d1c9f9d1ce1d55cf8528b54361b4fa895e25ae9f3c3db3ae5dfcb"
+        ],
+        [
+          "4ad0755a2e97d3ebfd970bbff88d96641d20c73941850be740193d99422cd992"
+        ]
+      ]
+    },
+    "transactions": [
+      {
+        "sender": "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",
+        "receiver": "MDgCMQDZDExOs97sRTnQLYtgFjDKpDzmO7Uo5HPP62u6MDimXBpZtGxtwa8dhJe5NBIsJjUCAwEAAQ==",
+        "message": "SEND $100   // By Alice   // 1678588946515",
+        "sig": "llrKNbVmzRU4vNdF/b5xOLlAKF2bLqOoOD1f7999mspsyppcPZBAaKsXfZ48ySCn"
+      }
+    ]
+  }
+}
