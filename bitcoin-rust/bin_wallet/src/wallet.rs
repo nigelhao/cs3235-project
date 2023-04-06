@@ -2,7 +2,7 @@
 // Copyright 2023 Ruishi Li, Bo Wang, and Prateek Saxena.
 // Please do not distribute.
 
-// This file implements the Wallet struct and related methods.
+// This file implements the Wallet struct and related methmods.
 // The wallet has one key task: to sign a message using the private key.
 // The wallet also has a method to verify the signature for debugging purposes. Verification does not involve the private key.
 // The actual verification of the signature should be implemented in the lib_chain module.
@@ -39,8 +39,17 @@ impl Wallet {
     pub fn new(user_name: String, bits: usize) -> Wallet {
         // Please fill in the blank
         // Generate new key pairs, and return as a wallet
-        todo!();
-        
+        let mut rng = rand::thread_rng();
+        let private_key = RsaPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
+        let public_key = RsaPublicKey::from(&private_key);
+        let priv_key_pem = private_key.to_pkcs1_pem(base64ct::LineEnding::LF).unwrap().to_string();
+        let pub_key_pem = public_key.to_pkcs1_pem(base64ct::LineEnding::LF).unwrap().to_string();
+
+        Wallet {
+            user_name,
+            priv_key_pem,
+            pub_key_pem,
+        }
     }
 
     /// return the user name
@@ -54,8 +63,10 @@ impl Wallet {
         // Get user id from the public key by changing the format (strip off the first and last lines and join the middle lines)
         // Pub key format:  "-----BEGIN RSA PUBLIC KEY-----\nMDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JG\npfiZSckCAwEAAQ==\n-----END RSA PUBLIC KEY-----\n"
         // user_id format:  "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ=="
-        todo!();
-        
+        let pub_key_lines = self.pub_key_pem.split('\n').collect::<Vec<&str>>();
+        let user_id = pub_key_lines[1..pub_key_lines.len()-2].join("");
+
+        user_id.to_string()
     }
 
     /// Sign a message using the private key and return the signature as a Base64 encoded string.
@@ -63,8 +74,12 @@ impl Wallet {
     pub fn sign(&self, message: &str) -> String {
         // Please fill in the blank
         // Sign the message with the private key, and return the signature in Base64 format
-        todo!();
-        
+        let mut rng = rand::thread_rng();
+        let private_key = rsa::RsaPrivateKey::from_pkcs1_pem(&self.priv_key_pem).unwrap();
+        let signing_key = SigningKey::<Sha256>::new(private_key);
+        let signature = signing_key.sign_with_rng(&mut rng, message.as_bytes());
+        let encoded_signature = Base64::encode_string(&signature);
+        encoded_signature
     }
 
     /// Verify a signature using the public key. The signature is a string in Base64 format.
