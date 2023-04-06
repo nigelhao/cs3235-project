@@ -14,6 +14,8 @@ use std::fs;
 use std::io;
 use std::io::Write;
 use serde::{Serialize, Deserialize};
+use seccompiler::BpfMap;
+use std::convert::TryInto;
 
 /// Read a string from a file (help with debugging)
 fn read_string_from_file(filepath: &str) -> String {
@@ -80,7 +82,14 @@ fn main() {
     if let Some(policy_path) = maybe_policy_path {
         // Please fill in the blank
         // If the first param is provided, read the seccomp config and apply it
-        
+        let policy_str = read_string_from_file(&policy_path);
+        let filter_map: BpfMap = seccompiler::compile_from_json(
+            policy_str.as_bytes(),
+            std::env::consts::ARCH.try_into().unwrap(),
+        )
+        .unwrap();
+        let filter = filter_map.get("main_thread").unwrap();
+        seccompiler::apply_filter(&filter).unwrap();
     }
 
     // The main logic of the bin_wallet starts here
@@ -90,9 +99,41 @@ fn main() {
     // Eventually, the Quit call will be received and the program will exit.
     use wallet::Wallet;
     // Please fill in the blank
-    todo!();
-    
-    println!("{}\n", serde_json::to_string(&IPCMessageResp::Quitting).unwrap());
+    loop {
+        let mut input = String::new();
+        io::stdin().read_line(&mut input);
+        input.trim().to_string();
+        let request: IPCMessageReq = serde_json::from_str(&input).unwrap();
+        let mut wallet: Option<Wallet> = None;
+        match request {
+            IPCMessageReq::Initialize(string) => {
+                let wallet: Wallet = serde_json::from_str(&string).unwrap();
+                println!("{}", serde_json::to_string(&IPCMessageResp::Initialized).unwrap());
+            }
+            IPCMessageReq::SignRequest(data_string) => {
+                let signature = wallet.as_ref().unwrap().sign(&data_string);
+                let response = IPCMessageResp::SignResponse(data_string, signature);
+                println!("{}", serde_json::to_string(&response).unwrap());
+            }
+            IPCMessageReq::VerifyRequest(data_string, signature) => {
+                let is_verified = wallet.as_ref().unwrap().verify(&data_string, &signature);
+                let response = IPCMessageResp::VerifyResponse(is_verified, data_string);
+                println!("{}", serde_json::to_string(&response).unwrap());
+            }
+            IPCMessageReq::GetUserInfo => {
+                let user_name = wallet.as_ref().unwrap().get_user_name();
+                let user_id = wallet.as_ref().unwrap().get_user_id();
+                let response = IPCMessageResp::UserInfo(user_name, user_id);
+                println!("{}", serde_json::to_string(&response).unwrap());
+            }
+            IPCMessageReq::Quit => {
+                println!("{}", serde_json::to_string(&IPCMessageResp::Quitting).unwrap());
+                break;
+            }
+        }
+
+    }
+
 }
 
 #[cfg(test)]
