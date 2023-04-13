@@ -95,6 +95,7 @@ mod tests {
             loop {
                 let mut buf = String::new();
                 let len = reader.read_line(&mut buf).unwrap();
+
                 if len > 0 {
                     println!("{}", "[handle_client] [Read] ".to_owned() + &buf);
                 } else {
