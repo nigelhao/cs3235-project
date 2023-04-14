@@ -283,7 +283,7 @@ fn main() {
                 // TODO update the UI? 
             }
         });
-        handle.join().unwrap();
+        handle.join().unwrap();  
     }
 
 
@@ -300,7 +300,7 @@ fn main() {
     let mut wallet_stdout_clone_thread = wallet_stdout_mutex.clone();
 
     // thread to communicate with processes, work in progress
-    let handle = thread::spawn(move || {
+    let handle_processes_communicate = thread::spawn(move || {
         let tick_rate = Duration::from_millis(500);
         let mut last_tick = Instant::now();
         loop {
@@ -311,7 +311,7 @@ fn main() {
             // receive sign response from wallet
             let mut wallet_buffer = String::new();
             wallet_stdout_clone_thread.lock().unwrap().read_line(&mut wallet_buffer).unwrap();
-            wallet_stdout_clone_thread.lock().unwrap().consume(8000); // to clear the buffer..?
+            wallet_stdout_clone_thread.lock().unwrap().consume(wallet_buffer.len()); // to clear the buffer..?
         
 
             // publish transaction to nakamoto? if receive sign response from wallet
@@ -322,18 +322,46 @@ fn main() {
                 let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
 
-                // recieve ipc response from nakamoto regarding address balance
+                // send ipc request message to nakamoto to get netStatus
+                nakamoto_ipc_req = IPCMessageReqNakamoto::RequestNetStatus;
+                nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
+                nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+
+                // send ipc request message to nakamoto to get chainStatus
+                nakamoto_ipc_req = IPCMessageReqNakamoto::RequestChainStatus;
+                nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
+                nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+
+                // send ipc request message to nakamoto to get minerStatus 
+                nakamoto_ipc_req = IPCMessageReqNakamoto::RequestMinerStatus;
+                nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
+                nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+
+                // send ipc request message to nakamoto to get txPoolStatus 
+                nakamoto_ipc_req = IPCMessageReqNakamoto::RequestTxPoolStatus;
+                nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
+                nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+
+                // send ipc request message to nakamoto to get requestStateSerialization
+                nakamoto_ipc_req = IPCMessageReqNakamoto::RequestStateSerialization;
+                nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
+                nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+
+
+                // get status update from nakamoto 
+                // to create a loop and check whether buffer is empty, while not empty, read line by line(?) and process the response..
+
+                // recieve ipc response from nakamoto regarding address balance (to be combined with line 351)
                 let mut nakamoto_reply = String::new();
                 nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
                 let nakamoto_address_balance: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
-                nakamoto_stdout_clone_thread.lock().unwrap().consume(8000) // to clear the buffer..? 
+                nakamoto_stdout_clone_thread.lock().unwrap().consume(nakamoto_reply.len()); // to clear the buffer..? 
 
-                // get status update from nakamoto
                 // TODO update ui?
             }
         }
     });
-    handle.join().unwrap();
+    // handle_processes_communicate.join().unwrap(); // shifted to line 436
 
     // UI thread. Modify it to suit your needs. 
     let app_ui_ref = app_arc.clone();
@@ -433,8 +461,8 @@ fn main() {
 
     // Please fill in the blank
     // Wait for the IPC threads to finish
+    handle_processes_communicate.join().unwrap();
     
-
     let ecode1 = nakamoto_process.wait().expect("failed to wait on child nakamoto");
     eprintln!("--- nakamoto ecode: {}", ecode1);
 
