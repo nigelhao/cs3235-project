@@ -15,8 +15,8 @@ use lib_network::p2pnetwork::P2PNetwork;
 use lib_tx_pool::pool::TxPool;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
-use std::sync::mpsc::Sender;
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::mpsc::{Receiver, Sender}; //Ask if can do this
+use std::sync::{mpsc, Arc, Mutex, RwLock};
 use std::{thread, time::Duration};
 
 type UserId = String;
@@ -132,6 +132,9 @@ impl Nakamoto {
         let chain: BlockTree = serde_json::from_str(&chain_str).unwrap();
         let tx_pool: TxPool = serde_json::from_str(&tx_pool_str).unwrap();
 
+        let (trans_tx_sender, trans_tx_receiver): (Sender<Transaction>, Receiver<Transaction>) =
+            mpsc::channel();
+
         // Create the miner and the network according to the config.
         let miner = Miner::new();
         let (
@@ -141,7 +144,7 @@ impl Nakamoto {
             block_out_tx,
             trans_out_tx,
             req_block_id_out_tx,
-        ) = P2PNetwork::create(config.addr, config.neighbors);
+        ) = P2PNetwork::create(config.clone().addr, config.clone().neighbors);
 
         let chain_p = Arc::new(Mutex::new(chain));
         let miner_p = Arc::new(Mutex::new(miner));
@@ -154,8 +157,77 @@ impl Nakamoto {
             let message = upd_trans_in_rx.recv().unwrap();
         });
 
+        thread::spawn(move || {
+            let message = upd_block_in_rx.recv().unwrap();
+        });
+
         // Start necessary thread(s) to control the miner.
-        thread::spawn(move || {});
+        let tx_pool_p_thread = Arc::clone(&tx_pool_p);
+        let chain_p_thread = Arc::clone(&chain_p);
+        let miner_p_thread = Arc::clone(&miner_p);
+        let cancellation_token_thread = Arc::clone(&cancellation_token);
+        let config_thread = config.clone();
+
+        thread::spawn(move || loop {
+            trans_tx_receiver.recv().unwrap();
+
+            let tx_pool_p_thread = Arc::clone(&tx_pool_p_thread);
+
+            // if tx_pool_p_thread.lock().unwrap().pool_tx_ids.len() < 6 {
+            //     continue;
+            // }
+
+            let chain_p_thread = Arc::clone(&chain_p_thread);
+            let miner_p_thread = Arc::clone(&miner_p_thread);
+            let cancellation_token_thread = Arc::clone(&cancellation_token_thread);
+            let config_thread = config_thread.clone();
+
+            let chain_p_thread_puzzle = Arc::clone(&chain_p_thread);
+            let (puzzle_str, mut pre_block) = create_puzzle(
+                chain_p_thread_puzzle,
+                tx_pool_p_thread,
+                config.max_tx_in_one_block,
+                config_thread.mining_reward_receiver,
+            );
+
+            thread::spawn(move || {
+                let solution = Miner::solve_puzzle(
+                    miner_p_thread,
+                    puzzle_str,
+                    config_thread.nonce_len,
+                    config_thread.difficulty_leading_zero_len,
+                    config_thread.miner_thread_count,
+                    config_thread.miner_thread_0_seed,
+                    cancellation_token_thread,
+                );
+
+                match solution {
+                    Some(PuzzleSolution {
+                        puzzle,
+                        nonce,
+                        hash,
+                    }) => {
+                        let block_node = BlockNode {
+                            header: BlockNodeHeader {
+                                block_id: hash.clone(),
+                                nonce: nonce.clone(),
+                                ..pre_block.header
+                            },
+                            ..pre_block
+                        };
+
+                        chain_p_thread
+                            .lock()
+                            .unwrap()
+                            .add_block(block_node, config_thread.difficulty_leading_zero_len)
+                    }
+                    None => {
+                        println!("Miner returns None.");
+                    }
+                };
+            });
+        });
+
         // Return the Nakamoto instance that holds pointers to the chain, the miner, the network and the tx pool.
 
         return Nakamoto {
@@ -163,7 +235,7 @@ impl Nakamoto {
             miner_p: miner_p,
             network_p: network_p,
             tx_pool_p: tx_pool_p,
-            trans_tx: trans_out_tx,
+            trans_tx: trans_tx_sender,
         };
     }
 
