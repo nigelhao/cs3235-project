@@ -310,10 +310,16 @@ fn main() {
 
             // receive sign response from wallet
             let mut wallet_buffer = String::new();
-            wallet_stdout_clone_thread.lock().unwrap().read_line(&mut wallet_buffer).unwrap();
+            wallet_stdout_clone_thread.lock().unwrap().read_line(&mut wallet_buffer).unwrap(); // to be sent to nakamoto
             wallet_stdout_clone_thread.lock().unwrap().consume(wallet_buffer.len()); // to clear the buffer..?
-        
 
+            // to send publishTx to nakamoto? TODO
+            let mut nakamoto_ipc_req = IPCMessageReqNakamoto::GetAddressBalance((user_id_clone2).to_string());
+            let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
+            nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+
+            // to receive publishTx from nakamoto? TODO // maybe shift below until together with the status check..?
+            
             // publish transaction to nakamoto? if receive sign response from wallet
             if crossterm::event::poll(time_out).unwrap() {
 
@@ -322,42 +328,91 @@ fn main() {
                 let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
 
+                // get ipc address balance response from nakamoto, address
+                let mut nakamoto_reply = String::new();
+                nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
+                let nakamoto_address_balance: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
+                if let IPCMessageRespNakamoto::AddressBalance(user_id, balance) = nakamoto_address_balance {
+                    // TODO
+                }
+                nakamoto_stdout_clone_thread.lock().unwrap().consume(nakamoto_reply.len()); // to clear the buffer..? 
+
+                // TODO update UI?
+
                 // send ipc request message to nakamoto to get netStatus
                 nakamoto_ipc_req = IPCMessageReqNakamoto::RequestNetStatus;
                 nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+
+                // get ipc net status response from nakamoto
+                nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
+                let nakamoto_net_status: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
+                if let IPCMessageRespNakamoto::NetStatus(map) = nakamoto_net_status {
+                    // TODO
+                }
+                nakamoto_stdout_clone_thread.lock().unwrap().consume(nakamoto_reply.len()); // to clear the buffer..? 
+
+                // TODO update UI?
 
                 // send ipc request message to nakamoto to get chainStatus
                 nakamoto_ipc_req = IPCMessageReqNakamoto::RequestChainStatus;
                 nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
 
+                // get ipc chain status response from nakamoto
+                nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
+                let nakamoto_chain_status: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
+                if let IPCMessageRespNakamoto::ChainStatus(map) = nakamoto_chain_status {
+                    // TODO
+                }
+                nakamoto_stdout_clone_thread.lock().unwrap().consume(nakamoto_reply.len()); // to clear the buffer..? 
+
+                // TODO update UI?
+
                 // send ipc request message to nakamoto to get minerStatus 
                 nakamoto_ipc_req = IPCMessageReqNakamoto::RequestMinerStatus;
                 nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+
+                // get ipc miner status response from nakamoto
+                nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
+                let nakamoto_miner_status: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
+                if let IPCMessageRespNakamoto::MinerStatus(map) = nakamoto_miner_status {
+                    // TODO
+                }
+                nakamoto_stdout_clone_thread.lock().unwrap().consume(nakamoto_reply.len()); // to clear the buffer..? 
+
+                // TODO update UI?
 
                 // send ipc request message to nakamoto to get txPoolStatus 
                 nakamoto_ipc_req = IPCMessageReqNakamoto::RequestTxPoolStatus;
                 nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
 
+                // get ipc txPoolStatus response from nakamoto
+                nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
+                let nakamoto_tx_pool_status: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
+                if let IPCMessageRespNakamoto::TxPoolStatus(map) = nakamoto_tx_pool_status {
+                    // TODO
+                }
+                nakamoto_stdout_clone_thread.lock().unwrap().consume(nakamoto_reply.len()); // to clear the buffer..? 
+
+                // TODO update UI?
+
                 // send ipc request message to nakamoto to get requestStateSerialization
                 nakamoto_ipc_req = IPCMessageReqNakamoto::RequestStateSerialization;
                 nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
 
-
-                // get status update from nakamoto 
-                // to create a loop and check whether buffer is empty, while not empty, read line by line(?) and process the response..
-
-                // recieve ipc response from nakamoto regarding address balance (to be combined with line 351)
-                let mut nakamoto_reply = String::new();
+                // get ipc state serialization response from nakamoto
                 nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
-                let nakamoto_address_balance: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
+                let nakamoto_state_serialization: IPCMessageRespNakamoto = serde_json::from_str(& nakamoto_reply).unwrap();
+                if let IPCMessageRespNakamoto::StateSerialization(blocktree_json_string, tx_pool_json_string) = nakamoto_state_serialization {
+                    // TODO
+                }
                 nakamoto_stdout_clone_thread.lock().unwrap().consume(nakamoto_reply.len()); // to clear the buffer..? 
 
-                // TODO update ui?
+                // TODO update UI?
             }
         }
     });
