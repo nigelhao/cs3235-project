@@ -254,6 +254,7 @@ impl P2PNetwork {
             loop {
                 if let Ok(tx) = tx_r_receiver.recv() {
                     // Do something with the received message
+                    println!("Tx received from IPC");
                     for channel in channels_thread.lock().unwrap().iter_mut() {
                         let mut net_channel = channel.clone_channel();
                         let message = tx.clone();

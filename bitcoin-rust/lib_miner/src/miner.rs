@@ -154,8 +154,6 @@ impl Miner {
         // None of the threads found a solution
         miner_p.lock().unwrap().is_running = false;
         return None;
-
-        todo!();
     }
 
     /// Get status information of the miner for debug printing.
@@ -173,7 +171,5 @@ impl Miner {
         map.insert("is_running".to_string(), self.is_running.to_string());
 
         return map;
-
-        todo!();
     }
 }
