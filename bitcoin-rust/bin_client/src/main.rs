@@ -145,17 +145,22 @@ fn main() {
     }
 
     // - Create bin_nakamoto process:  Command::new("./target/debug/bin_nakamoto")...
-    // let mut nakamoto_process = Command::new("./target/debug/bin_nakamoto") // TODO check
-    let mut nakamoto_process = Command::new("cargo run --bin bin_nakamoto") 
+    // "cargo run --bin bin_nakamoto"
+    let mut nakamoto_process = Command::new("cargo") // CHECK
+        .arg("run")
+        .arg("--bin")
+        .arg("bin_nakamoto")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
-        .expect("failed to start nakamoto_process"); 
+        .expect("failed to start nakamoto_process"); // failed to start
     
     // - Create bin_wallet process:  Command::new("./target/debug/bin_wallet")...
-    // let mut bin_wallet_process = Command::new("./target/debug/bin_wallet") // TODO check
-    let mut bin_wallet_process = Command::new("cargo run --bin bin_wallet") 
+    let mut bin_wallet_process = Command::new("cargo") // CHECK
+        .arg("run")
+        .arg("--bin")
+        .arg("bin_wallet")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -172,23 +177,42 @@ fn main() {
     let wallet_stdout_mutex = Arc::new(Mutex::new(BufReader::new(bin_wallet_process.stdout.take().unwrap())));
     let wallet_stderr_mutex = Arc::new(Mutex::new(BufReader::new(bin_wallet_process.stderr.take().unwrap())));
 
+    println!("past line 180");
+
     // - Send initialization requests to bin_nakamoto and bin_wallet:
     // send initialize request to bin_nakamoto
     let nakamoto_initialization_message = IPCMessageReqNakamoto::Initialize((nakamoto_config_path.to_owned()).to_string(), (nakamoto_config_path.to_owned()).to_string(), (nakamoto_config_path.to_owned()).to_string()); 
     let nakamoto_json = serde_json::to_string(&nakamoto_initialization_message).unwrap();
     nakamoto_stdin_mutex.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap(); 
 
+    println!("past line 188");
+
     // Nakamoto IPC response
     let mut nakamoto_buffer = String::new();
+
+    println!("past line 193"); // jam here... isit possibly because no line to read?
+
     nakamoto_stdout_mutex.lock().unwrap().read_line(&mut nakamoto_buffer).unwrap();
+
+    println!("past line 197");
+
     let nakamoto_status: IPCMessageRespNakamoto = serde_json::from_str(&nakamoto_buffer).unwrap();
+
+    println!("past line 201");
+
         // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
     nakamoto_stdout_mutex.lock().unwrap().consume(nakamoto_buffer.len()); // to clear the buffer..? 
+
+
+    println!("past line 207");
+
 
     // send initialize request to bin_wallet
     let wallet_initialization_message = IPCMessageReqWallet::Initialize((wallet_config_path.to_owned()).to_string());
     let wallet_json = serde_json::to_string(&wallet_initialization_message).unwrap();
     wallet_stdin_mutex.lock().unwrap().write_all(wallet_json.as_bytes()).unwrap();
+
+    println!("past line 215");
 
     // wallet IPC response
     let mut wallet_buffer = String::new(); // TODO not sure
@@ -196,6 +220,8 @@ fn main() {
     let wallet_status: IPCMessageRespWallet = serde_json::from_str(&wallet_buffer).unwrap(); // TODO not sure
     // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
     wallet_stdout_mutex.lock().unwrap().consume(wallet_buffer.len()); // to clear the buffer..?
+
+    println!("past line 222");
 
     // The path to the seccomp file for this client process for Part B. (You can set this argument to any value during Part A.)
     let client_seccomp_path = std::env::args().nth(1).expect("Please specify client seccomp path");
@@ -209,6 +235,8 @@ fn main() {
     let mut user_id: String = "".to_string();
     // Please fill in the blank
     // Read the user info from wallet
+
+    println!("past line 239");
 
     // send get user info request to bin_wallet
     let wallet_get_info_message = IPCMessageReqWallet::GetUserInfo;
@@ -314,11 +342,14 @@ fn main() {
             wallet_stdout_clone_thread.lock().unwrap().consume(wallet_buffer.len()); // to clear the buffer..?
 
             // to send publishTx to nakamoto? TODO
-            let mut nakamoto_ipc_req = IPCMessageReqNakamoto::GetAddressBalance((user_id_clone2).to_string());
-            let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
-            nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+            let wallet_sign_response: IPCMessageRespWallet = serde_json::from_str(& wallet_buffer).unwrap();
+            if let IPCMessageRespWallet::SignResponse(data, signature) = wallet_sign_response {
+                let mut nakamoto_ipc_req = IPCMessageReqNakamoto::PublishTx(data, signature); // make publishTx
+                let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap(); 
+                nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
+            }
 
-            // to receive publishTx from nakamoto? TODO // maybe shift below until together with the status check..?
+            // to receive publishTx from nakamoto? TODO // maybe shift below until together with the status check..? because the publish response wont be immediate?
             
             // publish transaction to nakamoto? if receive sign response from wallet
             if crossterm::event::poll(time_out).unwrap() {
