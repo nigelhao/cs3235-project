@@ -20,7 +20,7 @@ mod tests {
         let puzzle = "RANDOM_STRING_ANYTHING".to_owned();
         let cancellation_token = Arc::new(RwLock::new(false));
         let solution =
-            Miner::solve_puzzle(miner_p, puzzle.clone(), 16, 5, 6, 43, cancellation_token).unwrap();
+            Miner::solve_puzzle(miner_p, puzzle.clone(), 16, 3, 6, 43, cancellation_token).unwrap();
 
         let PuzzleSolution {
             puzzle,

@@ -57,6 +57,11 @@ impl NetChannelTCP {
     /// Return an error string if the connection fails.
     pub fn from_addr(addr: &NetAddress) -> Result<Self, String> {
         // Please fill in the blank
+        println!(
+            "[NetChannel] Trying to connect to {}:{}",
+            addr.ip, addr.port
+        );
+
         let addr_port = format!("{}:{}", addr.ip, addr.port);
         match TcpStream::connect(&addr_port) {
             Ok(tcp_stream) => {

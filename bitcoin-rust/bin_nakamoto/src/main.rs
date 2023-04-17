@@ -1,4 +1,4 @@
-// This file is part of the project for the module CS3235 by Prateek 
+// This file is part of the project for the module CS3235 by Prateek
 // Copyright 2023 Ruishi Li, Bo Wang, and Prateek Saxena.
 // Please do not distribute.
 
@@ -7,21 +7,19 @@
 /// It reads commands from stdin and writes responses to stdout to facilitate IPC communication with bin_client eventually.
 /// However, you can also run it directly from the command line to test it.
 /// You can see detailed instructions in the comments below.
-
-
 mod nakamoto;
-use lib_chain::block::{Transaction, Signature};
-use nakamoto::Nakamoto;
+use lib_chain::block::{BlockTree, Signature, Transaction};
+use lib_tx_pool::pool::TxPool;
+use nakamoto::{Config, Nakamoto};
 
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use std::io::{self, Write};
 use std::fs;
-use serde::{Serialize, Deserialize};
+use std::io::{self, Write};
 
 // Read a string from a file (to help you debug)
 fn read_string_from_file(filepath: &str) -> String {
-    let contents = fs::read_to_string(filepath)
-        .expect(&("Cannot read ".to_owned() + filepath));
+    let contents = fs::read_to_string(filepath).expect(&("Cannot read ".to_owned() + filepath));
     contents
 }
 
@@ -89,7 +87,7 @@ enum IPCMessageResp {
     /// The program is quitting (responding to Quit)
     Quitting,
     /// This is not an actual response, but an arbitrary notification message for debugging
-    Notify(String), 
+    Notify(String),
 }
 
 fn main() {
@@ -97,10 +95,9 @@ fn main() {
     // If the argument is provided, bin_nakamoto will read and apply the seccomp policy at the beginning of the program
     // Otherwise, it will proceed to the normal execution
     let maybe_policy_path = std::env::args().nth(1);
-    if let Some(policy_path) = maybe_policy_path {
+    if let Some(policy_path) = maybe_policy_path.clone() {
         // Please fill in the blank
         // If the first param is provided, read the seccomp config and apply it
-        
     }
 
     // The main logic of the bin_nakamoto starts here
@@ -110,8 +107,77 @@ fn main() {
     // Eventually, the program will quit when receiving a Quit IPC call.
     // Please fill in the blank
     // Loop over stdin and handle IPC messages
-    
 
+    let mut nakamoto: Option<Nakamoto> = None;
+
+    loop {
+        let mut input_line = String::new();
+        io::stdin().read_line(&mut input_line).unwrap();
+        let message: IPCMessageReq = serde_json::from_str(input_line.trim()).unwrap();
+        let resp_msg = match message {
+            IPCMessageReq::Initialize(blocktree_json, tx_pool_json, config_json) => {
+                let nakamoto_instance =
+                    Nakamoto::create_nakamoto(blocktree_json, tx_pool_json, config_json);
+                nakamoto = Some(nakamoto_instance);
+                IPCMessageResp::Initialized
+            }
+            IPCMessageReq::GetAddressBalance(user_id) => {
+                let chain_p = nakamoto.as_ref().unwrap().chain_p.clone();
+                let balance = {
+                    let chain = chain_p.lock().unwrap();
+                    *chain.finalized_balance_map.get(&user_id).unwrap()
+                };
+                IPCMessageResp::AddressBalance(user_id, balance)
+            }
+
+            IPCMessageReq::PublishTx(data_string, signature) => {
+                //Do something about publish TX
+                let tx_data: Vec<String> = serde_json::from_str(&data_string).unwrap();
+
+                let transaction = Transaction::new(
+                    tx_data[0].clone(),
+                    tx_data[1].clone(),
+                    tx_data[2].clone(),
+                    signature,
+                );
+
+                nakamoto.as_mut().unwrap().publish_tx(transaction);
+                IPCMessageResp::PublishTxDone
+            }
+            IPCMessageReq::RequestBlock(block_id) => {
+                let chain_p = nakamoto.as_ref().unwrap().chain_p.clone();
+                let block_data = {
+                    let chain = chain_p.lock().unwrap();
+                    chain.all_blocks.get(&block_id).unwrap().clone()
+                };
+                IPCMessageResp::BlockData(serde_json::to_string_pretty(&block_data).unwrap())
+            }
+
+            IPCMessageReq::RequestNetStatus => {
+                IPCMessageResp::NetStatus(nakamoto.as_ref().unwrap().get_network_status())
+            }
+            IPCMessageReq::RequestChainStatus => {
+                IPCMessageResp::ChainStatus(nakamoto.as_ref().unwrap().get_chain_status())
+            }
+            IPCMessageReq::RequestMinerStatus => {
+                IPCMessageResp::MinerStatus(nakamoto.as_ref().unwrap().get_miner_status())
+            }
+            IPCMessageReq::RequestTxPoolStatus => {
+                IPCMessageResp::TxPoolStatus(nakamoto.as_ref().unwrap().get_txpool_status())
+            }
+            IPCMessageReq::RequestStateSerialization => {
+                let nakamoto_tmp = nakamoto.as_ref().unwrap();
+                let serialized_chain = nakamoto_tmp.clone().get_serialized_chain();
+                let serialized_txpool = nakamoto_tmp.clone().get_serialized_txpool();
+                IPCMessageResp::StateSerialization(serialized_chain, serialized_txpool)
+            }
+            IPCMessageReq::Quit => IPCMessageResp::Quitting,
+        };
+
+        println!("{resp_msg:?}");
+
+        if let IPCMessageResp::Quitting = resp_msg {
+            break;
+        }
+    }
 }
-
-

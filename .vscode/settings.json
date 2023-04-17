@@ -1,0 +1,5 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./bitcoin-rust/lib_chain/Cargo.toml"
+    ]
+}

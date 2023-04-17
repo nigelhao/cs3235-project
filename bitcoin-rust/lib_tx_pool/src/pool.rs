@@ -107,7 +107,13 @@ impl TxPool {
     /// Remove transactions from the pool given a list of finalized blocks. Update last_finalized_block_id as the last block in the list.
     pub fn remove_txs_from_finalized_blocks(&mut self, finalized_blocks: &Vec<BlockNode>) {
         // Please fill in the blank
-        todo!();
+        for block in finalized_blocks {
+            for tx in block.transactions_block.transactions.clone() {
+                let tx_id = tx.gen_hash();
+                self.pool_tx_ids.retain(|x| *x != tx_id.clone());
+                self.removed_tx_ids.insert(tx_id.clone());
+            }
+        }
     }
 
     /// Get status information of the tx_pool for debug printing.
@@ -115,6 +121,12 @@ impl TxPool {
         // Please fill in the blank
         // For debugging purpose, you can return any dictionary of strings as the status of the tx_pool.
         // It should be displayed in the Client UI eventually.
-        todo!();
+        let mut map = BTreeMap::new();
+        map.insert(
+            "#pool_tx_map".to_string(),
+            self.pool_tx_map.len().to_string(),
+        );
+
+        return map;
     }
 }
