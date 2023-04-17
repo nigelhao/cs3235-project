@@ -89,6 +89,7 @@ fn main() {
         )
         .unwrap();
         let filter = filter_map.get("main_thread").unwrap();
+        
         seccompiler::apply_filter(&filter).unwrap();
     }
 
@@ -99,18 +100,19 @@ fn main() {
     // Eventually, the Quit call will be received and the program will exit.
     use wallet::Wallet;
     // Please fill in the blank
+    let mut wallet: Option<Wallet> = None;
     loop {
         let mut input = String::new();
         io::stdin().read_line(&mut input);
         input.trim().to_string();
         let request: IPCMessageReq = serde_json::from_str(&input).unwrap();
-        let mut wallet: Option<Wallet> = None;
         match request {
             IPCMessageReq::Initialize(string) => {
-                let wallet: Wallet = serde_json::from_str(&string).unwrap();
+                wallet = Some(serde_json::from_str(&string).unwrap());
                 println!("{}", serde_json::to_string(&IPCMessageResp::Initialized).unwrap());
             }
             IPCMessageReq::SignRequest(data_string) => {
+                let signature = wallet.as_ref().unwrap().sign(&data_string);
                 let signature = wallet.as_ref().unwrap().sign(&data_string);
                 let response = IPCMessageResp::SignResponse(data_string, signature);
                 println!("{}", serde_json::to_string(&response).unwrap());
