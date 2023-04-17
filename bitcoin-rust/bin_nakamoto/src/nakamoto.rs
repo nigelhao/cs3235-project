@@ -167,23 +167,27 @@ impl Nakamoto {
         let miner_p_thread = Arc::clone(&miner_p);
         let cancellation_token_thread = Arc::clone(&cancellation_token);
         let config_thread = config.clone();
+        let block_out_tx_thread = block_out_tx.clone();
+        let trans_out_tx_thread = trans_out_tx.clone();
 
         thread::spawn(move || loop {
-            trans_tx_receiver.recv().unwrap();
+            let transaction = trans_tx_receiver.recv().unwrap();
+            trans_out_tx_thread.send(transaction).unwrap();
 
             let tx_pool_p_thread = Arc::clone(&tx_pool_p_thread);
 
-            // if tx_pool_p_thread.lock().unwrap().pool_tx_ids.len() < 6 {
-            //     continue;
-            // }
+            if tx_pool_p_thread.lock().unwrap().pool_tx_ids.len() < 6 {
+                continue;
+            }
 
             let chain_p_thread = Arc::clone(&chain_p_thread);
             let miner_p_thread = Arc::clone(&miner_p_thread);
             let cancellation_token_thread = Arc::clone(&cancellation_token_thread);
             let config_thread = config_thread.clone();
+            let block_out_tx_thread = block_out_tx_thread.clone();
 
             let chain_p_thread_puzzle = Arc::clone(&chain_p_thread);
-            let (puzzle_str, mut pre_block) = create_puzzle(
+            let (puzzle_str, pre_block) = create_puzzle(
                 chain_p_thread_puzzle,
                 tx_pool_p_thread,
                 config.max_tx_in_one_block,
@@ -216,10 +220,12 @@ impl Nakamoto {
                             ..pre_block
                         };
 
-                        chain_p_thread
-                            .lock()
-                            .unwrap()
-                            .add_block(block_node, config_thread.difficulty_leading_zero_len)
+                        chain_p_thread.lock().unwrap().add_block(
+                            block_node.clone(),
+                            config_thread.difficulty_leading_zero_len,
+                        );
+
+                        block_out_tx_thread.send(block_node).unwrap();
                     }
                     None => {
                         println!("Miner returns None.");

@@ -163,11 +163,8 @@ impl Miner {
         // It should be displayed in the Client UI eventually.
 
         let mut map = BTreeMap::new();
-        map.insert("thread_count".to_string(), self.thread_count.to_string());
-        map.insert(
-            "leading_zero_len".to_string(),
-            self.leading_zero_len.to_string(),
-        );
+        map.insert("#thread".to_string(), self.thread_count.to_string());
+        map.insert("difficulty".to_string(), self.leading_zero_len.to_string());
         map.insert("is_running".to_string(), self.is_running.to_string());
 
         return map;
