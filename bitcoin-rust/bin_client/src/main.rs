@@ -297,14 +297,14 @@ fn main() {
                 let command_line = line.unwrap();
                 // execute the commands
                 let command_enum: BotCommand = serde_json::from_str(&command_line).unwrap();
-                if let BotCommand::SleepMs(value) = command_enum {
-                    thread::sleep(Duration::from_millis(value));
-                } else {
-                    if let BotCommand::Send(receiver_id, transaction_message) = command_enum {
-                        // Send a transaction message from the default user_id of the client to the given receiver_user_id, e.g, Send(`receiver_user_id`, `transaction_message`)
+                match command_enum {
+                    BotCommand::SleepMs(value) => {
+                        thread::sleep(Duration::from_millis(value));
+                    }
+                    BotCommand::Send(receiver_id, transaction_message) => {
                         let user_id_clone_extra = user_id_clone.clone();
                         let sign_req_str = create_sign_req (user_id_clone_extra, receiver_id, transaction_message);
-                        // sign request to wallet
+                        // v send sign request to wallet
                         wallet_stdin_clone.lock().unwrap().write_all(sign_req_str.as_bytes()).unwrap();
                     }
                 }
@@ -334,14 +334,14 @@ fn main() {
         loop {
             let time_out = tick_rate.checked_sub(last_tick.elapsed()).unwrap_or_else(|| Duration::from_millis(500)); // TODO not sure
             
-            // read wallet stdout, send to nakamoto accordingly?
+            // below: read wallet stdout, send publishTx to nakamoto accordingly
 
-            // receive sign response from wallet
+            // receive sign response from wallet and clear buffer(?)
             let mut wallet_buffer = String::new();
             wallet_stdout_clone_thread.lock().unwrap().read_line(&mut wallet_buffer).unwrap(); // to be sent to nakamoto
             wallet_stdout_clone_thread.lock().unwrap().consume(wallet_buffer.len()); // to clear the buffer..?
 
-            // to send publishTx to nakamoto? TODO
+            // to send publishTx to nakamoto?
             let wallet_sign_response: IPCMessageRespWallet = serde_json::from_str(& wallet_buffer).unwrap();
             if let IPCMessageRespWallet::SignResponse(data, signature) = wallet_sign_response {
                 let mut nakamoto_ipc_req = IPCMessageReqNakamoto::PublishTx(data, signature); // make publishTx
@@ -349,7 +349,7 @@ fn main() {
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
             }
 
-            // to receive publishTx from nakamoto? TODO // maybe shift below until together with the status check..? because the publish response wont be immediate?
+            // to receive publishTx from nakamoto? TODO // maybe shift below until together with the status check..? because the publish response wont be immediate? - publish tx will not be immediate
             
             // publish transaction to nakamoto? if receive sign response from wallet
             if crossterm::event::poll(time_out).unwrap() {
@@ -359,6 +359,10 @@ fn main() {
                 let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_stdin_clone_thread.lock().unwrap().write_all(nakamoto_json.as_bytes()).unwrap();
 
+                // change into a loop, check whether buffer empty
+
+
+                
                 // get ipc address balance response from nakamoto, address
                 let mut nakamoto_reply = String::new();
                 nakamoto_stdout_clone_thread.lock().unwrap().read_line(&mut nakamoto_reply).unwrap();
