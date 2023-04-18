@@ -107,12 +107,14 @@ impl TxPool {
     /// Remove transactions from the pool given a list of finalized blocks. Update last_finalized_block_id as the last block in the list.
     pub fn remove_txs_from_finalized_blocks(&mut self, finalized_blocks: &Vec<BlockNode>) {
         // Please fill in the blank
+
         for block in finalized_blocks {
             for tx in block.transactions_block.transactions.clone() {
                 let tx_id = tx.gen_hash();
                 self.pool_tx_ids.retain(|x| *x != tx_id.clone());
                 self.removed_tx_ids.insert(tx_id.clone());
             }
+            self.last_finalized_block_id = block.header.block_id.clone();
         }
     }
 
@@ -125,6 +127,14 @@ impl TxPool {
         map.insert(
             "#pool_tx_map".to_string(),
             self.pool_tx_map.len().to_string(),
+        );
+        map.insert(
+            "#removed_tx_ids".to_string(),
+            self.removed_tx_ids.len().to_string(),
+        );
+        map.insert(
+            "#pool_tx_ids".to_string(),
+            self.pool_tx_ids.len().to_string(),
         );
 
         return map;

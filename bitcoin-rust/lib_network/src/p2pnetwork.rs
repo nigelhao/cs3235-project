@@ -93,23 +93,13 @@ impl P2PNetwork {
         let ack: Arc<Mutex<HashSet<String>>> = Arc::new(Mutex::new(HashSet::new()));
         let channels: Arc<Mutex<Vec<NetChannelTCP>>> = Arc::new(Mutex::new(Vec::new()));
 
-        let channels_thread = Arc::clone(&channels);
-        let neighbors_connected_thread = thread::spawn(move || {
-            for neighbor in neighbors {
-                let net_channel = NetChannelTCP::from_addr(&neighbor).unwrap();
-                channels_thread.lock().unwrap().push(net_channel);
-            }
-            println!("[P2PNetwork] All neighbors connected.");
-        });
-
-        neighbors_connected_thread.join().unwrap();
-
         let ack_thread = Arc::clone(&ack);
         let channels_thread = Arc::clone(&channels);
         let p2p_network_thread = Arc::clone(&p2p_network);
         let block_node_w_sender_thread = block_node_w_sender.clone();
         let tx_w_sender_thread = tx_w_sender.clone();
         let block_id_sender_thread = block_id_sender.clone();
+
         thread::spawn(move || {
             println!("[P2PNetwork] Starting processing received messages thread.");
 
@@ -183,6 +173,25 @@ impl P2PNetwork {
                 }
             }
         });
+
+        let channels_thread = Arc::clone(&channels);
+        let neighbors_connected_thread = thread::spawn(move || {
+            let mut neighbor_threads = vec![];
+            for neighbor in neighbors {
+                let channels_thread = Arc::clone(&channels_thread);
+                let neighbor_thread = thread::spawn(move || {
+                    let net_channel = NetChannelTCP::from_addr(&neighbor).unwrap();
+                    channels_thread.lock().unwrap().push(net_channel);
+                });
+                neighbor_threads.push(neighbor_thread);
+            }
+            for neighbor_thread in neighbor_threads {
+                neighbor_thread.join().unwrap();
+            }
+            println!("[P2PNetwork] All neighbors connected.");
+        });
+
+        neighbors_connected_thread.join().unwrap();
 
         // TODO: Verify if messages from neighbor channel is needed?
         let ack_thread = Arc::clone(&ack);

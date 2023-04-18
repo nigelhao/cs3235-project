@@ -56,25 +56,49 @@ impl NetChannelTCP {
     /// Create a new NetChannelTCP from a NetAddress and establish the TCP connection.
     /// Return an error string if the connection fails.
     pub fn from_addr(addr: &NetAddress) -> Result<Self, String> {
-        // Please fill in the blank
-        println!(
-            "[NetChannel] Trying to connect to {}:{}",
-            addr.ip, addr.port
-        );
-
         let addr_port = format!("{}:{}", addr.ip, addr.port);
-        match TcpStream::connect(&addr_port) {
-            Ok(tcp_stream) => {
-                let buf_reader = BufReader::new(tcp_stream.try_clone().unwrap());
-                let net_channel = NetChannelTCP {
-                    stream: tcp_stream,
-                    reader: buf_reader,
-                };
-                Ok(net_channel)
+        loop {
+            match TcpStream::connect(&addr_port) {
+                Ok(tcp_stream) => {
+                    let buf_reader = BufReader::new(tcp_stream.try_clone().unwrap());
+                    let net_channel = NetChannelTCP {
+                        stream: tcp_stream,
+                        reader: buf_reader,
+                    };
+                    println!("[NetChannel] Connected to {}:{}", addr.ip, addr.port);
+                    return Ok(net_channel);
+                }
+                Err(e) => {
+                    println!(
+                        "[NetChannel] Failed to connect to {}: {}. Retrying in 1 second...",
+                        addr_port, e
+                    );
+                    std::thread::sleep(std::time::Duration::from_secs(1));
+                }
             }
-            Err(e) => Err(format!("Failed to connect to {}: {}", addr_port, e)),
         }
     }
+
+    // pub fn from_addr(addr: &NetAddress) -> Result<Self, String> {
+    //     // Please fill in the blank
+    //     println!(
+    //         "[NetChannel] Trying to connect to {}:{}",
+    //         addr.ip, addr.port
+    //     );
+
+    //     let addr_port = format!("{}:{}", addr.ip, addr.port);
+    //     match TcpStream::connect(&addr_port) {
+    //         Ok(tcp_stream) => {
+    //             let buf_reader = BufReader::new(tcp_stream.try_clone().unwrap());
+    //             let net_channel = NetChannelTCP {
+    //                 stream: tcp_stream,
+    //                 reader: buf_reader,
+    //             };
+    //             Ok(net_channel)
+    //         }
+    //         Err(e) => Err(format!("Failed to connect to {}: {}", addr_port, e)),
+    //     }
+    // }
 
     /// Create a new NetChannelTCP from a TcpStream.
     /// This is useful for creating a NetChannelTCP instance from the listener side.

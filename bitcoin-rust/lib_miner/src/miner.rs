@@ -79,7 +79,6 @@ impl Miner {
         // If any of the threads finds a solution, other threads should stop.
         // Additionally, if the cancellation_token is set to true, all threads should stop.
         // The purpose of the cancellation_token is to allow the miner to stop the computation when other nodes have already solved the exact same puzzle.
-
         let mut threads = Vec::with_capacity(thread_count as usize);
         let found_token = Arc::new(Mutex::new(false));
 
