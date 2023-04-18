@@ -79,7 +79,6 @@ impl Miner {
         // If any of the threads finds a solution, other threads should stop.
         // Additionally, if the cancellation_token is set to true, all threads should stop.
         // The purpose of the cancellation_token is to allow the miner to stop the computation when other nodes have already solved the exact same puzzle.
-
         let mut threads = Vec::with_capacity(thread_count as usize);
         let found_token = Arc::new(Mutex::new(false));
 
@@ -154,8 +153,6 @@ impl Miner {
         // None of the threads found a solution
         miner_p.lock().unwrap().is_running = false;
         return None;
-
-        todo!();
     }
 
     /// Get status information of the miner for debug printing.
@@ -165,15 +162,10 @@ impl Miner {
         // It should be displayed in the Client UI eventually.
 
         let mut map = BTreeMap::new();
-        map.insert("thread_count".to_string(), self.thread_count.to_string());
-        map.insert(
-            "leading_zero_len".to_string(),
-            self.leading_zero_len.to_string(),
-        );
+        map.insert("#thread".to_string(), self.thread_count.to_string());
+        map.insert("difficulty".to_string(), self.leading_zero_len.to_string());
         map.insert("is_running".to_string(), self.is_running.to_string());
 
         return map;
-
-        todo!();
     }
 }

@@ -193,19 +193,20 @@ mod tests {
         let mut default_btree = BlockTree::new();
         // print current pwd
         println!("current dir: {:?}", std::env::current_dir());
-        for i in vec![8, 7, 6, 5, 4, 3, 2, 1] {
+        for i in vec![1, 2, 3, 4, 5, 6, 7] {
             // read block from "./testdata/add_block_basic__{i}.json"
             let block_json =
                 read_string_from_file(&format!("./testdata/add_blocks_basic__{}.json", i));
             let block_node = serde_json::from_str::<BlockNode>(&block_json).unwrap();
             default_btree.add_block(block_node, 5);
         }
-
+        println!("F_ID: {:?}\n\n", default_btree.finalized_block_id);
+        println!("TX_ID: {:?}\n\n", default_btree.finalized_tx_ids);
         println!(
             "F_BLKS: {:?}",
-            default_btree.get_finalized_blocks_since(
-                "00000f4cfb3b6f2371d3265fbcfc13f2c1c15d6a4e33a2b935a507430e9ecc9f".to_string()
-            )
+            default_btree
+                .get_finalized_blocks_since(default_btree.root_id.to_string())
+                .len()
         );
     }
 }
