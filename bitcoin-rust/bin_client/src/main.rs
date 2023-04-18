@@ -36,7 +36,6 @@ use std::{
 use std::fs;
 
 use std::path::PathBuf;
-// use std::process::{ChildStdout};
 
 mod app;
 
@@ -132,10 +131,6 @@ fn main() {
     // add in variables to keep the arguments provided when the program starts?
     let command_line_args: Arc<Vec<String>> = Arc::new(std::env::args().collect());
 
-    println!("{}", command_line_args.len());
-    println!("{}", command_line_args[0]);
-    println!("{}", command_line_args[1]);
-    println!("{}", command_line_args[2]);
     if command_line_args.len() < 6 {
         panic!("not enough arguments")
     }
@@ -161,7 +156,7 @@ fn main() {
         .expect("failed to start nakamoto_process");
 
     println!("good ngi");
-    thread::sleep(Duration::from_millis(5000));
+    thread::sleep(Duration::from_millis(500));
     println!("mronigng");
 
     let mut bin_wallet_process = Command::new("cargo")
@@ -174,11 +169,10 @@ fn main() {
         .spawn()
         .expect("failed to start wallet_process");
 
-    thread::sleep(Duration::from_millis(5000));
+    thread::sleep(Duration::from_millis(500));
 
     // - Get stdin and stdout of those processes
     // - Create buffer readers if necessary
-
     let nakamoto_stdin_mutex = Arc::new(Mutex::new(nakamoto_process.stdin.take().unwrap()));
     let nakamoto_stdout_mutex = Arc::new(Mutex::new(BufReader::new(
         nakamoto_process.stdout.take().unwrap(),
@@ -196,76 +190,77 @@ fn main() {
 
     // - Send initialization requests to bin_nakamoto and bin_wallet:
     // send initialize request to bin_nakamoto
-    // println!("{:?}", std::env::current_dir());
-    // println!("{:?}", nakamoto_config_path.to_owned().to_string());
     let nakamoto_initialization_message = IPCMessageReqNakamoto::Initialize(
-        fs::read_to_string(nakamoto_config_path.to_owned().to_string() + "/BlockTree.json")
-            .unwrap(),
-        fs::read_to_string(nakamoto_config_path.to_owned().to_string() + "/Config.json").unwrap(),
-        fs::read_to_string(nakamoto_config_path.to_owned().to_string() + "/TxPool.json").unwrap(),
+        read_string_from_file(
+            (nakamoto_config_path.to_owned().to_string() + "/BlockTree.json").as_str(),
+        )
+        .replace("\r\n", "\n"),
+        read_string_from_file(
+            (nakamoto_config_path.to_owned().to_string() + "/TxPool.json").as_str(),
+        )
+        .replace("\r\n", "\n"),
+        read_string_from_file(
+            (nakamoto_config_path.to_owned().to_string() + "/Config.json").as_str(),
+        )
+        .replace("\r\n", "\n"),
     );
     let nakamoto_json = serde_json::to_string(&nakamoto_initialization_message).unwrap();
-    nakamoto_stdin_mutex
-        .lock()
-        .unwrap()
-        .write_all(nakamoto_json.as_bytes())
-        .unwrap();
+    {
+        nakamoto_stdin_mutex
+            .lock()
+            .unwrap()
+            .write_all((nakamoto_json + "\n").as_bytes())
+            .unwrap();
+    }
 
+    // receive initialization response from nakamoto
     let mut nakamoto_buffer = String::new();
-
-    println!("past line 193"); // jam here... isit possibly because no line to read?
-
-    nakamoto_stdout_mutex
-        .lock()
-        .unwrap()
-        .read_line(&mut nakamoto_buffer)
-        .unwrap();
-
-    println!("past line 197");
-    println!("{}", nakamoto_buffer);
-
-    let nakamoto_status: IPCMessageRespNakamoto = serde_json::from_str(&nakamoto_buffer).unwrap();
-
-    println!("past line 201");
-
-    // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
-    nakamoto_stdout_mutex
-        .lock()
-        .unwrap()
-        .consume(nakamoto_buffer.len()); // to clear the buffer..?
-
-    println!("past line 207");
+    {
+        nakamoto_stdout_mutex
+            .lock()
+            .unwrap()
+            .read_line(&mut nakamoto_buffer)
+            .unwrap();
+    }
+    let nakamoto_status: IPCMessageRespNakamoto =
+        serde_json::from_str(&nakamoto_buffer.replace(r#"\""#, r#""#)).unwrap();
+    {
+        nakamoto_stdout_mutex
+            .lock()
+            .unwrap()
+            .consume(nakamoto_buffer.len()); // to clear the buffer..? actually don't even know if this is required..
+    }
 
     // send initialize request to bin_wallet
     let wallet_initialization_message = IPCMessageReqWallet::Initialize(
-        fs::read_to_string(wallet_config_path.to_owned().to_string()).unwrap(),
+        read_string_from_file(wallet_config_path.to_owned().to_string().as_str())
+            .replace("\r\n", "\n"),
     );
     let wallet_json = serde_json::to_string(&wallet_initialization_message).unwrap();
-    wallet_stdin_mutex
-        .lock()
-        .unwrap()
-        .write_all(wallet_json.as_bytes())
-        .unwrap();
+    {
+        wallet_stdin_mutex
+            .lock()
+            .unwrap()
+            .write_all((wallet_json + "\n").as_bytes())
+            .unwrap();
+    }
 
-    println!("past line 215");
-
-    // wallet IPC response
-    let mut wallet_buffer = String::new(); // TODO not sure
-    wallet_stdout_mutex
-        .lock()
-        .unwrap()
-        .read_line(&mut wallet_buffer)
-        .unwrap();
-    let wallet_status: IPCMessageRespWallet = serde_json::from_str(&wallet_buffer).unwrap(); // TODO not sure
-
-    // TODO (?) check whether received initialized message, and if not initialized, quit? [for now assumed that will always get initialized]
-
-    wallet_stdout_mutex
-        .lock()
-        .unwrap()
-        .consume(wallet_buffer.len()); // to clear the buffer..?
-
-    println!("past line 222");
+    // receive initialization response from wallet
+    let mut wallet_buffer = String::new();
+    {
+        wallet_stdout_mutex
+            .lock()
+            .unwrap()
+            .read_line(&mut wallet_buffer)
+            .unwrap();
+    }
+    let wallet_status: IPCMessageRespWallet = serde_json::from_str(&wallet_buffer).unwrap();
+    {
+        wallet_stdout_mutex
+            .lock()
+            .unwrap()
+            .consume(wallet_buffer.len()); // to clear the buffer..? actually don't even know if this is required..
+    }
 
     // The path to the seccomp file for this client process for Part B. (You can set this argument to any value during Part A.)
     let client_seccomp_path = std::env::args()
@@ -281,7 +276,7 @@ fn main() {
     // Please fill in the blank
     // Read the user info from wallet
 
-    println!("past line 239");
+    println!("past line 287"); // jam here
 
     // send get user info request to bin_wallet
     let wallet_get_info_message = IPCMessageReqWallet::GetUserInfo;
@@ -448,11 +443,13 @@ fn main() {
                 // send ipc request message to nakamoto to get netStatus
                 nakamoto_ipc_req = IPCMessageReqNakamoto::RequestNetStatus;
                 nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
-                nakamoto_stdin_clone_thread
-                    .lock()
-                    .unwrap()
-                    .write_all(nakamoto_json.as_bytes())
-                    .unwrap();
+                {
+                    nakamoto_stdin_clone_thread
+                        .lock()
+                        .unwrap()
+                        .write_all(nakamoto_json.as_bytes())
+                        .unwrap();
+                }
 
                 // send ipc request message to nakamoto to get chainStatus
                 nakamoto_ipc_req = IPCMessageReqNakamoto::RequestChainStatus;
@@ -535,7 +532,7 @@ fn main() {
             }
         }
     });
-    // handle_processes_communicate.join().unwrap(); // shifted to line 540
+    // handle_processes_communicate.join().unwrap(); // shifted below
 
     // UI thread. Modify it to suit your needs.
     let app_ui_ref = app_arc.clone();
