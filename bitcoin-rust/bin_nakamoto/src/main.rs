@@ -110,6 +110,9 @@ fn main() {
 
     let mut nakamoto: Option<Nakamoto> = None;
 
+    Nakamoto::stdout_notify("# Waiting for IPC Requests ...".to_string());
+    Nakamoto::stdout_notify("[Main] Start receiving trans thread".to_string());
+
     loop {
         let mut input_line = String::new();
         io::stdin().read_line(&mut input_line).unwrap();

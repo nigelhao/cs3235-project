@@ -193,7 +193,7 @@ mod tests {
         let mut default_btree = BlockTree::new();
         // print current pwd
         println!("current dir: {:?}", std::env::current_dir());
-        for i in vec![1, 2, 3, 4, 5, 6, 7] {
+        for i in vec![1, 2, 3, 3, 3, 3, 3] {
             // read block from "./testdata/add_block_basic__{i}.json"
             let block_json =
                 read_string_from_file(&format!("./testdata/add_blocks_basic__{}.json", i));
