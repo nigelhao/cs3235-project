@@ -193,7 +193,7 @@ pub struct BlockTree {
     /// The id of the root block (the genesis block)
     pub root_id: BlockId, //-X
     /// The id of the working block (the block at the end of the longest chain)
-    pub working_block_id: BlockId, //TODO: REQUIRE TO REVISE CONDITION OF WORKING BLOCK
+    pub working_block_id: BlockId,
     /// A map to bookkeep the orphan blocks.
     /// Orphan blocks are blocks whose parent are not in the block tree yet.
     /// They should be added to the block tree once they can be connected to the block tree.
@@ -547,8 +547,6 @@ impl BlockTree {
     }
 
     pub fn update_blocktree(&mut self, block: BlockNode) -> () {
-        self.working_block_id = block.header.block_id.clone();
-
         self.all_blocks
             .insert(block.header.block_id.clone(), block.clone());
 
@@ -561,6 +559,15 @@ impl BlockTree {
             .entry(block.header.parent.clone())
             .or_insert_with(Vec::new)
             .push(block.header.block_id.clone());
+
+        let all_children = self.children_map.get(&block.header.parent).unwrap();
+
+        let largest_child = all_children
+            .iter()
+            .max_by(|&a, &b| a.cmp(&b))
+            .unwrap_or(&block.header.block_id);
+
+        self.working_block_id = largest_child.clone();
 
         self.finalize_block(block.clone());
     }

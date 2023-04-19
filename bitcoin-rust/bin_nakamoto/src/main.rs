@@ -174,7 +174,7 @@ fn main() {
             IPCMessageReq::Quit => IPCMessageResp::Quitting,
         };
 
-        println!("{resp_msg:?}");
+        println!("{}", serde_json::to_string(&resp_msg).unwrap());
 
         if let IPCMessageResp::Quitting = resp_msg {
             break;
