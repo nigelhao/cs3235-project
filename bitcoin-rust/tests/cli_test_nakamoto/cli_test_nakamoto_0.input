@@ -25,3 +25,6 @@
 "RequestTxPoolStatus"
 {"GetAddressBalance":"MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ=="}
 "Quit"
+
+{"RequestBlock":"000fa107d05006523e223e184af2a59a4395a59fc7706e689f07b5adc15beaad"}
+

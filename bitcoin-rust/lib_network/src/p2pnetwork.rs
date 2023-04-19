@@ -121,18 +121,18 @@ impl P2PNetwork {
                     thread::spawn(move || {
                         let mut net_channel_read = net_channel;
                         while let Some(message) = net_channel_read.read_msg() {
-                            //Prevent broadcasting previously broadcasted messages
-                            let mut ack = ack_thread.lock().unwrap();
-                            p2p_network_thread.lock().unwrap().recv_msg_count += 1;
+                            {
+                                let mut ack = ack_thread.lock().unwrap();
+                                let message_str = format!("{:?}", message);
 
-                            let message_str = format!("{:?}", message);
-                            if ack.contains(&message_str) {
-                                drop(ack);
-                                continue;
-                            } else {
-                                ack.insert(message_str);
-                                drop(ack);
+                                if ack.contains(&message_str) {
+                                    continue;
+                                } else {
+                                    ack.insert(message_str);
+                                }
                             }
+
+                            p2p_network_thread.lock().unwrap().recv_msg_count += 1;
 
                             match message {
                                 NetMessage::BroadcastBlock(block_node) => {
@@ -146,6 +146,7 @@ impl P2PNetwork {
                                         p2p_network_thread.lock().unwrap().send_msg_count += 1;
                                     }
                                 }
+
                                 NetMessage::BroadcastTx(transaction) => {
                                     tx_w_sender_thread.send(transaction.clone()).unwrap();
 
@@ -156,6 +157,7 @@ impl P2PNetwork {
                                         p2p_network_thread.lock().unwrap().send_msg_count += 1;
                                     }
                                 }
+
                                 NetMessage::RequestBlock(block_id) => {
                                     block_id_sender_thread.send(block_id.clone()).unwrap();
 
@@ -193,74 +195,27 @@ impl P2PNetwork {
 
         neighbors_connected_thread.join().unwrap();
 
-        // TODO: Verify if messages from neighbor channel is needed?
+        let channels_thread = Arc::clone(&channels);
+        let p2p_network_thread = Arc::clone(&p2p_network);
         let ack_thread = Arc::clone(&ack);
-        let channels_thread = Arc::clone(&channels);
-        let p2p_network_thread = Arc::clone(&p2p_network);
-        thread::spawn(move || {
-            for channel_read in channels_thread.lock().unwrap().iter_mut() {
-                let mut net_channel_read = channel_read.clone_channel();
 
-                let ack_thread = Arc::clone(&ack_thread);
-                let channels_thread_tmp = Arc::clone(&channels_thread);
-                let p2p_network_thread = Arc::clone(&p2p_network_thread);
-                thread::spawn(move || loop {
-                    let message = net_channel_read.read_msg().unwrap();
-                    p2p_network_thread.lock().unwrap().recv_msg_count += 1;
-
-                    //Prevent broadcasting previously broadcasted messages
-                    let mut ack = ack_thread.lock().unwrap();
-                    let message_str = format!("{:?}", message);
-                    if ack.contains(&message_str) {
-                        drop(ack);
-                        continue;
-                    } else {
-                        ack.insert(message_str);
-                        drop(ack);
-                    }
-
-                    match message {
-                        NetMessage::BroadcastBlock(block_node) => {
-                            for channel_write in channels_thread_tmp.lock().unwrap().iter_mut() {
-                                let mut net_channel_write = channel_write.clone_channel();
-                                let message = NetMessage::BroadcastBlock(block_node.clone());
-                                net_channel_write.write_msg(message);
-                                p2p_network_thread.lock().unwrap().send_msg_count += 1;
-                            }
-                        }
-                        NetMessage::BroadcastTx(transaction) => {
-                            for channel_write in channels_thread_tmp.lock().unwrap().iter_mut() {
-                                let mut net_channel_write = channel_write.clone_channel();
-                                let message = NetMessage::BroadcastTx(transaction.clone());
-                                net_channel_write.write_msg(message);
-                                p2p_network_thread.lock().unwrap().send_msg_count += 1;
-                            }
-                        }
-                        NetMessage::RequestBlock(block_id) => {
-                            for channel_write in channels_thread_tmp.lock().unwrap().iter_mut() {
-                                let mut net_channel_write = channel_write.clone_channel();
-                                let message = NetMessage::RequestBlock(block_id.clone());
-                                net_channel_write.write_msg(message);
-                                p2p_network_thread.lock().unwrap().send_msg_count += 1;
-                            }
-                        }
-                        NetMessage::Unknown(_) => {}
-                    }
-                });
-            }
-        });
-
-        let channels_thread = Arc::clone(&channels);
-        let p2p_network_thread = Arc::clone(&p2p_network);
         thread::spawn(move || {
             println!("[P2PNetwork] Starting broadcasting blocks thread.");
 
             loop {
                 if let Ok(block_node) = block_node_r_receiver.recv() {
+                    {
+                        let mut ack = ack_thread.lock().unwrap();
+                        let message = NetMessage::BroadcastBlock(block_node.clone());
+                        let message_str = format!("{:?}", message);
+                        ack.insert(message_str);
+                    }
+
                     // Do something with the received message
+
                     for channel in channels_thread.lock().unwrap().iter_mut() {
                         let mut net_channel = channel.clone_channel();
-                        let message = block_node.clone();
+                        let message: BlockNode = block_node.clone();
                         let p2p_network_thread = Arc::clone(&p2p_network_thread);
 
                         thread::spawn(move || {
@@ -275,11 +230,20 @@ impl P2PNetwork {
 
         let channels_thread = Arc::clone(&channels);
         let p2p_network_thread = Arc::clone(&p2p_network);
+        let ack_thread = Arc::clone(&ack);
+
         thread::spawn(move || {
             println!("[P2PNetwork] Starting broadcasting transactions thread.");
 
             loop {
                 if let Ok(tx) = tx_r_receiver.recv() {
+                    {
+                        let mut ack = ack_thread.lock().unwrap();
+                        let message = NetMessage::BroadcastTx(tx.clone());
+                        let message_str = format!("{:?}", message);
+                        ack.insert(message_str);
+                    }
+
                     // Do something with the received message
                     for channel in channels_thread.lock().unwrap().iter_mut() {
                         let mut net_channel = channel.clone_channel();
@@ -298,8 +262,17 @@ impl P2PNetwork {
 
         let channels_thread = Arc::clone(&channels);
         let p2p_network_thread = Arc::clone(&p2p_network);
+        let ack_thread = Arc::clone(&ack);
+
         thread::spawn(move || loop {
             if let Ok(block_id) = block_id_receiver.recv() {
+                {
+                    let mut ack = ack_thread.lock().unwrap();
+                    let message = NetMessage::RequestBlock(block_id.clone());
+                    let message_str = format!("{:?}", message);
+                    ack.insert(message_str);
+                }
+
                 // Do something with the received message
                 for channel in channels_thread.lock().unwrap().iter_mut() {
                     let mut net_channel = channel.clone_channel();

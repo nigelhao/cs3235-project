@@ -69,7 +69,7 @@ impl NetChannelTCP {
                     return Ok(net_channel);
                 }
                 Err(e) => {
-                    println!(
+                    eprintln!(
                         "[NetChannel] Failed to connect to {}: {}. Retrying in 1 second...",
                         addr_port, e
                     );
