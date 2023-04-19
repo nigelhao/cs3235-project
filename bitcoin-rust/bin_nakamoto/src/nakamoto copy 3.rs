@@ -149,8 +149,6 @@ impl Nakamoto {
         let (trans_tx_sender, trans_tx_receiver): (Sender<Transaction>, Receiver<Transaction>) =
             mpsc::channel();
 
-        let (miner_sender, miner_receiver): (Sender<bool>, Receiver<bool>) = mpsc::channel();
-
         let chain_p = Arc::new(Mutex::new(chain));
         let miner_p = Arc::new(Mutex::new(miner));
         let tx_pool_p = Arc::new(Mutex::new(tx_pool));
@@ -160,48 +158,25 @@ impl Nakamoto {
         // Start necessary threads that read from and write to FIFO channels provided by the network.
         let tx_pool_p_thread = Arc::clone(&tx_pool_p);
         let trans_tx_sender_thread = trans_tx_sender.clone();
-        let miner_sender_thread = miner_sender.clone();
 
         thread::spawn(move || loop {
             let transaction = upd_trans_in_rx.recv().unwrap();
             println!("TX received");
             tx_pool_p_thread.lock().unwrap().add_tx(transaction.clone());
             trans_tx_sender_thread.send(transaction).unwrap();
-            miner_sender_thread.send(true).unwrap();
         });
 
-        let config_thread = config.clone();
-        let chain_p_thread = Arc::clone(&chain_p);
-
         let cancellation_token_thread = Arc::clone(&cancellation_token);
-        let miner_sender_thread = miner_sender.clone();
 
         thread::spawn(move || loop {
             let block = upd_block_in_rx.recv().unwrap();
-            let parent_id = block.header.parent.clone();
-            let working_block_id = chain_p_thread.lock().unwrap().working_block_id.clone();
-
             println!("BLOCK received");
-            println!("parent_id: {:?}", parent_id);
-            println!("working_block_id: {:?}", working_block_id);
+            let parent_id = block.header.parent;
 
             //Do some verification before stopping block
-            {
-                let mut writable = cancellation_token_thread.write().unwrap();
-                *writable = true;
-            }
 
-            chain_p_thread
-                .lock()
-                .unwrap()
-                .add_block(block.clone(), config_thread.difficulty_leading_zero_len_acc);
-
-            {
-                let mut writable = cancellation_token_thread.write().unwrap();
-                *writable = false;
-            }
-
-            miner_sender_thread.send(true).unwrap();
+            let mut writable = cancellation_token_thread.write().unwrap();
+            *writable = true;
         });
 
         // Start necessary thread(s) to control the miner.
@@ -213,20 +188,16 @@ impl Nakamoto {
         let miner_p_thread = Arc::clone(&miner_p);
 
         let cancellation_token_thread = Arc::clone(&cancellation_token);
-        let miner_sender_thread = miner_sender.clone();
-
-        thread::spawn(move || loop {
-            let transaction = trans_tx_receiver.recv().unwrap();
-            trans_out_tx.send(transaction.clone()).unwrap();
-            miner_sender_thread.send(true).unwrap();
-        });
 
         thread::spawn(move || loop {
             //Wait for a new transaction if transaction pool is empty
-            miner_receiver.recv().unwrap();
+            let transaction = trans_tx_receiver.recv().unwrap();
+            trans_out_tx.send(transaction).unwrap();
 
             //loop will attempt to clear out the entire transaction pool till its empty.
             loop {
+                thread::sleep(Duration::from_millis(200));
+
                 let miner_p_thread = Arc::clone(&miner_p_thread);
                 let chain_p_thread = Arc::clone(&chain_p_thread);
                 let tx_pool_p_thread = Arc::clone(&tx_pool_p_thread);
@@ -279,6 +250,12 @@ impl Nakamoto {
                     continue;
                 }
 
+                {
+                    let cancellation_token_thread_clone = Arc::clone(&cancellation_token_thread);
+                    let mut writable = cancellation_token_thread_clone.write().unwrap();
+                    *writable = false;
+                }
+
                 let solution = Miner::solve_puzzle(
                     miner_p_thread,
                     puzzle_str,
@@ -304,8 +281,6 @@ impl Nakamoto {
                             ..pre_block
                         };
 
-                        println!("BLOOCK FOUND");
-
                         chain_p_thread.lock().unwrap().add_block(
                             block_node.clone(),
                             config_thread.difficulty_leading_zero_len_acc,
@@ -314,7 +289,7 @@ impl Nakamoto {
                         block_out_tx.send(block_node).unwrap();
                     }
                     None => {
-                        println!("MINER STOPPED");
+                        println!("Miner returns None.");
                     }
                 };
             }
