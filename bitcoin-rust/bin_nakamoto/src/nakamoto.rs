@@ -303,7 +303,7 @@ impl Nakamoto {
                             ..pre_block
                         };
 
-                        Nakamoto::stdout_notify("[Miner] Block solved".to_string());
+                        Nakamoto::stdout_notify("[Miner] Puzzle solved".to_string());
 
                         chain_p_thread.lock().unwrap().add_block(
                             block_node.clone(),
@@ -337,10 +337,12 @@ impl Nakamoto {
     /// Get the status of the chain as a dictionary of strings. For debugging purpose.
     pub fn get_chain_status(&self) -> BTreeMap<String, String> {
         let chain_p_lock = self.chain_p.lock().unwrap();
-        let mut tmp_block = chain_p_lock
-            .get_block(chain_p_lock.working_block_id.clone())
-            .unwrap();
 
+        // let mut tmp_block = chain_p_lock
+        //     .get_block(chain_p_lock.working_block_id.clone())
+        //     .unwrap();
+
+        // println!("\n\n");
         // loop {
         //     print!("{:?} <- ", tmp_block.header.block_id);
         //     tmp_block = chain_p_lock
@@ -351,8 +353,7 @@ impl Nakamoto {
         //         break;
         //     }
         // }
-
-        println!("{:?} \n\n", tmp_block.header.block_id);
+        // println!("{:?} \n\n", tmp_block.header.block_id);
 
         return chain_p_lock.get_status();
         // self.chain_p.lock().unwrap().get_status()

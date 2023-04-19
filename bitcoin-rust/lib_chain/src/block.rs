@@ -172,9 +172,7 @@ impl Transaction {
         return match verify_result {
             Ok(()) => true,
             Err(e) => {
-                println!("Signature generated: {}", verify_signature);
-                println!("Message: {}", self.message);
-                println!("[Signature verification failed]: {}", e);
+                eprintln!("[Chain] Signature verification failed: {}", e);
                 false
             }
         };
@@ -236,6 +234,11 @@ impl BlockTree {
         bt
     }
 
+    pub fn stdout_notify(msg: String) {
+        let msg = HashMap::from([("Notify".to_string(), msg.clone())]);
+        println!("{}", serde_json::to_string(&msg).unwrap());
+    }
+
     /// Add a block to the block tree. If the block is not valid to be added to the tree
     /// (i.e. it does not satsify the conditions below), ignore the block. Otherwise, add the block to the BlockTree.
     ///
@@ -262,8 +265,13 @@ impl BlockTree {
             || self.orphans.contains_key(&block.header.block_id);
 
         // Verify if block meet the condition stated.
-        if !self.verify_block_integrity(block.clone(), leading_zero_len) || block_exist {
-            println!("Warn: Invalid block or block already exist in chain");
+        if block_exist {
+            eprintln!("[Chain] Block already exist");
+            return;
+        }
+
+        if !self.verify_block_integrity(block.clone(), leading_zero_len) {
+            eprintln!("[Chain] Invalid block");
             return;
         }
 
@@ -271,7 +279,9 @@ impl BlockTree {
         let parent_block = match self.get_block(block.header.parent.clone()) {
             Some(block) => block,
             None => {
-                println!("Warn: Parent node not found: Storing block as orphan");
+                BlockTree::stdout_notify(
+                    "[Chain] Parent node not found. Storing block as orphan...".to_string(),
+                );
                 self.orphans.insert(block.header.block_id.clone(), block);
                 return;
             }
@@ -279,13 +289,13 @@ impl BlockTree {
 
         // Verify that there is no duplicated transaction(s) in any ancestor blocks
         if !self.verify_block_ancestry(block.header.merkle_root.clone(), parent_block.clone()) {
-            println!("Warn: Found duplicate transactions in ancestor block");
+            eprintln!("[Chain] Found duplicate transactions in ancestor block");
             return;
         }
 
         //Verify if transactions in the block are valid
         if !self.verifiy_transactions_balance(block.clone(), parent_block.clone()) {
-            println!("Warn: Transaction does not have sufficient balance");
+            eprintln!("[Chain] Transaction does not have sufficient balance");
             return;
         }
 
@@ -293,7 +303,9 @@ impl BlockTree {
 
         for (_, o_block) in self.orphans.clone() {
             if o_block.header.parent == block.header.block_id {
-                println!("Info: Orphan block found. Adding orphan to chain");
+                BlockTree::stdout_notify(
+                    "[Chain] Orphan block found. Adding orphan to chain...".to_string(),
+                );
                 self.add_orphan_block(o_block, leading_zero_len);
                 self.orphans.remove(&block.header.block_id.clone());
                 return;
@@ -501,7 +513,7 @@ impl BlockTree {
         //k-deep confirmation rule = 6
         for _ in 0..6 {
             if block.header.parent == self.finalized_block_id {
-                println!("Warn: Insufficient block to finalize");
+                BlockTree::stdout_notify("[Chain] Insufficient block to finalize".to_string());
                 return;
             }
 
@@ -581,7 +593,8 @@ impl BlockTree {
 
         // //Check if block meet the condition stated.
         if !self.verify_block_integrity(block.clone(), leading_zero_len) || block_exist {
-            println!("Warn: Invalid block or block already exist in chain");
+            eprintln!("[Chain] Invalid block or block already exist in chain");
+
             return;
         }
 
@@ -590,19 +603,21 @@ impl BlockTree {
         let parent_block = match self.get_block(block.header.parent.clone()) {
             Some(block) => block,
             None => {
-                println!("Warn: Parent node not found: Storing block as orphan");
+                BlockTree::stdout_notify(
+                    "[Chain] Parent node not found. Storing block as orphan...".to_string(),
+                );
                 self.orphans.insert(block.header.block_id.clone(), block);
                 return;
             }
         };
 
         if !self.verify_block_ancestry(block.header.merkle_root.clone(), parent_block.clone()) {
-            println!("Warn: Found duplicate transactions in ancestor block");
+            eprintln!("[Chain] Found duplicate transactions in ancestor block");
             return;
         }
 
         if !self.verifiy_transactions_balance(block.clone(), parent_block.clone()) {
-            println!("Warn: Transaction does not have sufficient balance");
+            println!("[Chain] Transaction does not have sufficient balance");
             return;
         }
 
@@ -611,7 +626,10 @@ impl BlockTree {
         //Recursively calls to add all possible orphan blocks to the chain
         for (_, o_block) in self.orphans.clone() {
             if o_block.header.parent == block.header.block_id {
-                println!("Info: Orphan block found. Adding orphan to chain");
+                BlockTree::stdout_notify(
+                    "[Chain] Orphan block found. Adding orphan to chain...".to_string(),
+                );
+
                 self.add_orphan_block(o_block, leading_zero_len);
                 self.orphans.remove(&block.header.block_id.clone());
 

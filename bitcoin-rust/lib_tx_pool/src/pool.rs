@@ -63,6 +63,8 @@ impl TxPool {
             return true;
         }
 
+        eprintln!("[TxPool] Transaction invalid or already exist");
+
         return false;
     }
 
@@ -128,14 +130,15 @@ impl TxPool {
             "#pool_tx_map".to_string(),
             self.pool_tx_map.len().to_string(),
         );
-        map.insert(
-            "#removed_tx_ids".to_string(),
-            self.removed_tx_ids.len().to_string(),
-        );
-        map.insert(
-            "#pool_tx_ids".to_string(),
-            self.pool_tx_ids.len().to_string(),
-        );
+
+        // map.insert(
+        //     "#removed_tx_ids".to_string(),
+        //     self.removed_tx_ids.len().to_string(),
+        // );
+        // map.insert(
+        //     "#pool_tx_ids".to_string(),
+        //     self.pool_tx_ids.len().to_string(),
+        // );
 
         return map;
     }

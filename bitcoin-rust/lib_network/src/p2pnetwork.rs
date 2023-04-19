@@ -101,7 +101,9 @@ impl P2PNetwork {
         let block_id_sender_thread = block_id_sender.clone();
 
         thread::spawn(move || {
-            println!("[P2PNetwork] Starting processing received messages thread.");
+            P2PNetwork::stdout_notify(
+                "[P2PNetwork] Starting processing received messages thread".to_string(),
+            );
 
             let listener =
                 TcpListener::bind(&format!("{}:{}", address.ip.clone(), address.port.clone()))
@@ -190,7 +192,8 @@ impl P2PNetwork {
             for neighbor_thread in neighbor_threads {
                 neighbor_thread.join().unwrap();
             }
-            println!("[P2PNetwork] All neighbors connected.");
+
+            P2PNetwork::stdout_notify("[P2PNetwork] All neighbors connected".to_string());
         });
 
         neighbors_connected_thread.join().unwrap();
@@ -200,7 +203,9 @@ impl P2PNetwork {
         let ack_thread = Arc::clone(&ack);
 
         thread::spawn(move || {
-            println!("[P2PNetwork] Starting broadcasting blocks thread.");
+            P2PNetwork::stdout_notify(
+                "[P2PNetwork] Starting broadcasting blocks thread".to_string(),
+            );
 
             loop {
                 if let Ok(block_node) = block_node_r_receiver.recv() {
@@ -233,7 +238,9 @@ impl P2PNetwork {
         let ack_thread = Arc::clone(&ack);
 
         thread::spawn(move || {
-            println!("[P2PNetwork] Starting broadcasting transactions thread.");
+            P2PNetwork::stdout_notify(
+                "[P2PNetwork] Starting broadcasting transactions thread".to_string(),
+            );
 
             loop {
                 if let Ok(tx) = tx_r_receiver.recv() {
@@ -296,6 +303,11 @@ impl P2PNetwork {
             tx_r_sender,
             block_id_sender,
         );
+    }
+
+    pub fn stdout_notify(msg: String) {
+        let msg = HashMap::from([("Notify".to_string(), msg.clone())]);
+        println!("{}", serde_json::to_string(&msg).unwrap());
     }
 
     /// Get status information of the P2PNetwork for debug printing.
