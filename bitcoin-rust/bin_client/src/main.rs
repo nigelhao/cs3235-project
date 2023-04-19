@@ -33,7 +33,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use std::fs;
+use std::{fs, string};
 
 mod app;
 
@@ -204,7 +204,6 @@ fn main() {
     }
 
     // receive initialization response from nakamoto
-    // TODO may need to put p2p messages into UI?
     let mut nakamoto_buffer = String::new();
     loop {
         {
@@ -378,7 +377,7 @@ fn main() {
                         .read_line(&mut wallet_buffer)
                         .unwrap();
                 }
-                if wallet_buffer != "" {
+                if wallet_buffer.contains("SignResponse") {
                     break;
                 }
 
@@ -404,10 +403,11 @@ fn main() {
 
     let user_id_clone2 = user_id.clone();
     let nakamoto_stdin_clone = nakamoto_stdin_mutex.clone();
+    let nakamoto_config_path_clone = nakamoto_config_path.clone();
 
     let handle_send_status_updates = thread::spawn(move || {
         loop {
-            std::thread::sleep(Duration::from_millis(500));
+            thread::sleep(Duration::from_millis(500));
             // send ipc request message to nakamoto to get address balance
             let mut nakamoto_ipc_req =
                 IPCMessageReqNakamoto::GetAddressBalance((user_id_clone2).to_string());
@@ -467,26 +467,13 @@ fn main() {
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
             }
-
-            // send ipc request message to nakamoto to get requestStateSerialization
-            nakamoto_ipc_req = IPCMessageReqNakamoto::RequestStateSerialization;
-            nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
-            nakamoto_json.push_str("\n");
-            {
-                nakamoto_stdin_clone
-                    .lock()
-                    .unwrap()
-                    .write_all(nakamoto_json.as_bytes())
-                    .unwrap();
-            }
         }
     });
 
     let nakamoto_stdout_clone = nakamoto_stdout_mutex.clone();
+    let app_ui_ref_status = app_arc.clone();
 
-    // FROM HERE ONWARDS NEED TO CHECK
     let handle_read_nakamoto_stdout = thread::spawn(move || {
-        // change into a loop, check whether buffer empty
         loop {
             let mut nakamoto_reply = String::new();
             loop {
@@ -513,37 +500,180 @@ fn main() {
                 }
                 nakamoto_reply.clear();
             }
-            // println!("{}", nakamoto_reply);
 
             let nakamoto_enum: IPCMessageRespNakamoto =
                 serde_json::from_str(&nakamoto_reply).unwrap();
             match nakamoto_enum {
                 IPCMessageRespNakamoto::AddressBalance(user_id, balance) => {
-                    // println!("{} {} address balance", user_id, balance); // to figure out how to update UI
+                    if user_id == app_ui_ref_status.lock().unwrap().user_id {
+                        app_ui_ref_status.lock().unwrap().user_balance = balance;
+                    }
                 }
                 IPCMessageRespNakamoto::NetStatus(map) => {
-                    // println!("{:?} netstatus", map); // to figure out how to update UI
+                    {
+                        app_ui_ref_status.lock().unwrap().network_status.insert(
+                            "#address".to_string(),
+                            serde_json::to_string(&map.get("#address"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().network_status.insert(
+                            "#recv_msg".to_string(),
+                            serde_json::to_string(&map.get("#recv_msg"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().network_status.insert(
+                            "#send_msg".to_string(),
+                            serde_json::to_string(&map.get("#send_msg"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
                 }
                 IPCMessageRespNakamoto::ChainStatus(map) => {
-                    // println!("{:?} chainstatus", map); // to figure out how to update UI
+                    {
+                        app_ui_ref_status.lock().unwrap().blocktree_status.insert(
+                            "#blocks".to_string(),
+                            serde_json::to_string(&map.get("#blocks"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().blocktree_status.insert(
+                            "#orphans".to_string(),
+                            serde_json::to_string(&map.get("#orphans"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().blocktree_status.insert(
+                            "finalized_id".to_string(),
+                            serde_json::to_string(&map.get("finalized_id"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().blocktree_status.insert(
+                            "root_id".to_string(),
+                            serde_json::to_string(&map.get("root_id"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().blocktree_status.insert(
+                            "working_depth".to_string(),
+                            serde_json::to_string(&map.get("working_depth"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().blocktree_status.insert(
+                            "working_id".to_string(),
+                            serde_json::to_string(&map.get("working_id"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
                 }
                 IPCMessageRespNakamoto::MinerStatus(map) => {
-                    // println!("{:?} minerstatus", map); // to figure out how to update UI
+                    {
+                        app_ui_ref_status.lock().unwrap().miner_status.insert(
+                            "#thread".to_string(),
+                            serde_json::to_string(&map.get("#thread"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().miner_status.insert(
+                            "difficulty".to_string(),
+                            serde_json::to_string(&map.get("difficulty"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().miner_status.insert(
+                            "is_running".to_string(),
+                            serde_json::to_string(&map.get("is_running"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
                 }
                 IPCMessageRespNakamoto::TxPoolStatus(map) => {
                     // println!("{:?} txPoolstatus", map); // to figure out how to update UI
+                    {
+                        app_ui_ref_status.lock().unwrap().txpool_status.insert(
+                            "#pool_tx_map".to_string(),
+                            serde_json::to_string(&map.get("#pool_tx_map"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().txpool_status.insert(
+                            "#removed_tx_ids".to_string(),
+                            serde_json::to_string(&map.get("#removed_tx_ids"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
+                    {
+                        app_ui_ref_status.lock().unwrap().txpool_status.insert(
+                            "#pool_tx_ids".to_string(),
+                            serde_json::to_string(&map.get("#pool_tx_ids"))
+                                .unwrap()
+                                .replace(r#"""#, ""),
+                        );
+                    }
                 }
                 IPCMessageRespNakamoto::StateSerialization(
                     blocktree_json_string,
                     tx_pool_json_string,
                 ) => {
-                    // println!(
-                    //     "{} {} stateSerialization",
-                    //     blocktree_json_string, tx_pool_json_string
-                    // ); // to figure out how to update UI
+                    // save into json file, with the config path, appended with timestamps
+                    let time_stamp_json = serde_json::to_string(&SystemTime::now()).unwrap();
+                    #[derive(Serialize, Deserialize)]
+                    struct Time {
+                        secs_since_epoch: i64,
+                        nanos_since_epoch: i64,
+                    }
+                    let time_stamp: Time = serde_json::from_str(&time_stamp_json).unwrap();
+                    let time_append: String = time_stamp.secs_since_epoch.to_string();
+
+                    let blocktree_json_filename = nakamoto_config_path_clone.to_owned().to_string()
+                        + r#"/"#
+                        + &time_append
+                        + "-BlockTree.json";
+                    let tx_pool_json_filename = nakamoto_config_path_clone.to_owned().to_string()
+                        + r#"/"#
+                        + &time_append
+                        + "-TxPool.json";
+
+                    println!("{}", blocktree_json_filename);
+
+                    let blocktree_json_filename_clone = blocktree_json_filename.clone();
+                    let tx_pool_json_filename_clone = tx_pool_json_filename.clone();
+                    let mut _blocktree_file = File::create(blocktree_json_filename);
+                    fs::write(blocktree_json_filename_clone, blocktree_json_string)
+                        .expect("Failed to write to blocktree file");
+                    let mut _tx_pool_file = File::create(tx_pool_json_filename);
+                    fs::write(tx_pool_json_filename_clone, tx_pool_json_string)
+                        .expect("Failed to write to tx pool file");
                 }
                 IPCMessageRespNakamoto::PublishTxDone => {
-                    // println!("publishTxDone"); // to figure out how to update UI
+                    // do nothing
                 }
                 IPCMessageRespNakamoto::Initialized => {
                     // do nothing
@@ -551,8 +681,8 @@ fn main() {
                 IPCMessageRespNakamoto::Quitting => {
                     // do nothing
                 }
-                IPCMessageRespNakamoto::Notify(_message) => {
-                    // do nothing
+                IPCMessageRespNakamoto::Notify(message) => {
+                    app_ui_ref_status.lock().unwrap().notify_log.push(message);
                 }
                 IPCMessageRespNakamoto::BlockData(_block_data) => {
                     // do nothing
@@ -561,6 +691,49 @@ fn main() {
         }
     });
     // handle_read_nakamoto_stdout.join().unwrap(); // shifted below
+
+    let nakamoto_stderr_clone = nakamoto_stderr_mutex.clone();
+    let app_ui_ref_err = app_arc.clone();
+
+    let handle_nakamoto_stderr = thread::spawn(move || {
+        let mut nakamoto_err_ignore = String::new();
+        loop {
+            {
+                nakamoto_stderr_clone
+                    .lock()
+                    .unwrap()
+                    .read_line(&mut nakamoto_err_ignore)
+                    .unwrap();
+            }
+            if nakamoto_err_ignore
+                == "To only capture error messages from nakamoto from this instance onwards"
+            {
+                break;
+            }
+            nakamoto_err_ignore.clear();
+        }
+        loop {
+            let mut nakamoto_err_message = String::new();
+            loop {
+                {
+                    nakamoto_stderr_clone
+                        .lock()
+                        .unwrap()
+                        .read_line(&mut nakamoto_err_message)
+                        .unwrap();
+                }
+                if !nakamoto_err_message.is_empty() {
+                    break;
+                }
+                nakamoto_err_message.clear();
+            }
+            app_ui_ref_err
+                .lock()
+                .unwrap()
+                .stderr_log
+                .push(nakamoto_err_message);
+        }
+    }); // handle_nakamoto_stderr.join().unwrap(); // shifted below
 
     // UI thread. Modify it to suit your needs.
     let app_ui_ref = app_arc.clone();
@@ -681,6 +854,7 @@ fn main() {
     handle_wallet_nakamoto_publish_tx.join().unwrap();
     handle_send_status_updates.join().unwrap();
     handle_read_nakamoto_stdout.join().unwrap();
+    handle_nakamoto_stderr.join().unwrap();
 
     let ecode1 = nakamoto_process
         .wait()
