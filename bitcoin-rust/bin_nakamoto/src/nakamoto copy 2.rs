@@ -57,14 +57,13 @@ fn create_puzzle(
     // Please fill in the blank
     // Filter transactions from tx_pool and get the last node of the longest chain.
 
-    let working_block_id = chain_p.lock().unwrap().working_block_id.clone();
+    let chain_p_lock = chain_p.lock().unwrap();
 
-    let excluding_txs = chain_p.lock().unwrap().get_pending_finalization_txs();
+    let working_block_id = chain_p_lock.working_block_id.clone();
 
-    let filtered_tx = tx_pool_p
-        .lock()
-        .unwrap()
-        .filter_tx(tx_count, &excluding_txs);
+    let tx_pool_p_lock = tx_pool_p.lock().unwrap();
+    let excluding_txs = chain_p_lock.get_pending_finalization_txs();
+    let filtered_tx = tx_pool_p_lock.filter_tx(tx_count, &excluding_txs);
 
     let (merkle_root, merkle_tree) = MerkleTree::create_merkle_tree(filtered_tx.clone());
 
@@ -135,6 +134,11 @@ impl Nakamoto {
         let chain: BlockTree = serde_json::from_str(&chain_str).unwrap();
         let tx_pool: TxPool = serde_json::from_str(&tx_pool_str).unwrap();
 
+        let (miner_start_sender, miner_start_receiver): (Sender<bool>, Receiver<bool>) =
+            mpsc::channel();
+        let (miner_complete_sender, miner_complete_receiver): (Sender<bool>, Receiver<bool>) =
+            mpsc::channel();
+
         // Create the miner and the network according to the config.
         let miner = Miner::new();
         let (
@@ -146,139 +150,95 @@ impl Nakamoto {
             req_block_id_out_tx,
         ) = P2PNetwork::create(config.clone().addr, config.clone().neighbors);
 
-        let (trans_tx_sender, trans_tx_receiver): (Sender<Transaction>, Receiver<Transaction>) =
-            mpsc::channel();
-
-        let (miner_sender, miner_receiver): (Sender<bool>, Receiver<bool>) = mpsc::channel();
-
         let chain_p = Arc::new(Mutex::new(chain));
         let miner_p = Arc::new(Mutex::new(miner));
         let tx_pool_p = Arc::new(Mutex::new(tx_pool));
 
         let cancellation_token = Arc::new(RwLock::new(false));
+        let is_processing_token = Arc::new(RwLock::new(false));
 
         // Start necessary threads that read from and write to FIFO channels provided by the network.
-        let tx_pool_p_thread = Arc::clone(&tx_pool_p);
-        let trans_tx_sender_thread = trans_tx_sender.clone();
-        let miner_sender_thread = miner_sender.clone();
-
-        thread::spawn(move || loop {
-            let transaction = upd_trans_in_rx.recv().unwrap();
-            println!("TX received");
-            tx_pool_p_thread.lock().unwrap().add_tx(transaction.clone());
-            trans_tx_sender_thread.send(transaction).unwrap();
-            miner_sender_thread.send(true).unwrap();
-        });
-
-        let config_thread = config.clone();
-        let chain_p_thread = Arc::clone(&chain_p);
-
-        let cancellation_token_thread = Arc::clone(&cancellation_token);
-        let miner_sender_thread = miner_sender.clone();
-
-        thread::spawn(move || loop {
-            let block = upd_block_in_rx.recv().unwrap();
-            let parent_id = block.header.parent.clone();
-            let working_block_id = chain_p_thread.lock().unwrap().working_block_id.clone();
-
-            println!("BLOCK received");
-            println!("parent_id: {:?}", parent_id);
-            println!("working_block_id: {:?}", working_block_id);
-
-            //Do some verification before stopping block
-            {
-                let mut writable = cancellation_token_thread.write().unwrap();
-                *writable = true;
-            }
-
-            chain_p_thread
-                .lock()
-                .unwrap()
-                .add_block(block.clone(), config_thread.difficulty_leading_zero_len_acc);
-
-            {
-                let mut writable = cancellation_token_thread.write().unwrap();
-                *writable = false;
-            }
-
-            miner_sender_thread.send(true).unwrap();
-        });
-
         // Start necessary thread(s) to control the miner.
-
-        let config_thread = config.clone();
-
-        let chain_p_thread = Arc::clone(&chain_p);
         let tx_pool_p_thread = Arc::clone(&tx_pool_p);
+        let chain_p_thread = Arc::clone(&chain_p);
         let miner_p_thread = Arc::clone(&miner_p);
 
+        let config_thread = config.clone();
+        let block_out_tx_thread = block_out_tx.clone();
+
         let cancellation_token_thread = Arc::clone(&cancellation_token);
-        let miner_sender_thread = miner_sender.clone();
+        let is_processing_token_thread = Arc::clone(&is_processing_token);
 
         thread::spawn(move || loop {
-            let transaction = trans_tx_receiver.recv().unwrap();
-            trans_out_tx.send(transaction.clone()).unwrap();
-            miner_sender_thread.send(true).unwrap();
+            let excluding_txs = chain_p_thread
+                .lock()
+                .unwrap()
+                .get_pending_finalization_txs();
+
+            let filtered_tx = tx_pool_p_thread
+                .lock()
+                .unwrap()
+                .filter_tx(config_thread.max_tx_in_one_block, &excluding_txs);
+
+            let is_empty_tx = filtered_tx.is_empty();
+
+            let is_running_miner = miner_p_thread
+                .lock()
+                .unwrap()
+                .get_status()
+                .get("is_running")
+                .unwrap()
+                .parse::<bool>()
+                .unwrap();
+
+            if !is_empty_tx && !is_running_miner {
+                miner_start_sender.send(true).unwrap();
+                miner_complete_receiver.recv().unwrap();
+            }
+            thread::sleep(Duration::from_millis(200));
         });
 
+        let miner_p_thread = Arc::clone(&miner_p);
+        let tx_pool_p_thread = Arc::clone(&tx_pool_p);
+        let chain_p_thread = Arc::clone(&chain_p);
+        let config_thread = config.clone();
+
+        let is_processing_token_thread = Arc::clone(&is_processing_token);
+        let cancellation_token_thread = Arc::clone(&cancellation_token);
+        let miner_complete_sender_thread = miner_complete_sender.clone();
+
         thread::spawn(move || loop {
-            //Wait for a new transaction if transaction pool is empty
-            miner_receiver.recv().unwrap();
+            miner_start_receiver.recv().unwrap();
 
-            //loop will attempt to clear out the entire transaction pool till its empty.
-            loop {
-                let miner_p_thread = Arc::clone(&miner_p_thread);
-                let chain_p_thread = Arc::clone(&chain_p_thread);
-                let tx_pool_p_thread = Arc::clone(&tx_pool_p_thread);
+            let miner_p_thread = Arc::clone(&miner_p_thread);
+            let chain_p_thread_puzzle = Arc::clone(&chain_p_thread);
+            let chain_p_thread_miner = Arc::clone(&chain_p_thread);
+            let chain_p_thread_finalized_block = Arc::clone(&chain_p_thread);
+            let miner_complete_sender_thread = miner_complete_sender_thread.clone();
 
-                let cancellation_token_thread = Arc::clone(&cancellation_token_thread);
+            let block_out_tx_thread = block_out_tx_thread.clone();
 
-                {
-                    let excluding_txs = chain_p_thread
-                        .lock()
-                        .unwrap()
-                        .get_pending_finalization_txs();
+            let cancellation_token_thread = Arc::clone(&cancellation_token_thread);
+            let is_processing_token_thread = Arc::clone(&is_processing_token_thread);
 
-                    let filtered_tx = tx_pool_p_thread
-                        .lock()
-                        .unwrap()
-                        .filter_tx(config_thread.max_tx_in_one_block, &excluding_txs);
+            {
+                let chain_p_thread_lock = chain_p_thread_finalized_block.lock().unwrap();
+                let mut tx_pool_thread_lock = tx_pool_p_thread.lock().unwrap();
 
-                    if filtered_tx.is_empty() {
-                        //Capture existing transaction
-                        // break;
-                        continue;
-                    }
-                }
+                let finalized_blocks = chain_p_thread_lock
+                    .get_finalized_blocks_since(chain_p_thread_lock.finalized_block_id.clone());
 
-                let since_block_id = tx_pool_p_thread
-                    .lock()
-                    .unwrap()
-                    .last_finalized_block_id
-                    .clone();
-                let finalized_blocks = chain_p_thread
-                    .lock()
-                    .unwrap()
-                    .get_finalized_blocks_since(since_block_id);
+                tx_pool_thread_lock.remove_txs_from_finalized_blocks(&finalized_blocks);
+            }
 
-                tx_pool_p_thread
-                    .lock()
-                    .unwrap()
-                    .remove_txs_from_finalized_blocks(&finalized_blocks);
+            let (puzzle_str, pre_block) = create_puzzle(
+                chain_p_thread_puzzle,
+                tx_pool_p_thread.clone(),
+                config.max_tx_in_one_block.clone(),
+                config_thread.mining_reward_receiver.clone(),
+            );
 
-                let (puzzle_str, pre_block) = create_puzzle(
-                    chain_p_thread.clone(),
-                    tx_pool_p_thread.clone(),
-                    config.max_tx_in_one_block.clone(),
-                    config_thread.mining_reward_receiver.clone(),
-                );
-
-                //Control miner
-                if pre_block.transactions_block.transactions.is_empty() {
-                    //Another safety net to capture some retarded transaction
-                    continue;
-                }
-
+            thread::spawn(move || {
                 let solution = Miner::solve_puzzle(
                     miner_p_thread,
                     puzzle_str,
@@ -304,20 +264,24 @@ impl Nakamoto {
                             ..pre_block
                         };
 
-                        println!("BLOOCK FOUND");
-
-                        chain_p_thread.lock().unwrap().add_block(
+                        chain_p_thread_miner.lock().unwrap().add_block(
                             block_node.clone(),
                             config_thread.difficulty_leading_zero_len_acc,
                         );
 
-                        block_out_tx.send(block_node).unwrap();
+                        block_out_tx_thread.send(block_node.clone()).unwrap();
+
+                        println!("hash: {:?}", hash);
+                        println!("nonce: {:?}", nonce);
+                        println!("block_node: {:?}", block_node);
+
+                        miner_complete_sender_thread.send(true).unwrap();
                     }
                     None => {
-                        println!("MINER STOPPED");
+                        println!("Miner returns None.");
                     }
                 };
-            }
+            });
         });
 
         // Return the Nakamoto instance that holds pointers to the chain, the miner, the network and the tx pool.
@@ -326,7 +290,7 @@ impl Nakamoto {
             miner_p: miner_p,
             network_p: network_p,
             tx_pool_p: tx_pool_p,
-            trans_tx: trans_tx_sender,
+            trans_tx: trans_out_tx,
         };
     }
 

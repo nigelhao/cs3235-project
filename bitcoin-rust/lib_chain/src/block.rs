@@ -38,9 +38,9 @@ impl MerkleTree {
     /// - `txs`: a list of transactions
     /// - The return value is the root hash of the merkle tree
     pub fn create_merkle_tree(txs: Vec<Transaction>) -> (String, MerkleTree) {
-        // If the transaction vector is empty, panic uwu
         if txs.len() == 0 {
-            panic!("create_merkel_tree get empty Transaction Vector.");
+            // panic!("create_merkel_tree get empty Transaction Vector.");
+            return ("".to_owned(), MerkleTree { hashes: Vec::new() });
         }
 
         // Create the first level of hashes from the transaction vector
@@ -317,23 +317,52 @@ impl BlockTree {
             .get_block(self.finalized_block_id.clone())
             .unwrap()
             .clone();
+        if self.block_depth.get(&since_block_id) > self.block_depth.get(&self.finalized_block_id) {
+            panic!("Given block id is not finalized");
+        }
 
-        while block.header.block_id != since_block_id && block.header.parent != self.root_id {
+        if block.header.block_id == since_block_id {
+            return f_blocks;
+        }
+
+        loop {
             f_blocks.insert(0, block.clone());
+
+            if block.header.parent == since_block_id || block.header.parent == self.root_id {
+                break;
+            }
+
             block = self.get_block(block.header.parent.clone()).unwrap().clone();
         }
 
         return f_blocks;
     }
 
+    // pub fn get_finalized_blocks_since(&self, since_block_id: BlockId) -> Vec<BlockNode> {
+    //     // Please fill in the blank
+    //     let mut f_blocks: Vec<BlockNode> = Vec::new();
+    //     let mut block = self
+    //         .get_block(self.finalized_block_id.clone())
+    //         .unwrap()
+    //         .clone();
+
+    //     while block.header.block_id != since_block_id && block.header.parent != self.root_id {
+    //         f_blocks.insert(0, block.clone());
+    //         block = self.get_block(block.header.parent.clone()).unwrap().clone();
+    //     }
+    //     block = self.get_block(self.root_id.clone()).unwrap().clone();
+    //     f_blocks.insert(0, block.clone());
+
+    //     return f_blocks;
+    // }
+
     /// Get the pending transactions on the longest chain that are confirmed but not finalized.
     pub fn get_pending_finalization_txs(&self) -> Vec<Transaction> {
         let mut block = self.get_block(self.working_block_id.clone()).unwrap();
         let mut pending_txs: Vec<Transaction> = Vec::new();
 
-        while block.header.parent != self.finalized_block_id {
-            pending_txs.extend(block.transactions_block.transactions.iter().cloned());
-
+        while block.header.block_id != self.finalized_block_id {
+            pending_txs.extend(block.transactions_block.transactions);
             block = self.get_block(block.header.parent.clone()).unwrap();
         }
 
@@ -511,7 +540,7 @@ impl BlockTree {
                 .entry(new_f_block.header.reward_receiver)
                 .or_insert(0) += 10;
 
-            self.finalized_tx_ids = new_f_block_tx_ids.clone();
+            self.finalized_tx_ids.extend(new_f_block_tx_ids.clone());
             self.finalized_balance_map = new_f_block_balance_map.clone();
             self.finalized_block_id = new_f_block.header.block_id.clone();
         }
