@@ -16,6 +16,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::fs;
 use std::io::{self, Write};
+use seccompiler::BpfMap;
+use std::convert::TryInto;
 
 // Read a string from a file (to help you debug)
 fn read_string_from_file(filepath: &str) -> String {
@@ -91,6 +93,7 @@ enum IPCMessageResp {
 }
 
 fn main() {
+	eprintln!("To only capture error messages from nakamoto from this instance onwards");
     // bin_nakamoto has only one optional argument: the path to the seccomp policy file
     // If the argument is provided, bin_nakamoto will read and apply the seccomp policy at the beginning of the program
     // Otherwise, it will proceed to the normal execution
@@ -98,6 +101,16 @@ fn main() {
     if let Some(policy_path) = maybe_policy_path.clone() {
         // Please fill in the blank
         // If the first param is provided, read the seccomp config and apply it
+        /* */
+        let policy_str = read_string_from_file(&policy_path);
+        let filter_map: BpfMap = seccompiler::compile_from_json(
+            policy_str.as_bytes(),
+            std::env::consts::ARCH.try_into().unwrap(),
+        )
+        .unwrap();
+        let filter = filter_map.get("main_thread").unwrap();
+        
+        seccompiler::apply_filter(&filter).unwrap();
     }
 
     // The main logic of the bin_nakamoto starts here
