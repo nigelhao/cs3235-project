@@ -16,7 +16,7 @@
                 "transactions": [
                     {
                         "sender": "GENESIS",
-                        "receiver": "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",
+                        "receiver": "MDgCMQDeoEeA8OtGME/SRwp+ASKVOnjlEUHYvQfo0FLp3+fwVi/SztDdJskjzCRasGk06UUCAwEAAQ==",
                         "message": "SEND $299792458",
                         "sig": "GENESIS"
                     }
@@ -33,7 +33,7 @@
     "orphans": {},
     "finalized_block_id": "0",
     "finalized_balance_map": {
-        "MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==": 299792458
+        "MDgCMQDOpK8YWmcg8ffNF/O7xlBDq/DBdoUnc4yyWrV0y/X3LF+dddjaGksXzGl3tHskpgkCAwEAAQ==": 299792458
     },
     "finalized_tx_ids": []
 }
