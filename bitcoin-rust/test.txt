@@ -1,427 +1,781 @@
-execve("/home/yuan/.cargo/bin/cargo", ["cargo", "run", "--bin", "bin_wallet", "-o", "trace.log"], 0xffffeeaa7ba8 /* 33 vars */) = 0
-brk(NULL)                               = 0xaaaad4e51000
-faccessat(AT_FDCWD, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-fstat(3, {st_mode=S_IFREG|0644, st_size=70322, ...}) = 0
-mmap(NULL, 70322, PROT_READ, MAP_PRIVATE, 3, 0) = 0xffffbd900000
+read(9, "", 32)                         = 0
+close(9)                                = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/tui-textarea-f55c9c5431ce17a1", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0775, stx_size=4096, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/tui-textarea-f55c9c5431ce17a1/lib-tui-textarea", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=16, ...}) = 0
+read(9, "8622043b6858d280", 16)         = 16
+read(9, "", 32)                         = 0
+close(9)                                = 0
+ioctl(2, TIOCGWINSZ, {ws_row=45, ws_col=124, ws_xpixel=0, ws_ypixel=0}) = 0
+rt_sigaction(SIGUSR1, {sa_handler=0xaaaad788e2c0, sa_mask=[], sa_flags=SA_SIGINFO}, NULL, 8) = 0
+futex(0xffffb66a60e8, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+mmap(NULL, 2101248, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0xffffaf0c3000
+mprotect(0xffffaf0c4000, 2097152, PROT_READ|PROT_WRITE) = 0
+clone(child_stack=0xffffaf2c2900, flags=CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID, parent_tid=[143174], tls=0xffffaf2c3700, child_tidptr=0xffffaf2c30d0) = 143174
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/libc-275771e152d0690e/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/libc-275771e152d0690e/build_script_build-275771e152d0690e", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5111256, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/libc-275771e152d0690e/build_script_build-275771e152d0690e", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5111256, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/libc-275771e152d0690e/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5111256, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/cfg-if-3eda684293645ab0/output-lib-cfg-if", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libcfg_if-3eda684293645ab0.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=7654, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libcfg_if-3eda684293645ab0.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=6313, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/libc-a0d642a5a92a68cb/output-lib-libc", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/liblibc-a0d642a5a92a68cb.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=3481352, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/liblibc-a0d642a5a92a68cb.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=3138757, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/proc-macro2-3c3d743ff67dde4b/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/proc-macro2-3c3d743ff67dde4b/build_script_build-3c3d743ff67dde4b", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5000128, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/proc-macro2-3c3d743ff67dde4b/build_script_build-3c3d743ff67dde4b", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5000128, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/proc-macro2-3c3d743ff67dde4b/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5000128, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/autocfg-3327818de5c61eb2/output-lib-autocfg", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libautocfg-3327818de5c61eb2.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1927650, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libautocfg-3327818de5c61eb2.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=85680, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/quote-9bda29946cb23246/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/quote-9bda29946cb23246/build_script_build-9bda29946cb23246", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4916056, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/quote-9bda29946cb23246/build_script_build-9bda29946cb23246", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4916056, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/quote-9bda29946cb23246/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4916056, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/log-8f1f3cdc803a2c16/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/log-8f1f3cdc803a2c16/build_script_build-8f1f3cdc803a2c16", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4520976, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/log-8f1f3cdc803a2c16/build_script_build-8f1f3cdc803a2c16", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4520976, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/log-8f1f3cdc803a2c16/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4520976, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/unicode-ident-917f3b63bfda87af/output-lib-unicode-ident", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libunicode_ident-917f3b63bfda87af.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=259672, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libunicode_ident-917f3b63bfda87af.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=189201, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/proc-macro2-6cdaa28ef9015b2a/output-lib-proc-macro2", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libproc_macro2-6cdaa28ef9015b2a.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=3212318, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libproc_macro2-6cdaa28ef9015b2a.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=415537, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/lock_api-0503d8c0853d3101/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/lock_api-0503d8c0853d3101/build_script_build-0503d8c0853d3101", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5386400, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/lock_api-0503d8c0853d3101/build_script_build-0503d8c0853d3101", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5386400, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/lock_api-0503d8c0853d3101/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=5386400, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/signal-hook-4ac43cf88319b88d/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/signal-hook-4ac43cf88319b88d/build_script_build-4ac43cf88319b88d", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4451824, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/signal-hook-4ac43cf88319b88d/build_script_build-4ac43cf88319b88d", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4451824, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/signal-hook-4ac43cf88319b88d/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4451824, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/parking_lot_core-86d5e130952c24ac/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/parking_lot_core-86d5e130952c24ac/build_script_build-86d5e130952c24ac", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4582192, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/parking_lot_core-86d5e130952c24ac/build_script_build-86d5e130952c24ac", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4582192, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/parking_lot_core-86d5e130952c24ac/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4582192, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/quote-24928154fc93a18c/output-lib-quote", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libquote-24928154fc93a18c.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1623442, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libquote-24928154fc93a18c.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=286376, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/log-c0c8a758958b18e1/output-lib-log", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/liblog-c0c8a758958b18e1.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=639732, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/liblog-c0c8a758958b18e1.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=242613, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/signal-hook-registry-1d43c946d56d8628/output-lib-signal-hook-registry", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsignal_hook_registry-1d43c946d56d8628.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=2923940, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsignal_hook_registry-1d43c946d56d8628.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=120382, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/smallvec-79fcf98adacea0dc/output-lib-smallvec", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsmallvec-79fcf98adacea0dc.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=361284, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsmallvec-79fcf98adacea0dc.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=305700, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/scopeguard-54ada409aeacfb34/output-lib-scopeguard", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libscopeguard-54ada409aeacfb34.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=39804, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libscopeguard-54ada409aeacfb34.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=32923, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/serde_derive-597f49fc3160b6ef/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde_derive-597f49fc3160b6ef/build_script_build-597f49fc3160b6ef", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4910256, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde_derive-597f49fc3160b6ef/build_script_build-597f49fc3160b6ef", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4910256, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde_derive-597f49fc3160b6ef/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4910256, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/lock_api-b61e43da63df7a55/output-lib-lock_api", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/liblock_api-b61e43da63df7a55.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=458424, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/liblock_api-b61e43da63df7a55.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=436467, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/signal-hook-81ea37c865991d47/output-lib-signal-hook", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsignal_hook-81ea37c865991d47.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=2342290, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsignal_hook-81ea37c865991d47.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=293425, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/parking_lot_core-27705aa45a0cd2e1/output-lib-parking_lot_core", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libparking_lot_core-27705aa45a0cd2e1.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1197762, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libparking_lot_core-27705aa45a0cd2e1.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=211843, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/syn-236805bd3ed49e02/output-lib-syn", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsyn-236805bd3ed49e02.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=15035192, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsyn-236805bd3ed49e02.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=2680732, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/mio-e5dc7237cf288aea/output-lib-mio", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libmio-e5dc7237cf288aea.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=2354158, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libmio-e5dc7237cf288aea.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=539488, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/serde-29eaf1f898cc58d4/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde-29eaf1f898cc58d4/build_script_build-29eaf1f898cc58d4", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4912448, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde-29eaf1f898cc58d4/build_script_build-29eaf1f898cc58d4", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4912448, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde-29eaf1f898cc58d4/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4912448, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/serde_derive-36b08f57e6174b86/output-lib-serde_derive", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libserde_derive-36b08f57e6174b86.so", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=21620928, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/signal-hook-mio-f570993554107270/output-lib-signal-hook-mio", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsignal_hook_mio-f570993554107270.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=71916, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libsignal_hook_mio-f570993554107270.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=24779, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/parking_lot-001a850be3f18076/output-lib-parking_lot", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libparking_lot-001a850be3f18076.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1636330, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libparking_lot-001a850be3f18076.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=291490, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/bitflags-a62167d66df21b36/output-lib-bitflags", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libbitflags-a62167d66df21b36.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=49970, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libbitflags-a62167d66df21b36.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=48625, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/serde_json-f2c105b6000655c8/output-build-script-build-script-build", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde_json-f2c105b6000655c8/build_script_build-f2c105b6000655c8", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4922016, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde_json-f2c105b6000655c8/build_script_build-f2c105b6000655c8", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4922016, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/build/serde_json-f2c105b6000655c8/build-script-build", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=4922016, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/crossterm-a0069ae548fab7a5/output-lib-crossterm", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libcrossterm-a0069ae548fab7a5.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=4722476, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libcrossterm-a0069ae548fab7a5.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1275442, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/serde-4079576b47dff4f1/output-lib-serde", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libserde-4079576b47dff4f1.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=7117246, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libserde-4079576b47dff4f1.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=6386178, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/itoa-82f66aa9993f623d/output-lib-itoa", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libitoa-82f66aa9993f623d.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=126618, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libitoa-82f66aa9993f623d.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=125281, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/ryu-ad067521c1a3d31b/output-lib-ryu", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libryu-ad067521c1a3d31b.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=420436, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libryu-ad067521c1a3d31b.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=141231, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/unicode-width-8c232fba68fb777d/output-lib-unicode-width", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libunicode_width-8c232fba68fb777d.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=135120, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libunicode_width-8c232fba68fb777d.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=123681, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/unicode-segmentation-2dc963112c4705fd/output-lib-unicode-segmentation", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libunicode_segmentation-2dc963112c4705fd.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=2484826, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libunicode_segmentation-2dc963112c4705fd.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1771308, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/cassowary-a9c0c75c8b27b533/output-lib-cassowary", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libcassowary-a9c0c75c8b27b533.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=3336834, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libcassowary-a9c0c75c8b27b533.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=246473, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/serde_json-02c66c73fc938576/output-lib-serde_json", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libserde_json-02c66c73fc938576.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=5214248, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libserde_json-02c66c73fc938576.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1629380, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/tui-f9a1ddcfd1a25cc0/output-lib-tui", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libtui-f9a1ddcfd1a25cc0.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=9251686, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libtui-f9a1ddcfd1a25cc0.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=2007023, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/seccompiler-7314742a17088c71/output-lib-seccompiler", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libseccompiler-7314742a17088c71.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=4299878, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libseccompiler-7314742a17088c71.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=533864, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/tui-textarea-f55c9c5431ce17a1/output-lib-tui-textarea", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xffffd9334af0) = -1 ENOENT (No such file or directory)
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libtui_textarea-f55c9c5431ce17a1.rlib", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1984044, ...}) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libtui_textarea-f55c9c5431ce17a1.rmeta", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=274664, ...}) = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/bin_client-7ad78bd274c4d0bf/output-bin-bin_client", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=17680, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/bin_client-7ad78bd274c4d0bf/output-bin-bin_client", O_RDONLY|O_CLOEXEC) = 9
+read(9, "{\"message\":\"unused import: `BpfP"..., 8192) = 8192
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 521warning: unused import: `BpfProgram`
+  --> bin_client/./src/main.rs:11:27
+   |
+11 | use seccompiler::{BpfMap, BpfProgram};
+   |                           ^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+) = 521
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 349warning: unused import: `string`
+  --> bin_client/./src/main.rs:38:15
+   |
+38 | use std::{fs, string};
+   |               ^^^^^^
+) = 349
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 381warning: unused import: `Widget`
+  --> bin_client/./src/app.rs:16:15
+   |
+16 |     widgets::{Widget, Block, Borders, Paragraph, Wrap},
+   |               ^^^^^^
+) = 381
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 402warning: unused import: `Read`
+  --> bin_client/./src/main.rs:25:41
+   |
+25 | use std::io::{self, BufRead, BufReader, Read, Write};
+   |                                         ^^^^
+) = 402
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+read(9, "001b[1m\\u001b[38;5;12m|\\u001b[0m"..., 8192) = 8192
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 653warning: unused variable: `client_seccomp_path`
+   --> bin_client/./src/main.rs:137:9
+    |
+137 |     let client_seccomp_path = &command_line_args[1];
+    |         ^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_client_seccomp_path`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+) = 653
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 521warning: unused variable: `nakamoto_seccomp_path`
+   --> bin_client/./src/main.rs:139:9
+    |
+139 |     let nakamoto_seccomp_path = &command_line_args[3];
+    |         ^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_nakamoto_seccomp_path`
+) = 521
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 513warning: unused variable: `wallet_seccomp_path`
+   --> bin_client/./src/main.rs:141:9
+    |
+141 |     let wallet_seccomp_path = &command_line_args[5];
+    |         ^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_wallet_seccomp_path`
+) = 513
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 526warning: unused variable: `wallet_stderr_mutex`
+   --> bin_client/./src/main.rs:189:9
+    |
+189 |     let wallet_stderr_mutex = Arc::new(Mutex::new(BufReader::new(
+    |         ^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_wallet_stderr_mutex`
+) = 526
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 573warning: associated function `set_inputs` is never used
+   --> bin_client/./src/app.rs:121:12
+    |
+121 |     pub fn set_inputs(&mut self, receiver: Option<String>, message: Option<String>) {
+    |            ^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+) = 573
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+read(9, "1b[0m\\u001b[1m: unused `Result` "..., 8192) = 1296
+write(2, "\33[0m\33[1m\33[33mwarning\33[0m\33[0m\33[1m"..., 737warning: unused `Result` that must be used
+   --> bin_client/./src/main.rs:407:29
+    |
+407 | ...                   wallet_stdin_clone.lock().unwrap().flush();
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this `Result` may be an `Err` variant, which should be handled
+    = note: `#[warn(unused_must_use)]` on by default
+) = 737
+write(2, "\n", 1
+)                       = 1
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+read(9, "", 8192)                       = 0
+close(9)                                = 0
+statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/bin_client-7ad78bd274c4d0bf", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=20920568, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/bin_client-7ad78bd274c4d0bf", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=20920568, ...}) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/bin_client", O_RDONLY|O_CLOEXEC) = 10
+statx(10, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0775, stx_size=20920568, ...}) = 0
+close(10)                               = 0
+close(9)                                = 0
+futex(0xaaab164de9b0, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0xaaab164de9b4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+write(2, "\33[0m", 4)                   = 4
+write(2, "\33[0m", 4)                   = 4
+write(2, "\33[1m", 4)                   = 4
+write(2, "\33[33m", 5)                  = 5
+write(2, "warning", 7warning)                  = 7
+write(2, "\33[0m", 4)                   = 4
+write(2, "\33[1m", 4)                   = 4
+write(2, ":", 1:)                        = 1
+write(2, "\33[0m", 4)                   = 4
+write(2, " ", 1 )                        = 1
+write(2, "`bin_client` (bin \"bin_client\") "..., 53`bin_client` (bin "bin_client") generated 10 warnings) = 53
+write(2, "\n", 1
+)                       = 1
+write(2, "\33[0m", 4)                   = 4
+write(2, "\33[0m", 4)                   = 4
+write(2, "\33[1m", 4)                   = 4
+write(2, "\33[32m", 5)                  = 5
+write(2, " ", 1 )                        = 1
+write(2, " ", 1 )                        = 1
+write(2, " ", 1 )                        = 1
+write(2, " ", 1 )                        = 1
+write(2, "Finished", 8Finished)                 = 8
+write(2, "\33[0m", 4)                   = 4
+write(2, " ", 1 )                        = 1
+write(2, "dev [unoptimized + debuginfo] ta"..., 48dev [unoptimized + debuginfo] target(s) in 0.41s) = 48
+write(2, "\n", 1
+)                       = 1
+write(7, "|", 1)                        = 1
+futex(0xaaab166bab98, FUTEX_WAKE_PRIVATE, 1) = 0
+getpid()                                = 143173
+tgkill(143173, 143174, SIGUSR1)         = 0
+futex(0xaaab166bab98, FUTEX_WAIT_BITSET_PRIVATE, 48, {tv_sec=50972, tv_nsec=774311333}, FUTEX_BITSET_MATCH_ANY) = -1 EAGAIN (Resource temporarily unavailable)
+sched_yield()                           = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/.fingerprint/bin_client-7ad78bd274c4d0bf/dep-bin-bin_client", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=39, ...}) = 0
+read(9, "\2\0\0\0\0\v\0\0\0src/main.rs\0\n\0\0\0src/app"..., 39) = 39
+read(9, "", 32)                         = 0
+close(9)                                = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/bin_client.d", O_RDONLY|O_CLOEXEC) = 9
+statx(9, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=166, ...}) = 0
+read(9, "/home/yuan/Desktop/bitcoin-rust/"..., 166) = 166
+read(9, "", 32)                         = 0
+close(9)                                = 0
+close(6)                                = 0
+close(7)                                = 0
+flock(8, LOCK_UN)                       = 0
+close(8)                                = 0
+munmap(0xffffaf3cd000, 113475812)       = 0
+close(4)                                = 0
+munmap(0xffffb6006000, 5346776)         = 0
+munmap(0xffffaf325000, 389120)          = 0
+munmap(0xffffaf384000, 135168)          = 0
+munmap(0xffffaf3a5000, 163840)          = 0
+munmap(0xffffaf2c4000, 397312)          = 0
 close(3)                                = 0
-openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = 3
-read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0\320)\0\0\0\0\0\0"..., 832) = 832
-fstat(3, {st_mode=S_IFREG|0644, st_size=80200, ...}) = 0
-mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xffffbd93f000
-mmap(NULL, 144472, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffbd8dc000
-mprotect(0xffffbd8ef000, 61440, PROT_NONE) = 0
-mmap(0xffffbd8fe000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x12000) = 0xffffbd8fe000
-close(3)                                = 0
-openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libpthread.so.0", O_RDONLY|O_CLOEXEC) = 3
-read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0Ha\0\0\0\0\0\0"..., 832) = 832
-fstat(3, {st_mode=S_IFREG|0755, st_size=164304, ...}) = 0
-mmap(NULL, 197624, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffbd8ab000
-mprotect(0xffffbd8c7000, 61440, PROT_NONE) = 0
-mmap(0xffffbd8d6000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1b000) = 0xffffbd8d6000
-mmap(0xffffbd8d8000, 13304, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xffffbd8d8000
-close(3)                                = 0
-openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
-read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0\360\272\0\0\0\0\0\0"..., 832) = 832
-fstat(3, {st_mode=S_IFREG|0644, st_size=633832, ...}) = 0
-mmap(NULL, 696440, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffbd800000
-mprotect(0xffffbd899000, 65536, PROT_NONE) = 0
-mmap(0xffffbd8a9000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x99000) = 0xffffbd8a9000
-close(3)                                = 0
-openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libdl.so.2", O_RDONLY|O_CLOEXEC) = 3
-read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0P\17\0\0\0\0\0\0"..., 832) = 832
-fstat(3, {st_mode=S_IFREG|0644, st_size=14560, ...}) = 0
-mmap(NULL, 78080, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffbd7ec000
-mprotect(0xffffbd7ef000, 61440, PROT_NONE) = 0
-mmap(0xffffbd7fe000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0xffffbd7fe000
-close(3)                                = 0
-openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
-read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0`\17\2\0\0\0\0\0"..., 832) = 832
-fstat(3, {st_mode=S_IFREG|0755, st_size=1450832, ...}) = 0
-mmap(NULL, 1519552, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffbd679000
-mprotect(0xffffbd7d4000, 61440, PROT_NONE) = 0
-mmap(0xffffbd7e3000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x15a000) = 0xffffbd7e3000
-mmap(0xffffbd7e9000, 12224, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xffffbd7e9000
-close(3)                                = 0
-mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xffffbd93d000
-mprotect(0xffffbd7e3000, 16384, PROT_READ) = 0
-mprotect(0xffffbd7fe000, 4096, PROT_READ) = 0
-mprotect(0xffffbd8a9000, 4096, PROT_READ) = 0
-mprotect(0xffffbd8d6000, 4096, PROT_READ) = 0
-mprotect(0xffffbd8fe000, 4096, PROT_READ) = 0
-mprotect(0xaaaaca5a0000, 704512, PROT_READ) = 0
-mprotect(0xffffbd943000, 4096, PROT_READ) = 0
-munmap(0xffffbd900000, 70322)           = 0
-set_tid_address(0xffffbd93d8f0)         = 134773
-set_robust_list(0xffffbd93d900, 24)     = 0
-rt_sigaction(SIGRTMIN, {sa_handler=0xffffbd8b0bd0, sa_mask=[], sa_flags=SA_SIGINFO}, NULL, 8) = 0
-rt_sigaction(SIGRT_1, {sa_handler=0xffffbd8b0c90, sa_mask=[], sa_flags=SA_RESTART|SA_SIGINFO}, NULL, 8) = 0
-rt_sigprocmask(SIG_UNBLOCK, [RTMIN RT_1], NULL, 8) = 0
-prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
-brk(NULL)                               = 0xaaaad4e51000
-brk(0xaaaad4e72000)                     = 0xaaaad4e72000
-rt_sigprocmask(SIG_SETMASK, ~[ILL TRAP BUS FPE SEGV RTMIN RT_1], [], 8) = 0
-rt_sigaction(SIGILL, {sa_handler=0xaaaaca2e7c50, sa_mask=~[ILL TRAP BUS FPE SEGV RTMIN RT_1], sa_flags=0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
-rt_sigprocmask(SIG_BLOCK, NULL, ~[ILL TRAP BUS FPE KILL SEGV STOP RTMIN RT_1], 8) = 0
-rt_sigaction(SIGILL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, NULL, 8) = 0
-rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
-futex(0xaaaaca656438, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca6564a4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca656468, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca65652c, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca656428, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca65642c, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca65645c, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca653aa4, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca6563d8, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca654320, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca654324, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca65646c, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca656450, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaaca656458, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-openat(AT_FDCWD, "/usr/local/ssl/openssl.cnf", O_RDONLY) = -1 ENOENT (No such file or directory)
-futex(0xaaaaca656448, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-sysinfo({uptime=46343, loads=[3040, 1824, 128], totalram=4110639104, freeram=787034112, sharedram=9740288, bufferram=73760768, totalswap=4110413824, freeswap=3802918912, procs=838, totalhigh=0, freehigh=0, mem_unit=1}) = 0
-futex(0xaaaaca653a48, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-ppoll([{fd=0, events=0}, {fd=1, events=0}, {fd=2, events=0}], 3, {tv_sec=0, tv_nsec=0}, NULL, 0) = 0 (Timeout)
-rt_sigaction(SIGPIPE, {sa_handler=SIG_IGN, sa_mask=[PIPE], sa_flags=SA_RESTART}, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=0}, 8) = 0
-rt_sigaction(SIGSEGV, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
-rt_sigaction(SIGSEGV, {sa_handler=0xaaaaca126774, sa_mask=[], sa_flags=SA_ONSTACK|SA_SIGINFO}, NULL, 8) = 0
-rt_sigaction(SIGBUS, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
-rt_sigaction(SIGBUS, {sa_handler=0xaaaaca126774, sa_mask=[], sa_flags=SA_ONSTACK|SA_SIGINFO}, NULL, 8) = 0
-sigaltstack(NULL, {ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}) = 0
-mmap(NULL, 20480, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0xffffbd938000
-mprotect(0xffffbd938000, 4096, PROT_NONE) = 0
-sigaltstack({ss_sp=0xffffbd939000, ss_flags=0, ss_size=16384}, NULL) = 0
-openat(AT_FDCWD, "/proc/self/maps", O_RDONLY|O_CLOEXEC) = 3
-prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
-fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
-read(3, "aaaac9c93000-aaaaca590000 r-xp 0"..., 1024) = 1024
-read(3, "inux-gnu/libdl-2.31.so\nffffbd7ef"..., 1024) = 1024
-read(3, "4-linux-gnu/libpthread-2.31.so\nf"..., 1024) = 1024
-read(3, "0:00 0                          "..., 1024) = 422
-close(3)                                = 0
-sched_getaffinity(134773, 32, [0, 1])   = 32
-getcwd("/home/yuan/Desktop/bitcoin-rust", 512) = 32
-readlinkat(AT_FDCWD, "/proc/self/exe", "/home/yuan/.cargo/bin/cargo", 256) = 27
-getcwd("/home/yuan/Desktop/bitcoin-rust", 512) = 32
-statx(0, NULL, AT_STATX_SYNC_AS_STAT, STATX_ALL, NULL) = -1 EFAULT (Bad address)
-statx(AT_FDCWD, "/home/yuan/.cargo/bin/rustup-init", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xfffff5a2a3d0) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/home/yuan/.terminfo", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xfffff5a29cb0) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/etc/terminfo", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
-statx(AT_FDCWD, "/etc/terminfo/x/xterm-256color", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xfffff5a29cb0) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/etc/terminfo/78/xterm-256color", AT_STATX_SYNC_AS_STAT, STATX_ALL, 0xfffff5a29cb0) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/lib/terminfo", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
-statx(AT_FDCWD, "/lib/terminfo/x/xterm-256color", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0644, stx_size=3503, ...}) = 0
-openat(AT_FDCWD, "/lib/terminfo/x/xterm-256color", O_RDONLY|O_CLOEXEC) = 3
-read(3, "\36\2%\0&\0\17\0\235\1\356\5xterm-256color|xterm"..., 8192) = 3503
-getrandom(0xfffff5a29d40, 16, 0x4 /* GRND_??? */) = -1 EINVAL (Invalid argument)
-getrandom("\xd5\x32\xce\xfa\xbf\x55\x50\xd2\x43\x3a\x3c\x28\x0f\x1a\xa3\x88", 16, GRND_NONBLOCK) = 16
-brk(0xaaaad4e93000)                     = 0xaaaad4e93000
-close(3)                                = 0
-getcwd("/home/yuan/Desktop/bitcoin-rust", 512) = 32
-statx(AT_FDCWD, "/home/yuan/.rustup", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0775, stx_size=4096, ...}) = 0
-openat(AT_FDCWD, "/etc/rustup/settings.toml", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/home/yuan/.rustup/settings.toml", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=103, ...}) = 0
-openat(AT_FDCWD, "/home/yuan/.rustup/settings.toml", O_RDONLY|O_CLOEXEC) = 3
-statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=103, ...}) = 0
-lseek(3, 0, SEEK_CUR)                   = 0
-read(3, "default_toolchain = \"stable-aarc"..., 103) = 103
-read(3, "", 32)                         = 0
-close(3)                                = 0
-brk(0xaaaad4eb7000)                     = 0xaaaad4eb7000
-brk(0xaaaad4eec000)                     = 0xaaaad4eec000
-uname({sysname="Linux", nodename="3235", ...}) = 0
-brk(0xaaaad4f0d000)                     = 0xaaaad4f0d000
-statx(AT_FDCWD, "/home/yuan/.rustup", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0775, stx_size=4096, ...}) = 0
-getcwd("/home/yuan/Desktop/bitcoin-rust", 512) = 32
-statx(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0775, stx_size=4096, ...}) = 0
-newfstatat(AT_FDCWD, "/home", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-newfstatat(AT_FDCWD, "/home/yuan", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-newfstatat(AT_FDCWD, "/home/yuan/Desktop", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust", {st_mode=S_IFDIR|0775, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/rust-toolchain", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/rust-toolchain.toml", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/home/yuan/Desktop", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
-newfstatat(AT_FDCWD, "/home", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-newfstatat(AT_FDCWD, "/home/yuan", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-newfstatat(AT_FDCWD, "/home/yuan/Desktop", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-openat(AT_FDCWD, "/home/yuan/Desktop/rust-toolchain", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/Desktop/rust-toolchain.toml", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/home/yuan", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
-newfstatat(AT_FDCWD, "/home", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-newfstatat(AT_FDCWD, "/home/yuan", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-openat(AT_FDCWD, "/home/yuan/rust-toolchain", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/rust-toolchain.toml", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/home", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
-newfstatat(AT_FDCWD, "/home", {st_mode=S_IFDIR|0755, st_size=4096, ...}, AT_SYMLINK_NOFOLLOW) = 0
-openat(AT_FDCWD, "/home/rust-toolchain", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/rust-toolchain.toml", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-statx(AT_FDCWD, "/", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0755, stx_size=4096, ...}) = 0
-openat(AT_FDCWD, "/rust-toolchain", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/rust-toolchain.toml", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-uname({sysname="Linux", nodename="3235", ...}) = 0
-statx(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0775, stx_size=4096, ...}) = 0
-statx(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0775, stx_size=4096, ...}) = 0
-statx(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/rust-installer-version", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1, ...}) = 0
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/rust-installer-version", O_RDONLY|O_CLOEXEC) = 3
-statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1, ...}) = 0
-lseek(3, 0, SEEK_CUR)                   = 0
-read(3, "3", 8)                         = 1
-read(3, "", 7)                          = 0
-close(3)                                = 0
-statx(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/multirust-channel-manifest.toml", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=746590, ...}) = 0
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/multirust-channel-manifest.toml", O_RDONLY|O_CLOEXEC) = 3
-statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=746590, ...}) = 0
-lseek(3, 0, SEEK_CUR)                   = 0
-mmap(NULL, 749568, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xffffbd5c2000
-read(3, "date = \"2023-03-28\"\nmanifest-ver"..., 746590) = 746590
-read(3, "", 32)                         = 0
-close(3)                                = 0
-brk(0xaaaad4f2e000)                     = 0xaaaad4f2e000
-brk(0xaaaad4f4f000)                     = 0xaaaad4f4f000
-brk(0xaaaad4f70000)                     = 0xaaaad4f70000
-brk(0xaaaad4f91000)                     = 0xaaaad4f91000
-brk(0xaaaad4fb2000)                     = 0xaaaad4fb2000
-brk(0xaaaad4fd3000)                     = 0xaaaad4fd3000
-mmap(NULL, 135168, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xffffbd5a1000
-brk(0xaaaad4ff4000)                     = 0xaaaad4ff4000
-brk(0xaaaad5015000)                     = 0xaaaad5015000
-brk(0xaaaad5036000)                     = 0xaaaad5036000
-brk(0xaaaad5057000)                     = 0xaaaad5057000
-brk(0xaaaad5078000)                     = 0xaaaad5078000
-brk(0xaaaad5099000)                     = 0xaaaad5099000
-mremap(0xffffbd5a1000, 135168, 266240, MREMAP_MAYMOVE) = 0xffffbd560000
-brk(0xaaaad50ba000)                     = 0xaaaad50ba000
-brk(0xaaaad50db000)                     = 0xaaaad50db000
-brk(0xaaaad50fc000)                     = 0xaaaad50fc000
-brk(0xaaaad511d000)                     = 0xaaaad511d000
-brk(0xaaaad513e000)                     = 0xaaaad513e000
-brk(0xaaaad515f000)                     = 0xaaaad515f000
-brk(0xaaaad5180000)                     = 0xaaaad5180000
-brk(0xaaaad51a1000)                     = 0xaaaad51a1000
-brk(0xaaaad51c2000)                     = 0xaaaad51c2000
-brk(0xaaaad51e3000)                     = 0xaaaad51e3000
-brk(0xaaaad5204000)                     = 0xaaaad5204000
-brk(0xaaaad5225000)                     = 0xaaaad5225000
-mremap(0xffffbd560000, 266240, 528384, MREMAP_MAYMOVE) = 0xffffbd4df000
-brk(0xaaaad5246000)                     = 0xaaaad5246000
-brk(0xaaaad5267000)                     = 0xaaaad5267000
-brk(0xaaaad5288000)                     = 0xaaaad5288000
-brk(0xaaaad52a9000)                     = 0xaaaad52a9000
-brk(0xaaaad52ca000)                     = 0xaaaad52ca000
-brk(0xaaaad52eb000)                     = 0xaaaad52eb000
-brk(0xaaaad530c000)                     = 0xaaaad530c000
-brk(0xaaaad532d000)                     = 0xaaaad532d000
-brk(0xaaaad534e000)                     = 0xaaaad534e000
-brk(0xaaaad536f000)                     = 0xaaaad536f000
-brk(0xaaaad5390000)                     = 0xaaaad5390000
-brk(0xaaaad53b1000)                     = 0xaaaad53b1000
-brk(0xaaaad53d4000)                     = 0xaaaad53d4000
-brk(0xaaaad53f8000)                     = 0xaaaad53f8000
-brk(0xaaaad541b000)                     = 0xaaaad541b000
-brk(0xaaaad543c000)                     = 0xaaaad543c000
-brk(0xaaaad545d000)                     = 0xaaaad545d000
-brk(0xaaaad547e000)                     = 0xaaaad547e000
-brk(0xaaaad549f000)                     = 0xaaaad549f000
-brk(0xaaaad54c0000)                     = 0xaaaad54c0000
-brk(0xaaaad54e1000)                     = 0xaaaad54e1000
-brk(0xaaaad5502000)                     = 0xaaaad5502000
-brk(0xaaaad5523000)                     = 0xaaaad5523000
-brk(0xaaaad5544000)                     = 0xaaaad5544000
-brk(0xaaaad5565000)                     = 0xaaaad5565000
-brk(0xaaaad5586000)                     = 0xaaaad5586000
-brk(0xaaaad55a7000)                     = 0xaaaad55a7000
-brk(0xaaaad55c8000)                     = 0xaaaad55c8000
-brk(0xaaaad55e9000)                     = 0xaaaad55e9000
-brk(0xaaaad560a000)                     = 0xaaaad560a000
-brk(0xaaaad562b000)                     = 0xaaaad562b000
-brk(0xaaaad564c000)                     = 0xaaaad564c000
-brk(0xaaaad566e000)                     = 0xaaaad566e000
-brk(0xaaaad568f000)                     = 0xaaaad568f000
-brk(0xaaaad56b0000)                     = 0xaaaad56b0000
-brk(0xaaaad56d1000)                     = 0xaaaad56d1000
-brk(0xaaaad56f2000)                     = 0xaaaad56f2000
-brk(0xaaaad5713000)                     = 0xaaaad5713000
-brk(0xaaaad5734000)                     = 0xaaaad5734000
-brk(0xaaaad5755000)                     = 0xaaaad5755000
-brk(0xaaaad5776000)                     = 0xaaaad5776000
-brk(0xaaaad5797000)                     = 0xaaaad5797000
-brk(0xaaaad57b8000)                     = 0xaaaad57b8000
-munmap(0xffffbd4df000, 528384)          = 0
-munmap(0xffffbd5c2000, 749568)          = 0
-statx(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/multirust-config.toml", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=495, ...}) = 0
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/multirust-config.toml", O_RDONLY|O_CLOEXEC) = 3
-statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=495, ...}) = 0
-lseek(3, 0, SEEK_CUR)                   = 0
-read(3, "config_version = \"1\"\n\n[[componen"..., 495) = 495
-read(3, "", 32)                         = 0
-close(3)                                = 0
-brk(0xaaaad5569000)                     = 0xaaaad5569000
-statx(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFDIR|0775, stx_size=4096, ...}) = 0
-statx(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo", AT_STATX_SYNC_AS_STAT, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0755, stx_size=25594568, ...}) = 0
-getcwd("/home/yuan/Desktop/bitcoin-rust", 512) = 32
-getcwd("/home/yuan/Desktop/bitcoin-rust", 512) = 32
+close(5)                                = 0
+write(2, "\33[0m", 4)                   = 4
+write(2, "\33[0m", 4)                   = 4
+write(2, "\33[1m", 4)                   = 4
+write(2, "\33[32m", 5)                  = 5
+write(2, " ", 1 )                        = 1
+write(2, " ", 1 )                        = 1
+write(2, " ", 1 )                        = 1
+write(2, " ", 1 )                        = 1
+write(2, " ", 1 )                        = 1
+write(2, "Running", 7Running)                  = 7
+write(2, "\33[0m", 4)                   = 4
+write(2, " ", 1 )                        = 1
+write(2, "`target/debug/bin_client ./bin_c"..., 228`target/debug/bin_client ./bin_client/policies/seccomp_client.json ./tests/nakamoto_config1_alone ./bin_client/policies/seccomp_nakamoto.json ./tests/_secrets/Wallet.A.json ./bin_client/policies/seccomp_wallet.json -o trace.log`) = 228
+write(2, "\n", 1
+)                       = 1
+chdir("/home/yuan/Desktop/bitcoin-rust") = 0
 rt_sigaction(SIGPIPE, {sa_handler=SIG_DFL, sa_mask=[PIPE], sa_flags=SA_RESTART}, {sa_handler=SIG_IGN, sa_mask=[PIPE], sa_flags=SA_RESTART}, 8) = 0
-execve("/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo", ["/home/yuan/.rustup/toolchains/st"..., "run", "--bin", "bin_wallet", "-o", "trace.log"], 0xaaaad4e6d910 /* 38 vars */) = 0
-brk(NULL)                               = 0xaaab0553a000
-readlinkat(AT_FDCWD, "/proc/self/exe", "/home/yuan/.rustup/toolchains/st"..., 4096) = 72
-mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xffff8a641000
+execve("target/debug/bin_client", ["target/debug/bin_client", "./bin_client/policies/seccomp_cl"..., "./tests/nakamoto_config1_alone", "./bin_client/policies/seccomp_na"..., "./tests/_secrets/Wallet.A.json", "./bin_client/policies/seccomp_wa"..., "-o", "trace.log"], 0xaaab1653b0d0 /* 55 vars */) = 0
+brk(NULL)                               = 0xaaaaf04fb000
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xffffa0ad1000
 faccessat(AT_FDCWD, "/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/tls/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/tls/aarch64/atomics", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/tls/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/tls/aarch64", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/tls/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/tls/atomics", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/tls/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/tls", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/aarch64/atomics", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/aarch64", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/atomics", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/tls/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/tls/aarch64/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/tls/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/tls/aarch64", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/tls/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/tls/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/tls/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/tls", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/aarch64/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/aarch64", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps", {st_mode=S_IFDIR|0775, st_size=36864, ...}, 0) = 0
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/tls/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/tls/aarch64/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/tls/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/tls/aarch64", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/tls/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/tls/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/tls/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/tls", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/aarch64/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/aarch64", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/tls/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/tls/aarch64/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/tls/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/tls/aarch64", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/tls/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/tls/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/tls/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/tls", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/aarch64/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/aarch64", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/aarch64/atomics", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/aarch64/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/aarch64", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/aarch64", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/atomics", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/tls", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/aarch64/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/aarch64/atomics", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/aarch64/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/aarch64/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/aarch64", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/aarch64", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/atomics/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
-newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/atomics", 0xffffd1fce3e0, 0) = -1 ENOENT (No such file or directory)
+newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/atomics", 0xffffc2e0b450, 0) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 newfstatat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 fstat(3, {st_mode=S_IFREG|0644, st_size=70322, ...}) = 0
-mmap(NULL, 70322, PROT_READ, MAP_PRIVATE, 3, 0) = 0xffff8a602000
+mmap(NULL, 70322, PROT_READ, MAP_PRIVATE, 3, 0) = 0xffffa0a92000
 close(3)                                = 0
 openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = 3
 read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0\320)\0\0\0\0\0\0"..., 832) = 832
 fstat(3, {st_mode=S_IFREG|0644, st_size=80200, ...}) = 0
-mmap(NULL, 144472, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffff8a5de000
-mprotect(0xffff8a5f1000, 61440, PROT_NONE) = 0
-mmap(0xffff8a600000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x12000) = 0xffff8a600000
+mmap(NULL, 144472, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffa0a6e000
+mprotect(0xffffa0a81000, 61440, PROT_NONE) = 0
+mmap(0xffffa0a90000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x12000) = 0xffffa0a90000
 close(3)                                = 0
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/libpthread.so.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libpthread.so.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/libpthread.so.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/libpthread.so.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/libpthread.so.0", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libpthread.so.0", O_RDONLY|O_CLOEXEC) = 3
 read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0Ha\0\0\0\0\0\0"..., 832) = 832
 fstat(3, {st_mode=S_IFREG|0755, st_size=164304, ...}) = 0
-mmap(NULL, 197624, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffff8a5ad000
-mprotect(0xffff8a5c9000, 61440, PROT_NONE) = 0
-mmap(0xffff8a5d8000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1b000) = 0xffff8a5d8000
-mmap(0xffff8a5da000, 13304, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xffff8a5da000
+mmap(NULL, 197624, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffa0a3d000
+mprotect(0xffffa0a59000, 61440, PROT_NONE) = 0
+mmap(0xffffa0a68000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1b000) = 0xffffa0a68000
+mmap(0xffffa0a6a000, 13304, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xffffa0a6a000
 close(3)                                = 0
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/libm.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libm.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/libm.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/libm.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/libm.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
 read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0\360\272\0\0\0\0\0\0"..., 832) = 832
 fstat(3, {st_mode=S_IFREG|0644, st_size=633832, ...}) = 0
-mmap(NULL, 696440, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffff8a502000
-mprotect(0xffff8a59b000, 65536, PROT_NONE) = 0
-mmap(0xffff8a5ab000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x99000) = 0xffff8a5ab000
+mmap(NULL, 696440, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffa0992000
+mprotect(0xffffa0a2b000, 65536, PROT_NONE) = 0
+mmap(0xffffa0a3b000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x99000) = 0xffffa0a3b000
 close(3)                                = 0
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/libdl.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libdl.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/libdl.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/libdl.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/libdl.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libdl.so.2", O_RDONLY|O_CLOEXEC) = 3
 read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0P\17\0\0\0\0\0\0"..., 832) = 832
 fstat(3, {st_mode=S_IFREG|0644, st_size=14560, ...}) = 0
-mmap(NULL, 78080, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffff8a4ee000
-mprotect(0xffff8a4f1000, 61440, PROT_NONE) = 0
-mmap(0xffff8a500000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0xffff8a500000
+mmap(NULL, 78080, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffa097e000
+mprotect(0xffffa0981000, 61440, PROT_NONE) = 0
+mmap(0xffffa0990000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0xffffa0990000
 close(3)                                = 0
-openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/../lib/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/deps/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/Desktop/bitcoin-rust/target/debug/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/aarch64-unknown-linux-gnu/lib/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/home/yuan/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/lib/aarch64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
 read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0\267\0\1\0\0\0`\17\2\0\0\0\0\0"..., 832) = 832
 fstat(3, {st_mode=S_IFREG|0755, st_size=1450832, ...}) = 0
-mmap(NULL, 1519552, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffff8a37b000
-mprotect(0xffff8a4d6000, 61440, PROT_NONE) = 0
-mmap(0xffff8a4e5000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x15a000) = 0xffff8a4e5000
-mmap(0xffff8a4eb000, 12224, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xffff8a4eb000
+mmap(NULL, 1519552, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xffffa080b000
+mprotect(0xffffa0966000, 61440, PROT_NONE) = 0
+mmap(0xffffa0975000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x15a000) = 0xffffa0975000
+mmap(0xffffa097b000, 12224, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xffffa097b000
 close(3)                                = 0
-mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xffff8a63f000
-mprotect(0xffff8a4e5000, 16384, PROT_READ) = 0
-mprotect(0xffff8a500000, 4096, PROT_READ) = 0
-mprotect(0xffff8a5ab000, 4096, PROT_READ) = 0
-mprotect(0xffff8a5d8000, 4096, PROT_READ) = 0
-mprotect(0xffff8a600000, 4096, PROT_READ) = 0
-mprotect(0xaaaac69e6000, 552960, PROT_READ) = 0
-mprotect(0xffff8a645000, 4096, PROT_READ) = 0
-munmap(0xffff8a602000, 70322)           = 0
-set_tid_address(0xffff8a63fb90)         = 134773
-set_robust_list(0xffff8a63fba0, 24)     = 0
-rt_sigaction(SIGRTMIN, {sa_handler=0xffff8a5b2bd0, sa_mask=[], sa_flags=SA_SIGINFO}, NULL, 8) = 0
-rt_sigaction(SIGRT_1, {sa_handler=0xffff8a5b2c90, sa_mask=[], sa_flags=SA_RESTART|SA_SIGINFO}, NULL, 8) = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xffffa0acf000
+mprotect(0xffffa0975000, 16384, PROT_READ) = 0
+mprotect(0xffffa0990000, 4096, PROT_READ) = 0
+mprotect(0xffffa0a3b000, 4096, PROT_READ) = 0
+mprotect(0xffffa0a68000, 4096, PROT_READ) = 0
+mprotect(0xffffa0a90000, 4096, PROT_READ) = 0
+mprotect(0xaaaab3b90000, 32768, PROT_READ) = 0
+mprotect(0xffffa0ad5000, 4096, PROT_READ) = 0
+munmap(0xffffa0a92000, 70322)           = 0
+set_tid_address(0xffffa0acfb90)         = 143173
+set_robust_list(0xffffa0acfba0, 24)     = 0
+rt_sigaction(SIGRTMIN, {sa_handler=0xffffa0a42bd0, sa_mask=[], sa_flags=SA_SIGINFO}, NULL, 8) = 0
+rt_sigaction(SIGRT_1, {sa_handler=0xffffa0a42c90, sa_mask=[], sa_flags=SA_RESTART|SA_SIGINFO}, NULL, 8) = 0
 rt_sigprocmask(SIG_UNBLOCK, [RTMIN RT_1], NULL, 8) = 0
 prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
-brk(NULL)                               = 0xaaab0553a000
-brk(0xaaab0555b000)                     = 0xaaab0555b000
-rt_sigprocmask(SIG_SETMASK, ~[ILL TRAP BUS FPE SEGV RTMIN RT_1], [], 8) = 0
-rt_sigaction(SIGILL, {sa_handler=0xaaaac65e50d0, sa_mask=~[ILL TRAP BUS FPE SEGV RTMIN RT_1], sa_flags=0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
-rt_sigprocmask(SIG_BLOCK, NULL, ~[ILL TRAP BUS FPE KILL SEGV STOP RTMIN RT_1], 8) = 0
-rt_sigaction(SIGILL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, NULL, 8) = 0
-rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
-futex(0xaaaac6a783e8, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a78454, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a78418, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a784dc, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a783d8, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a783dc, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a7840c, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a75904, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a78388, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a76280, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a76284, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a7841c, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a78400, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-futex(0xaaaac6a78408, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-openat(AT_FDCWD, "/usr/local/ssl/openssl.cnf", O_RDONLY) = -1 ENOENT (No such file or directory)
-futex(0xaaaac6a783f8, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-sysinfo({uptime=46343, loads=[3040, 1824, 128], totalram=4110639104, freeram=784187392, sharedram=9740288, bufferram=73760768, totalswap=4110413824, freeswap=3802918912, procs=838, totalhigh=0, freehigh=0, mem_unit=1}) = 0
-futex(0xaaaac6a75890, FUTEX_WAKE_PRIVATE, 2147483647) = 0
 ppoll([{fd=0, events=0}, {fd=1, events=0}, {fd=2, events=0}], 3, {tv_sec=0, tv_nsec=0}, NULL, 0) = 0 (Timeout)
 rt_sigaction(SIGPIPE, {sa_handler=SIG_IGN, sa_mask=[PIPE], sa_flags=SA_RESTART}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
 rt_sigaction(SIGSEGV, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
-rt_sigaction(SIGSEGV, {sa_handler=0xaaaac6675fe0, sa_mask=[], sa_flags=SA_ONSTACK|SA_SIGINFO}, NULL, 8) = 0
+rt_sigaction(SIGSEGV, {sa_handler=0xaaaab3b1f150, sa_mask=[], sa_flags=SA_ONSTACK|SA_SIGINFO}, NULL, 8) = 0
 rt_sigaction(SIGBUS, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
-rt_sigaction(SIGBUS, {sa_handler=0xaaaac6675fe0, sa_mask=[], sa_flags=SA_ONSTACK|SA_SIGINFO}, NULL, 8) = 0
+rt_sigaction(SIGBUS, {sa_handler=0xaaaab3b1f150, sa_mask=[], sa_flags=SA_ONSTACK|SA_SIGINFO}, NULL, 8) = 0
 sigaltstack(NULL, {ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}) = 0
-mmap(NULL, 20480, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0xffff8a63a000
-mprotect(0xffff8a63a000, 4096, PROT_NONE) = 0
-sigaltstack({ss_sp=0xffff8a63b000, ss_flags=0, ss_size=16384}, NULL) = 0
+mmap(NULL, 20480, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0xffffa0aca000
+mprotect(0xffffa0aca000, 4096, PROT_NONE) = 0
+sigaltstack({ss_sp=0xffffa0acb000, ss_flags=0, ss_size=16384}, NULL) = 0
+brk(NULL)                               = 0xaaaaf04fb000
+brk(0xaaaaf051c000)                     = 0xaaaaf051c000
 openat(AT_FDCWD, "/proc/self/maps", O_RDONLY|O_CLOEXEC) = 3
 prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
-read(3, "aaaac5c67000-aaaac69d7000 r-xp 0"..., 1024) = 1024
-read(3, "a4eb000-ffff8a4ee000 rw-p 000000"..., 1024) = 1024
-read(3, " /usr/lib/aarch64-linux-gnu/libp"..., 1024) = 1024
-read(3, "8a63a000-ffff8a63b000 ---p 00000"..., 1024) = 557
+read(3, "aaaab3a55000-aaaab3b81000 r-xp 0"..., 1024) = 1024
+read(3, "                 /usr/lib/aarch6"..., 1024) = 1024
+read(3, "                    /usr/lib/aar"..., 1024) = 1024
+read(3, "ad3000-ffffa0ad4000 r--p 0000000"..., 1024) = 457
 close(3)                                = 0
-sched_getaffinity(134773, 32, [0, 1])   = 32
-getrandom(0xffffd1fce898, 16, 0x4 /* GRND_??? */) = -1 EINVAL (Invalid argument)
-getrandom("\x10\x52\x50\x5c\x90\x6a\x17\x45\x4f\x5f\x1a\x7e\x9f\x7a\x18\xb0", 16, GRND_NONBLOCK) = 16
-ioctl(2, TIOCGWINSZ, {ws_row=49, ws_col=82, ws_xpixel=0, ws_ypixel=0}) = 0
-brk(0xaaab05581000)                     = 0xaaab05581000
-brk(0xaaab055a4000)                     = 0xaaab055a4000
-brk(0xaaab055c5000)                     = 0xaaab055c5000
-brk(0xaaab055eb000)                     = 0xaaab055eb000
-brk(0xaaab05613000)                     = 0xaaab05613000
-brk(0xaaab05635000)                     = 0xaaab05635000
-brk(0xaaab05601000)                     = 0xaaab05601000
-brk(0xaaab055f4000)                     = 0xaaab055f4000
-ioctl(1, TIOCGWINSZ, {ws_row=49, ws_col=82, ws_xpixel=0, ws_ypixel=0}) = 0
-ioctl(2, TIOCGWINSZ, {ws_row=49, ws_col=82, ws_xpixel=0, ws_ypixel=0}) = 0
-ioctl(2, TIOCGWINSZ, {ws_row=49, ws_col=82, ws_xpixel=0, ws_ypixel=0}) = 0
-getcwd("/home/yuan/Desktop/bitcoin-rust", 512) = 32
-ioctl(2, TIOCGWINSZ, {ws_row=49, ws_col=82, ws_xpixel=0, ws_ypixel=0}) = 0
-write(2, "\33[0m\33[1m\33[31merror:\33[0m\33[0m \33[0m"..., 40
+sched_getaffinity(143173, 32, [0, 1])   = 32
+pipe2([3, 4], O_CLOEXEC)                = 0
+pipe2([5, 6], O_CLOEXEC)                = 0
+pipe2([7, 8], O_CLOEXEC)                = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+mmap(NULL, 36864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0xffffa0a9b000
+rt_sigprocmask(SIG_BLOCK, ~[], [], 8)   = 0
+clone(child_stack=0xffffa0aa4000, flags=CLONE_VM|CLONE_VFORK|SIGCHLD) = 143175
+munmap(0xffffa0a9b000, 36864)           = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+close(3)                                = 0
+close(6)                                = 0
+close(8)                                = 0
+clock_nanosleep(CLOCK_REALTIME, 0, {tv_sec=0, tv_nsec=500000000}, 0xffffc2e0aac0) = 0
+pipe2([3, 6], O_CLOEXEC)                = 0
+pipe2([8, 9], O_CLOEXEC)                = 0
+pipe2([10, 11], O_CLOEXEC)              = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024*1024, rlim_max=1024*1024}) = 0
+mmap(NULL, 36864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0xffffa0a9b000
+rt_sigprocmask(SIG_BLOCK, ~[], [], 8)   = 0
+clone(child_stack=0xffffa0aa4000, flags=CLONE_VM|CLONE_VFORK|SIGCHLD) = 143190
+munmap(0xffffa0a9b000, 36864)           = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+close(3)                                = 0
+close(9)                                = 0
+close(11)                               = 0
+clock_nanosleep(CLOCK_REALTIME, 0, {tv_sec=0, tv_nsec=500000000}, 0xffffc2e0aac0) = 0
+openat(AT_FDCWD, "./tests/nakamoto_config1_alone/BlockTree.json", O_RDONLY|O_CLOEXEC) = 3
+statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=1125, ...}) = 0
+read(3, "{\n    \"all_blocks\": {\n        \"0"..., 1125) = 1125
+read(3, "", 32)                         = 0
+close(3)                                = 0
+openat(AT_FDCWD, "./tests/nakamoto_config1_alone/TxPool.json", O_RDONLY|O_CLOEXEC) = 3
+statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=140, ...}) = 0
+read(3, "{\n    \"pool_tx_ids\": [],\n    \"po"..., 140) = 140
+read(3, "", 32)                         = 0
+close(3)                                = 0
+openat(AT_FDCWD, "./tests/nakamoto_config1_alone/Config.json", O_RDONLY|O_CLOEXEC) = 3
+statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=394, ...}) = 0
+read(3, "{\n    \"neighbors\": [],\n    \"addr"..., 394) = 394
+read(3, "", 32)                         = 0
+close(3)                                = 0
+write(4, "{\"Initialize\":[\"{\\n    \\\"all_blo"..., 1858) = 1858
+read(5, "{\"Notify\":\"# Waiting for IPC Req"..., 8192) = 93
+read(5, "{\"Notify\":\"[P2PNetwork] Starting"..., 8192) = 71
+read(5, "{\"Notify\":\"[P2PNetwork] All neig"..., 8192) = 50
+read(5, "\"Initialized\"\n", 8192)      = 14
+openat(AT_FDCWD, "./tests/_secrets/Wallet.A.json", O_RDONLY|O_CLOEXEC) = 3
+statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=619, ...}) = 0
+read(3, "{\n  \"user_name\": \"Alice\",\n  \"pri"..., 619) = 619
+read(3, "", 32)                         = 0
+close(3)                                = 0
+write(6, "{\"Initialize\":\"{\\n  \\\"user_name\\"..., 665) = 665
+read(8, "\"Initialized\"\n", 8192)      = 14
+openat(AT_FDCWD, "./bin_client/policies/seccomp_client.json", O_RDONLY|O_CLOEXEC) = 3
+statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_ALL, stx_attributes=0, stx_mode=S_IFREG|0664, stx_size=136, ...}) = 0
+read(3, "{\n    \"main_thread\": {\n        \""..., 136) = 136
+read(3, "", 32)                         = 0
+close(3)                                = 0
+getrandom(0xffffc2e082e8, 16, 0x4 /* GRND_??? */) = -1 EINVAL (Invalid argument)
+getrandom("\xdb\x91\x58\x32\xbe\x08\x89\xaa\xed\x6e\xb0\x27\xcc\x8e\x79\x60", 16, GRND_NONBLOCK) = 16
+prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)  = 0
+prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, {len=4, filter=0xaaaaf0509f30}) = 0
+write(6, "\"GetUserInfo\"\n", 14)       = 14
+read(8, "{\"UserInfo\":[\"Alice\",\"MDgCMQCqrJ"..., 8192) = 106
+openat(AT_FDCWD, "", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+write(2, "thread '", 8thread ')                 = 8
+write(2, "main", 4main)                     = 4
+write(2, "' panicked at '", 15' panicked at ')         = 15
+write(2, "Cannot read : Os { code: 2, kind"..., 82Cannot read : Os { code: 2, kind: NotFound, message: "No such file or directory" }) = 82
+write(2, "', ", 3', )                      = 3
+write(2, "bin_client/./src/main.rs", 24bin_client/./src/main.rs) = 24
+write(2, ":", 1:)                        = 1
+write(2, "109", 3109)                      = 3
+write(2, ":", 1:)                        = 1
+write(2, "49", 249)                       = 2
+write(2, "\n", 1
+)                       = 1
+write(2, "note: run with `RUST_BACKTRACE=1"..., 78note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+) = 78
+futex(0xffffa0a91234, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+close(10)                               = 0
+close(8)                                = 0
+close(6)                                = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=143190, si_uid=1000, si_status=101, si_utime=5, si_stime=1} ---
+close(7)                                = 0
+close(5)                                = 0
+close(4)                                = 0
+sigaltstack({ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=16384}, NULL) = 0
+munmap(0xffffa0aca000, 20480)           = 0
+exit_group(101)                         = ?
++++ exited with 101 +++
