@@ -112,7 +112,7 @@ fn read_string_from_file(filepath: &str) -> String {
 
 /// A flag indicating whether to disable the UI thread if you need to check some debugging outputs that is covered by the UI.
 /// Eventually this should be set to false and you shouldn't output debugging information directly to stdout or stderr.
-const NO_UI_DEBUG_NODE: bool = true;
+const NO_UI_DEBUG_NODE: bool = false;
 
 fn main() {
     // The usage of bin_client is as follows:
@@ -407,44 +407,10 @@ fn main() {
                             wallet_stdin_clone.lock().unwrap().flush();
 
                         }
-                        // loop {
-                        //     {
-                        //         wallet_stdout_clone
-                        //             .lock()
-                        //             .unwrap()
-                        //             .read_line(&mut wallet_buffer)
-                        //             .unwrap();
-                        //     }
-                        //     if wallet_buffer.contains("SignResponse") {
-                        //         break;
-                        //     }
-
-                        //     wallet_buffer.clear();
-                        // }
-
-                        // // send publishTx to nakamoto
-                        // let wallet_sign_response: IPCMessageRespWallet =
-                        //     serde_json::from_str(&wallet_buffer).unwrap();
-                        // if let IPCMessageRespWallet::SignResponse(data, signature) = wallet_sign_response {
-                        //     let nakamoto_ipc_req = IPCMessageReqNakamoto::PublishTx(data, signature); // make publishTx
-                        //     let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
-                        //     nakamoto_json.push_str("\n");
-                        //     let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                        //     nakamoto_stdin_clone_lock
-                        //         .write_all(nakamoto_json.as_bytes())
-                        //         .unwrap();
-                        //     nakamoto_stdin_clone_lock.flush().unwrap();
-                        //     // nakamoto_stdin_clone
-                        //     //     .lock()
-                        //     //     .unwrap()
-                        //     //     .write_all(nakamoto_json.as_bytes())
-                        //     //     .unwrap();
-                        // }
                     }
                 }
             }
         });
-        // bot_handle.join().unwrap(); // i think dont need to wait for bot_handle
     }
 
     // Please fill in the blank
@@ -481,11 +447,11 @@ fn main() {
                 let nakamoto_ipc_req = IPCMessageReqNakamoto::PublishTx(data, signature); // make publishTx
                 let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_json.push_str("\n");
-                let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                nakamoto_stdin_clone_lock
+                //let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
+                nakamoto_stdin_clone.lock().unwrap()
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
-                nakamoto_stdin_clone_lock.flush().unwrap();
+                nakamoto_stdin_clone.lock().unwrap().flush();
             }
         }
     });
@@ -504,22 +470,24 @@ fn main() {
             let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                nakamoto_stdin_clone_lock
+                nakamoto_stdin_clone
+                    .lock()
+                    .unwrap()
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
-                nakamoto_stdin_clone_lock.flush().unwrap();
+                nakamoto_stdin_clone.lock().unwrap().flush();
             }
             // send ipc request message to nakamoto to get netStatus
             nakamoto_ipc_req = IPCMessageReqNakamoto::RequestNetStatus;
             nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                nakamoto_stdin_clone_lock
+                nakamoto_stdin_clone
+                    .lock()
+                    .unwrap()
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
-                nakamoto_stdin_clone_lock.flush().unwrap();
+                nakamoto_stdin_clone.lock().unwrap().flush();
             }
 
             // send ipc request message to nakamoto to get chainStatus
@@ -527,11 +495,12 @@ fn main() {
             nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                nakamoto_stdin_clone_lock
+                nakamoto_stdin_clone
+                    .lock()
+                    .unwrap()
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
-                nakamoto_stdin_clone_lock.flush().unwrap();
+                nakamoto_stdin_clone.lock().unwrap().flush();
             }
 
             // send ipc request message to nakamoto to get minerStatus
@@ -539,11 +508,12 @@ fn main() {
             nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                nakamoto_stdin_clone_lock
+                nakamoto_stdin_clone
+                    .lock()
+                    .unwrap()
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
-                nakamoto_stdin_clone_lock.flush().unwrap();
+                nakamoto_stdin_clone.lock().unwrap().flush();
             }
 
             // send ipc request message to nakamoto to get txPoolStatus
@@ -551,11 +521,12 @@ fn main() {
             nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                nakamoto_stdin_clone_lock
+                nakamoto_stdin_clone
+                    .lock()
+                    .unwrap()
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
-                nakamoto_stdin_clone_lock.flush().unwrap();
+                nakamoto_stdin_clone.lock().unwrap().flush();
             }
         }
     });
@@ -895,11 +866,10 @@ fn main() {
                             ..
                         } => {
                             let serialize_req = IPCMessageReqNakamoto::RequestStateSerialization;
-                            let mut nakamoto_stdin = nakamoto_stdin_p_cloned.lock().unwrap();
                             let mut to_send = serde_json::to_string(&serialize_req).unwrap();
                             to_send.push_str("\n");
-                            nakamoto_stdin.write_all(to_send.as_bytes()).unwrap();
-                            nakamoto_stdin.flush().unwrap();
+                            nakamoto_stdin_p_cloned.lock().unwrap().write_all(to_send.as_bytes()).unwrap();
+                            nakamoto_stdin_p_cloned.lock().unwrap().flush();
                         }
                         input => {
                             app.on_textarea_input(input);
@@ -933,11 +903,10 @@ fn main() {
     eprintln!("--- Sending \"Quit\" command...");
     // nakamoto_stdin_p.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
     // bin_wallet_stdin_p.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
-    let mut nakamoto_stdin_mutex_lock = nakamoto_stdin_mutex.lock().unwrap();
-    nakamoto_stdin_mutex_lock
+    nakamoto_stdin_mutex.lock().unwrap()
         .write_all("\"Quit\"\n".as_bytes())
         .unwrap();
-    nakamoto_stdin_mutex_lock.flush().unwrap();
+    nakamoto_stdin_mutex.lock().unwrap().flush();
     // nakamoto_stdin_mutex
     //     .lock()
     //     .unwrap()
