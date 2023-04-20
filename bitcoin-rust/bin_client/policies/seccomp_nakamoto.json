@@ -22,7 +22,8 @@
             {"syscall": "listen"},
             {"syscall": "socket"},
             {"syscall": "setsockopt"},
-            {"syscall": "madvise"}
+            {"syscall": "madvise"},
+            {"syscall": "getrandom"}
         ]
     }
 }
