@@ -164,7 +164,7 @@ impl Nakamoto {
 
         thread::spawn(move || loop {
             let transaction = upd_trans_in_rx.recv().unwrap();
-            println!("TX received");
+            Nakamoto::stdout_notify("[TxRecv] Get Transaction".to_string());
             tx_pool_p_thread.lock().unwrap().add_tx(transaction.clone());
             trans_tx_sender_thread.send(transaction).unwrap();
             miner_sender_thread.send(true).unwrap();
@@ -178,14 +178,11 @@ impl Nakamoto {
 
         thread::spawn(move || loop {
             let block = upd_block_in_rx.recv().unwrap();
-            let parent_id = block.header.parent.clone();
-            let working_block_id = chain_p_thread.lock().unwrap().working_block_id.clone();
 
-            println!("BLOCK received");
-            println!("parent_id: {:?}", parent_id);
-            println!("working_block_id: {:?}", working_block_id);
+            Nakamoto::stdout_notify("[BlockRecv] Get Block".to_string());
+            Nakamoto::stdout_notify(block.header.block_id.clone());
 
-            //Do some verification before stopping block
+            //Wack the block to the tree
             {
                 let mut writable = cancellation_token_thread.write().unwrap();
                 *writable = true;
@@ -246,7 +243,6 @@ impl Nakamoto {
 
                     if filtered_tx.is_empty() {
                         //Capture existing transaction
-                        // break;
                         continue;
                     }
                 }
@@ -279,6 +275,9 @@ impl Nakamoto {
                     continue;
                 }
 
+                Nakamoto::stdout_notify("[Miner] Start solving puzzle".to_string());
+                Nakamoto::stdout_notify(puzzle_str.clone());
+
                 let solution = Miner::solve_puzzle(
                     miner_p_thread,
                     puzzle_str,
@@ -304,7 +303,7 @@ impl Nakamoto {
                             ..pre_block
                         };
 
-                        println!("BLOOCK FOUND");
+                        Nakamoto::stdout_notify("[Miner] Puzzle solved".to_string());
 
                         chain_p_thread.lock().unwrap().add_block(
                             block_node.clone(),
@@ -314,7 +313,7 @@ impl Nakamoto {
                         block_out_tx.send(block_node).unwrap();
                     }
                     None => {
-                        println!("MINER STOPPED");
+                        Nakamoto::stdout_notify("[Miner] Interrupted".to_string());
                     }
                 };
             }
@@ -338,22 +337,23 @@ impl Nakamoto {
     /// Get the status of the chain as a dictionary of strings. For debugging purpose.
     pub fn get_chain_status(&self) -> BTreeMap<String, String> {
         let chain_p_lock = self.chain_p.lock().unwrap();
-        let mut tmp_block = chain_p_lock
-            .get_block(chain_p_lock.working_block_id.clone())
-            .unwrap();
 
-        loop {
-            print!("{:?} <- ", tmp_block.header.block_id);
-            tmp_block = chain_p_lock
-                .get_block(tmp_block.header.parent.clone())
-                .unwrap();
+        // let mut tmp_block = chain_p_lock
+        //     .get_block(chain_p_lock.working_block_id.clone())
+        //     .unwrap();
 
-            if tmp_block.header.block_id == chain_p_lock.root_id {
-                break;
-            }
-        }
+        // println!("\n\n");
+        // loop {
+        //     print!("{:?} <- ", tmp_block.header.block_id);
+        //     tmp_block = chain_p_lock
+        //         .get_block(tmp_block.header.parent.clone())
+        //         .unwrap();
 
-        println!("{:?} \n\n", tmp_block.header.block_id);
+        //     if tmp_block.header.block_id == chain_p_lock.root_id {
+        //         break;
+        //     }
+        // }
+        // println!("{:?} \n\n", tmp_block.header.block_id);
 
         return chain_p_lock.get_status();
         // self.chain_p.lock().unwrap().get_status()

@@ -10,6 +10,7 @@
 
 use lib_chain::block::{BlockId, BlockNode, Transaction};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::hash::Hash;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -65,11 +66,15 @@ impl NetChannelTCP {
                         stream: tcp_stream,
                         reader: buf_reader,
                     };
-                    println!("[NetChannel] Connected to {}:{}", addr.ip, addr.port);
+
+                    NetChannelTCP::stdout_notify(format!(
+                        "[NetChannel] Connected to {}:{}",
+                        addr.ip, addr.port
+                    ));
                     return Ok(net_channel);
                 }
                 Err(e) => {
-                    println!(
+                    eprintln!(
                         "[NetChannel] Failed to connect to {}: {}. Retrying in 1 second...",
                         addr_port, e
                     );
@@ -135,13 +140,13 @@ impl NetChannelTCP {
                 match deserialized_msg {
                     Ok(msg) => Some(msg),
                     Err(e) => {
-                        eprintln!("Error deserializing message: {}", e);
+                        eprintln!("[NetChannel] Error deserializing message: {}", e);
                         None
                     }
                 }
             }
             Err(e) => {
-                eprintln!("Error reading message from stream: {}", e);
+                eprintln!("[NetChannel] Error reading message from stream: {}", e);
                 None
             }
         }
@@ -153,7 +158,12 @@ impl NetChannelTCP {
         // Please fill in the blank
         let serialized_msg = format!("{}\n", serde_json::to_string(&msg).unwrap());
         if let Err(e) = self.stream.write_all(serialized_msg.as_bytes()) {
-            eprintln!("Error writing message to stream: {}", e);
+            eprintln!("[NetChannel] Error writing message to stream: {}", e);
         }
+    }
+
+    pub fn stdout_notify(msg: String) {
+        let msg = HashMap::from([("Notify".to_string(), msg.clone())]);
+        println!("{}", serde_json::to_string(&msg).unwrap());
     }
 }
