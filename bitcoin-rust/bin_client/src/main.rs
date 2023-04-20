@@ -374,10 +374,13 @@ fn main() {
         // create thread
         let _bot_handle = thread::spawn(move || {
             for line in bot_actions.split("\n") {
+                
                 if !line.contains("SleepMs") && !line.contains("Send") {
                     continue;
                 }
+                
                 let command_action: BotCommand = serde_json::from_str(&line).unwrap();
+
                 match command_action {
                     BotCommand::SleepMs(value) => {
                         thread::sleep(Duration::from_millis(value));
@@ -388,19 +391,14 @@ fn main() {
                             create_sign_req(user_id_clone_extra, receiver_id, transaction_message);
                         sign_req_str.push_str("\n");
                         // send sign request to wallet
-                        println!("line 391");
-                        println!("{}", sign_req_str);
                         {
-                            let mut wallet_stdin_clone_lock = wallet_stdin_clone.lock().unwrap();
-                            wallet_stdin_clone_lock
-                                .write_all(sign_req_str.as_bytes())
-                                .unwrap(); // broken pipe here /////////////////////////////////
-                            wallet_stdin_clone_lock.flush().unwrap();
-                            // wallet_stdin_clone
-                            //     .lock()
-                            //     .unwrap()
-                            //     .write_all(sign_req_str.as_bytes()) // broken pipe here /////////////////////////////////
-                            //     .unwrap();
+                            wallet_stdin_clone
+                                .lock()
+                                .unwrap()
+                                .write_all(sign_req_str.as_bytes()) // broken pipe here /////////////////////////////////
+                                .unwrap();
+                            wallet_stdin_clone.lock().unwrap().flush();
+
                         }
                         // loop {
                         //     {
@@ -481,11 +479,6 @@ fn main() {
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
                 nakamoto_stdin_clone_lock.flush().unwrap();
-                // nakamoto_stdin_clone
-                //     .lock()
-                //     .unwrap()
-                //     .write_all(nakamoto_json.as_bytes())
-                //     .unwrap();
             }
         }
     });
@@ -509,12 +502,6 @@ fn main() {
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
                 nakamoto_stdin_clone_lock.flush().unwrap();
-
-                // nakamoto_stdin_clone
-                //     .lock()
-                //     .unwrap()
-                //     .write_all(nakamoto_json.as_bytes())
-                //     .unwrap();
             }
             // send ipc request message to nakamoto to get netStatus
             nakamoto_ipc_req = IPCMessageReqNakamoto::RequestNetStatus;
@@ -526,11 +513,6 @@ fn main() {
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
                 nakamoto_stdin_clone_lock.flush().unwrap();
-                // nakamoto_stdin_clone
-                //     .lock()
-                //     .unwrap()
-                //     .write_all(nakamoto_json.as_bytes())
-                //     .unwrap();
             }
 
             // send ipc request message to nakamoto to get chainStatus
@@ -543,11 +525,6 @@ fn main() {
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
                 nakamoto_stdin_clone_lock.flush().unwrap();
-                // nakamoto_stdin_clone
-                //     .lock()
-                //     .unwrap()
-                //     .write_all(nakamoto_json.as_bytes())
-                //     .unwrap();
             }
 
             // send ipc request message to nakamoto to get minerStatus
@@ -560,11 +537,6 @@ fn main() {
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
                 nakamoto_stdin_clone_lock.flush().unwrap();
-                // nakamoto_stdin_clone
-                //     .lock()
-                //     .unwrap()
-                //     .write_all(nakamoto_json.as_bytes())
-                //     .unwrap();
             }
 
             // send ipc request message to nakamoto to get txPoolStatus
@@ -577,11 +549,6 @@ fn main() {
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
                 nakamoto_stdin_clone_lock.flush().unwrap();
-                // nakamoto_stdin_clone
-                //     .lock()
-                //     .unwrap()
-                //     .write_all(nakamoto_json.as_bytes())
-                //     .unwrap();
             }
         }
     });
