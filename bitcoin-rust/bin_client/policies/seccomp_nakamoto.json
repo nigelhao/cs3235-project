@@ -3,6 +3,26 @@
         "mismatch_action": "kill_process",
         "match_action": "allow",
         "filter": [
+            {"syscall": "read"}, 
+            {"syscall": "write"},
+            {"syscall": "close"},
+            {"syscall": "clone"},
+            {"syscall": "futex"},
+            {"syscall": "exit_group"},
+            {"syscall": "munmap"},
+            {"syscall": "sigaltstack"},
+            {"syscall": "mmap"},
+            {"syscall": "mprotect"},
+            {"syscall": "openat"},
+            {"syscall": "sched_getaffinity"},
+            {"syscall": "set_robust_list"},
+            {"syscall": "accept4"},
+            {"syscall": "bind"},
+            {"syscall": "exit"},
+            {"syscall": "listen"},
+            {"syscall": "socket"},
+            {"syscall": "setsockopt"},
+            {"syscall": "madvise"}
         ]
     }
 }
