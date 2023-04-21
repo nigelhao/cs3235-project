@@ -335,6 +335,8 @@ fn main() {
         return sign_req_str;
     };
 
+    
+
     if std::env::args().len() != 6 {
         // Then there must be 7 arguments provided. The last argument is the bot commands path
         // Please fill in the blank
@@ -347,35 +349,52 @@ fn main() {
         let wallet_stdin_clone = wallet_stdin_mutex.clone();
 
         // link and open the bot file as stated in `bot_command_path`
-        let bot_actions = read_string_from_file(bot_command_path).replace("\r\n", "\n");
+        let bot_command_path_clone = bot_command_path.to_string();
 
         // create thread
         let _bot_handle = thread::spawn(move || {
-            for line in bot_actions.split("\n") {
-                if !line.contains("SleepMs") && !line.contains("Send") {
-                    continue;
-                }
+            
+            let bot_command_path_clone_clone = bot_command_path_clone.clone();
+            loop {
+                
+                let fifo_file = File::open(bot_command_path_clone_clone.to_string()).expect("Failed to open named pipe");
+                let reader = BufReader::new(fifo_file);
 
-                let command_action: BotCommand = serde_json::from_str(&line).unwrap();
+                for line in reader.lines() {
+                    
+                    if let Ok(line) = line {
 
-                match command_action {
-                    BotCommand::SleepMs(value) => {
-                        thread::sleep(Duration::from_millis(value));
-                    }
-                    BotCommand::Send(receiver_id, transaction_message) => {
-                        let user_id_clone_extra = user_id_clone.clone();
-                        let sign_req_str =
-                            create_sign_req(user_id_clone_extra, receiver_id, transaction_message);
-                        // send sign request to wallet
-                        {
-                            wallet_stdin_clone
-                                .lock()
-                                .unwrap()
-                                .write_all(sign_req_str.as_bytes())
-                                .unwrap();
+                        if !line.contains("SleepMs") && !line.contains("Send") {
+                            continue;
+                        }
+    
+                        let command_action: BotCommand = serde_json::from_str(&line).unwrap();
+    
+                        match command_action {
+                            BotCommand::SleepMs(value) => {
+                                thread::sleep(Duration::from_millis(value));
+                            }
+                            BotCommand::Send(receiver_id, transaction_message) => {
+                                let user_id_clone_extra = user_id_clone.clone();
+                                let sign_req_str = create_sign_req(
+                                    user_id_clone_extra,
+                                    receiver_id,
+                                    transaction_message,
+                                );
+                                // send sign request to wallet
+                                {
+                                    wallet_stdin_clone
+                                        .lock()
+                                        .unwrap()
+                                        .write_all(sign_req_str.as_bytes())
+                                        .unwrap();
+                                    wallet_stdin_clone.lock().unwrap().flush();
+                                }
+                            }
                         }
                     }
                 }
+
             }
         });
     }
