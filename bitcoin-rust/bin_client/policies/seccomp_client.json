@@ -31,7 +31,8 @@
             {"syscall": "exit_group"},
             {"syscall": "sendto"},
             {"syscall": "recvfrom"},
-            {"syscall": "mremap"}
+            {"syscall": "mremap"},
+            {"syscall": "prctl"}
         ]
     }
 }
