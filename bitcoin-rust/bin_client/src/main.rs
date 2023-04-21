@@ -202,8 +202,9 @@ fn main() {
     );
     let nakamoto_json = serde_json::to_string(&nakamoto_initialization_message).unwrap();
     {
-        let mut nakamoto_stdin_lock = nakamoto_stdin_mutex.lock().unwrap();
-        nakamoto_stdin_lock
+        nakamoto_stdin_mutex
+            .lock()
+            .unwrap()
             .write_all((nakamoto_json + "\n").as_bytes())
             .unwrap();
         nakamoto_stdin_lock.flush().unwrap();
@@ -271,20 +272,23 @@ fn main() {
         wallet_buffer.clear();
     }
 
-    let client_seccomp_path = std::env::args()
-        .nth(1)
-        .expect("Please specify client seccomp path");
-    // Please fill in the blank
-    // sandboxing the bin_client (For part B). Leave it blank for part A.
-    let policy_str = read_string_from_file(&client_seccomp_path);
-    let filter_map: BpfMap = seccompiler::compile_from_json(
-        policy_str.as_bytes(),
-        std::env::consts::ARCH.try_into().unwrap(),
-    )
-    .unwrap();
-    let filter = filter_map.get("main_thread").unwrap();
+    // SECCOMP STUFF
+    // seccomp stuff below
+
+    // let client_seccomp_path = std::env::args()
+    //     .nth(1)
+    //     .expect("Please specify client seccomp path");
+    // // Please fill in the blank
+    // // sandboxing the bin_client (For part B). Leave it blank for part A.
+    // let policy_str = read_string_from_file(&client_seccomp_path);
+    // let filter_map: BpfMap = seccompiler::compile_from_json(
+    //     policy_str.as_bytes(),
+    //     std::env::consts::ARCH.try_into().unwrap(),
+    // )
+    // .unwrap();
+    // let filter = filter_map.get("main_thread").unwrap();
         
-    seccompiler::apply_filter(&filter).unwrap();
+    // seccompiler::apply_filter(&filter).unwrap();
 
     let mut user_name: String = "".to_string();
     let mut user_id: String = "".to_string();
@@ -295,8 +299,10 @@ fn main() {
     let wallet_get_info_message = IPCMessageReqWallet::GetUserInfo;
     wallet_json = serde_json::to_string(&wallet_get_info_message).unwrap();
     {
-        let mut wallet_stdin_lock = wallet_stdin_mutex.lock().unwrap();
-        wallet_stdin_lock
+        // let mut wallet_stdin_lock =
+        wallet_stdin_mutex
+            .lock()
+            .unwrap()
             .write_all((wallet_json + "\n").as_bytes())
             .unwrap();
         wallet_stdin_lock.flush().unwrap();
@@ -381,11 +387,10 @@ fn main() {
         // create thread
         let _bot_handle = thread::spawn(move || {
             for line in bot_actions.split("\n") {
-                
                 if !line.contains("SleepMs") && !line.contains("Send") {
                     continue;
                 }
-                
+
                 let command_action: BotCommand = serde_json::from_str(&line).unwrap();
 
                 match command_action {
@@ -405,7 +410,6 @@ fn main() {
                                 .write_all(sign_req_str.as_bytes()) // broken pipe here /////////////////////////////////
                                 .unwrap();
                             wallet_stdin_clone.lock().unwrap().flush();
-
                         }
                     }
                 }
@@ -448,7 +452,9 @@ fn main() {
                 let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_json.push_str("\n");
                 //let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                nakamoto_stdin_clone.lock().unwrap()
+                nakamoto_stdin_clone
+                    .lock()
+                    .unwrap()
                     .write_all(nakamoto_json.as_bytes())
                     .unwrap();
                 nakamoto_stdin_clone.lock().unwrap().flush();
@@ -463,7 +469,7 @@ fn main() {
 
     let handle_send_status_updates = thread::spawn(move || {
         loop {
-            thread::sleep(Duration::from_millis(500));
+            thread::sleep(Duration::from_millis(5000));
             // send ipc request message to nakamoto to get address balance
             let mut nakamoto_ipc_req =
                 IPCMessageReqNakamoto::GetAddressBalance((user_id_clone2).to_string());
@@ -845,12 +851,12 @@ fn main() {
                             } else {
                                 let (sender, receiver, message) = app.on_enter();
                                 let sign_req_str = create_sign_req(sender, receiver, message);
-                                let mut bin_wallet_stdin_p_cloned_lock =
-                                    bin_wallet_stdin_p_cloned.lock().unwrap();
-                                bin_wallet_stdin_p_cloned_lock
+                                    bin_wallet_stdin_p_cloned
+                                    .lock()
+                                    .unwrap()
                                     .write_all(sign_req_str.as_bytes())
                                     .unwrap();
-                                bin_wallet_stdin_p_cloned_lock.flush().unwrap();
+                                bin_wallet_stdin_p_cloned.lock().unwrap().flush();
 
                                 // bin_wallet_stdin_p_cloned
                                 //     .lock()
@@ -868,7 +874,11 @@ fn main() {
                             let serialize_req = IPCMessageReqNakamoto::RequestStateSerialization;
                             let mut to_send = serde_json::to_string(&serialize_req).unwrap();
                             to_send.push_str("\n");
-                            nakamoto_stdin_p_cloned.lock().unwrap().write_all(to_send.as_bytes()).unwrap();
+                            nakamoto_stdin_p_cloned
+                                .lock()
+                                .unwrap()
+                                .write_all(to_send.as_bytes())
+                                .unwrap();
                             nakamoto_stdin_p_cloned.lock().unwrap().flush();
                         }
                         input => {
@@ -903,7 +913,9 @@ fn main() {
     eprintln!("--- Sending \"Quit\" command...");
     // nakamoto_stdin_p.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
     // bin_wallet_stdin_p.lock().unwrap().write_all("\"Quit\"\n".as_bytes()).unwrap();
-    nakamoto_stdin_mutex.lock().unwrap()
+    nakamoto_stdin_mutex
+        .lock()
+        .unwrap()
         .write_all("\"Quit\"\n".as_bytes())
         .unwrap();
     nakamoto_stdin_mutex.lock().unwrap().flush();
