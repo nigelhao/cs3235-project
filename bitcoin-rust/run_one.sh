@@ -5,3 +5,4 @@
    ./bin_client/policies/seccomp_nakamoto.json \
    ./tests/_secrets/Wallet.A.json \
    ./bin_client/policies/seccomp_client.json \
+   botpipeA \

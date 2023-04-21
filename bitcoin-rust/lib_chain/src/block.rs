@@ -400,7 +400,6 @@ impl BlockTree {
 
         map.insert("working_depth".to_string(), block_depth.to_string());
         map.insert("working_id".to_string(), working_block_id.to_string());
-
         return map;
     }
 

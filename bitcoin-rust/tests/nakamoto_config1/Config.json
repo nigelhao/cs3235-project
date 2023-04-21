@@ -14,10 +14,10 @@
         }
     ],
     "addr": {
-      "ip": "127.0.0.1",
-      "port": 9011
+        "ip": "127.0.0.1",
+        "port": 9011
     },
-    "miner_thread_count": 1,
+    "miner_thread_count": 2,
     "nonce_len": 10,
     "difficulty_leading_zero_len": 5,
     "difficulty_leading_zero_len_acc": 5,

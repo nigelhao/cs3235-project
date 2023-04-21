@@ -256,6 +256,21 @@ fn main() {
     // SECCOMP STUFF
     // seccomp stuff below
 
+    let client_seccomp_path = std::env::args()
+        .nth(1)
+        .expect("Please specify client seccomp path");
+    // Please fill in the blank
+    // sandboxing the bin_client (For part B). Leave it blank for part A.
+    let policy_str = read_string_from_file(&client_seccomp_path);
+    let filter_map: BpfMap = seccompiler::compile_from_json(
+        policy_str.as_bytes(),
+        std::env::consts::ARCH.try_into().unwrap(),
+    )
+    .unwrap();
+    let filter = filter_map.get("main_thread").unwrap();
+
+    seccompiler::apply_filter(&filter).unwrap();
+
      let client_seccomp_path = std::env::args()
          .nth(1)
          .expect("Please specify client seccomp path");
@@ -878,6 +893,9 @@ fn main() {
         };
         ui_loop().unwrap();
     });
+
+    // Please fill in the blank
+    // Wait for the IPC threads to finish
     handle_ui.join().unwrap();
 
     eprintln!("--- Sending \"Quit\" command...");
@@ -893,14 +911,6 @@ fn main() {
         .unwrap()
         .write_all("\"Quit\"\n".as_bytes())
         .unwrap();
-
-    // Please fill in the blank
-    // Wait for the IPC threads to finish
-    handle_wallet_nakamoto_publish_tx.join().unwrap();
-    handle_send_status_updates.join().unwrap();
-    handle_read_nakamoto_stdout.join().unwrap();
-    handle_nakamoto_stderr.join().unwrap();
-
     let ecode1 = nakamoto_process
         .wait()
         .expect("failed to wait on child nakamoto");
@@ -910,4 +920,11 @@ fn main() {
         .wait()
         .expect("failed to wait on child bin_wallet");
     eprintln!("--- bin_wallet ecode: {}", ecode2);
+
+    
+    handle_wallet_nakamoto_publish_tx.join().unwrap();
+    handle_send_status_updates.join().unwrap();
+    handle_read_nakamoto_stdout.join().unwrap();
+    handle_nakamoto_stderr.join().unwrap();
+
 }
