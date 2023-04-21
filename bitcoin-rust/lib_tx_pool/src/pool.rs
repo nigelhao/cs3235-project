@@ -131,14 +131,14 @@ impl TxPool {
             self.pool_tx_map.len().to_string(),
         );
 
-        // map.insert(
-        //     "#removed_tx_ids".to_string(),
-        //     self.removed_tx_ids.len().to_string(),
-        // );
-        // map.insert(
-        //     "#pool_tx_ids".to_string(),
-        //     self.pool_tx_ids.len().to_string(),
-        // );
+        map.insert(
+            "#removed_tx_ids".to_string(),
+            self.removed_tx_ids.len().to_string(),
+        );
+        map.insert(
+            "#pool_tx_ids".to_string(),
+            self.pool_tx_ids.len().to_string(),
+        );
 
         return map;
     }
