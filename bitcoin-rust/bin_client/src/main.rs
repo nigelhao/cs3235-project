@@ -207,7 +207,7 @@ fn main() {
             .unwrap()
             .write_all((nakamoto_json + "\n").as_bytes())
             .unwrap();
-        nakamoto_stdin_mutex.lock().unwrap().flush();
+        nakamoto_stdin_lock.flush().unwrap();
     }
 
     // receive initialization response from nakamoto
@@ -234,21 +234,29 @@ fn main() {
         serde_json::to_string(&IPCMessageReqWallet::Initialize(initialize_wallet_string)).unwrap();
     to_send_wallet.push_str("\n");
     {
-        // wallet_stdin_mutex.lock().unwrap()
-        //     .write_all(to_send_wallet.as_bytes())
-        //     .unwrap();
-        // wallet_stdin_mutex.lock().unwrap().flush();
-
-        wallet_stdin_mutex
-            .lock()
-            .unwrap()
+        let mut wallet_stdin_lock = wallet_stdin_mutex.lock().unwrap();
+        wallet_stdin_lock
             .write_all(to_send_wallet.as_bytes())
             .unwrap();
-        wallet_stdin_mutex.lock().unwrap().flush();
+        wallet_stdin_lock.flush().unwrap();
+
+        // wallet_stdin_mutex
+        //     .lock()
+        //     .unwrap()
+        //     .write_all(to_send_wallet.as_bytes())
+        //     .unwrap();
     }
 
     // receive initialization response from wallet
     let mut wallet_buffer = String::new();
+    // {
+    //     wallet_stdout_mutex
+    //         .lock()
+    //         .unwrap()
+    //         .read_line(&mut wallet_buffer)
+    //         .unwrap();
+    // }
+    // // let _wallet_status: IPCMessageRespWallet = serde_json::from_str(&wallet_buffer).unwrap();
     loop {
         {
             wallet_stdout_mutex
@@ -297,7 +305,12 @@ fn main() {
             .unwrap()
             .write_all((wallet_json + "\n").as_bytes())
             .unwrap();
-        wallet_stdin_mutex.lock().unwrap().flush();
+        wallet_stdin_lock.flush().unwrap();
+        // wallet_stdin_mutex
+        //     .lock()
+        //     .unwrap()
+        //     .write_all((wallet_json + "\n").as_bytes())
+        //     .unwrap();
     }
 
     // recieve wallet IPC reponse for user info
@@ -316,7 +329,13 @@ fn main() {
 
         wallet_buffer.clear();
     }
-
+    // {
+    //     wallet_stdout_mutex
+    //         .lock()
+    //         .unwrap()
+    //         .read_line(&mut wallet_buffer)
+    //         .unwrap();
+    // }
     let wallet_user_info = serde_json::from_str(&wallet_buffer).unwrap();
     if let IPCMessageRespWallet::UserInfo(username, userid) = wallet_user_info {
         user_name = username;
@@ -388,7 +407,7 @@ fn main() {
                             wallet_stdin_clone
                                 .lock()
                                 .unwrap()
-                                .write_all(sign_req_str.as_bytes())
+                                .write_all(sign_req_str.as_bytes()) // broken pipe here /////////////////////////////////
                                 .unwrap();
                             wallet_stdin_clone.lock().unwrap().flush();
                         }

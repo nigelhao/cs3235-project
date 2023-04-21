@@ -47,6 +47,7 @@ syscall needed for client:
             {"syscall": "rt_sigaction"},
             {"syscall": "sched_getaffinity"},
             {"syscall": "set_robust_list"},
+            {"syscall": "rt_sigreturn"},
             {"syscall": "sigaltstack"},
             {"syscall": "socketpair"},
             {"syscall": "statx"},
@@ -56,7 +57,9 @@ syscall needed for client:
             {"syscall": "epoll_create1"},
             {"syscall": "epoll_ctl"},
             {"syscall": "epoll_pwait"},
-            {"syscall": "exit_group"}
+            {"syscall": "exit_group"},
+            {"syscall": "sendto"},
+            {"syscall": "recvfrom"}
 
 
 
