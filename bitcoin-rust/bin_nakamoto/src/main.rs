@@ -139,10 +139,11 @@ fn main() {
             }
             IPCMessageReq::GetAddressBalance(user_id) => {
                 let chain_p = nakamoto.as_ref().unwrap().chain_p.clone();
-                let balance = {
+                let mut balance = {
                     let chain = chain_p.lock().unwrap();
-                    *chain.finalized_balance_map.get(&user_id).unwrap()
+                    *chain.finalized_balance_map.get(&user_id).unwrap_or(&0)
                 };
+
                 IPCMessageResp::AddressBalance(user_id, balance)
             }
 

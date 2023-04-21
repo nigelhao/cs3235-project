@@ -21,7 +21,7 @@ use std::{thread, time::Duration};
 
 type UserId = String;
 
-/// The struct to represent configuration of the Nakamoto instance.
+/// The struct to represent configuration of the Nakamoto instance.`
 /// The configuration does not contain any user information. The Nakamoto algorithm is user-independent.
 /// The configuration sets information about neighboring nodes, miner, block creation, etc.
 #[derive(Serialize, Deserialize, Debug, Clone)]
