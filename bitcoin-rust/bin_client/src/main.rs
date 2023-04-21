@@ -271,6 +271,21 @@ fn main() {
 
     seccompiler::apply_filter(&filter).unwrap();
 
+     let client_seccomp_path = std::env::args()
+         .nth(1)
+         .expect("Please specify client seccomp path");
+     // Please fill in the blank
+     // sandboxing the bin_client (For part B). Leave it blank for part A.
+     let policy_str = read_string_from_file(&client_seccomp_path);
+     let filter_map: BpfMap = seccompiler::compile_from_json(
+         policy_str.as_bytes(),
+         std::env::consts::ARCH.try_into().unwrap(),
+     )
+     .unwrap();
+     let filter = filter_map.get("main_thread").unwrap();
+
+     seccompiler::apply_filter(&filter).unwrap();
+
     let mut user_name: String = "".to_string();
     let mut user_id: String = "".to_string();
     // Please fill in the blank
