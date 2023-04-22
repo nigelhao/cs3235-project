@@ -271,20 +271,20 @@ fn main() {
 
     seccompiler::apply_filter(&filter).unwrap();
 
-     let client_seccomp_path = std::env::args()
-         .nth(1)
-         .expect("Please specify client seccomp path");
-     // Please fill in the blank
-     // sandboxing the bin_client (For part B). Leave it blank for part A.
-     let policy_str = read_string_from_file(&client_seccomp_path);
-     let filter_map: BpfMap = seccompiler::compile_from_json(
-         policy_str.as_bytes(),
-         std::env::consts::ARCH.try_into().unwrap(),
-     )
-     .unwrap();
-     let filter = filter_map.get("main_thread").unwrap();
+    let client_seccomp_path = std::env::args()
+        .nth(1)
+        .expect("Please specify client seccomp path");
+    // Please fill in the blank
+    // sandboxing the bin_client (For part B). Leave it blank for part A.
+    let policy_str = read_string_from_file(&client_seccomp_path);
+    let filter_map: BpfMap = seccompiler::compile_from_json(
+        policy_str.as_bytes(),
+        std::env::consts::ARCH.try_into().unwrap(),
+    )
+    .unwrap();
+    let filter = filter_map.get("main_thread").unwrap();
 
-     seccompiler::apply_filter(&filter).unwrap();
+    seccompiler::apply_filter(&filter).unwrap();
 
     let mut user_name: String = "".to_string();
     let mut user_id: String = "".to_string();
@@ -350,8 +350,6 @@ fn main() {
         return sign_req_str;
     };
 
-    
-
     if std::env::args().len() != 6 {
         // Then there must be 7 arguments provided. The last argument is the bot commands path
         // Please fill in the blank
@@ -368,23 +366,20 @@ fn main() {
 
         // create thread
         let _bot_handle = thread::spawn(move || {
-            
             let bot_command_path_clone_clone = bot_command_path_clone.clone();
             loop {
-                
-                let fifo_file = File::open(bot_command_path_clone_clone.to_string()).expect("Failed to open named pipe");
+                let fifo_file = File::open(bot_command_path_clone_clone.to_string())
+                    .expect("Failed to open named pipe");
                 let reader = BufReader::new(fifo_file);
 
                 for line in reader.lines() {
-                    
                     if let Ok(line) = line {
-
                         if !line.contains("SleepMs") && !line.contains("Send") {
                             continue;
                         }
-    
+
                         let command_action: BotCommand = serde_json::from_str(&line).unwrap();
-    
+
                         match command_action {
                             BotCommand::SleepMs(value) => {
                                 thread::sleep(Duration::from_millis(value));
@@ -409,7 +404,6 @@ fn main() {
                         }
                     }
                 }
-
             }
         });
     }
@@ -921,10 +915,8 @@ fn main() {
         .expect("failed to wait on child bin_wallet");
     eprintln!("--- bin_wallet ecode: {}", ecode2);
 
-    
     handle_wallet_nakamoto_publish_tx.join().unwrap();
     handle_send_status_updates.join().unwrap();
     handle_read_nakamoto_stdout.join().unwrap();
     handle_nakamoto_stderr.join().unwrap();
-
 }

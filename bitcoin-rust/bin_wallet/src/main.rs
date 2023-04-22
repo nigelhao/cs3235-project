@@ -180,5 +180,22 @@ mod test {
         let verify_result = bin_wallet.verify(&msg, &sig2);
         assert!(!verify_result);
     }
+
+    #[test]
+fn generate_tx() {
+
+    let bin_wallet: Wallet = serde_json::from_str(&read_string_from_file("../tests/_secrets/Wallet.A.json")).unwrap();
+
+    // WORKS LIKE THIS        
+    let msg = "[\"MDgCMQDZDExOs97sRTnQLYtgFjDKpDzmO7Uo5HPP62u6MDimXBpZtGxtwa8dhJe5NBIsJjUCAwEAAQ==\",\"MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==\",\"SEND $100   // By Bob   // 1678775190859\"]".to_string();
+
+    let sig64 = bin_wallet.sign(&msg);
+    let verify_result = bin_wallet.verify(&msg, &sig64);
+    assert!(verify_result);
+
+
+
+    println!("{{\"PublishTx\":[\"{}\", \"{}\"]}}", msg, sig64);
+}
 }
 

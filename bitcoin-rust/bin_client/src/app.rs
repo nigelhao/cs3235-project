@@ -103,7 +103,7 @@ impl<'a> App<'a> {
         let sender = self.textareas[0].lines()[0].clone();
         let receiver = self.textareas[1].lines()[0].clone();
         let message = self.textareas[2].lines()[0].clone();
-        self.notify_log.push(format!("[Client] ENTER pressed.  Sender: {}  Receiver: {}  Message: {}", &sender, &receiver, &message));
+        self.stderr_log.push(format!("[Client] ENTER pressed.  Sender: {}  Receiver: {}  Message: {}", &sender, &receiver, &message));
         (sender, receiver, message)
     }
 

@@ -96,6 +96,7 @@ fn main() {
     // bin_nakamoto has only one optional argument: the path to the seccomp policy file
     // If the argument is provided, bin_nakamoto will read and apply the seccomp policy at the beginning of the program
     // Otherwise, it will proceed to the normal execution
+    eprintln!("To only capture error messages from nakamoto from this instance onwards");
     let maybe_policy_path = std::env::args().nth(1);
     if let Some(policy_path) = maybe_policy_path.clone() {
         // Please fill in the blank

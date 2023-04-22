@@ -616,7 +616,7 @@ impl BlockTree {
         }
 
         if !self.verifiy_transactions_balance(block.clone(), parent_block.clone()) {
-            println!("[Chain] Transaction does not have sufficient balance");
+            eprintln!("[Chain] Transaction does not have sufficient balance");
             return;
         }
 
