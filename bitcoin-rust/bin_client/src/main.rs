@@ -763,7 +763,7 @@ fn main() {
                     .unwrap();
             }
             if nakamoto_err_ignore
-                == "To only capture error messages from nakamoto from this instance onwards"
+            .contains("To only capture error messages from nakamoto from this instance onwards")
             {
                 break;
             }
