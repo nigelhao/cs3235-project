@@ -308,10 +308,11 @@ fn main() {
     let wallet_get_info_message = IPCMessageReqWallet::GetUserInfo;
     wallet_json = serde_json::to_string(&wallet_get_info_message).unwrap();
     {
-        let _result = wallet_stdin_mutex
+        wallet_stdin_mutex
             .lock()
             .unwrap()
-            .write_all((wallet_json + "\n").as_bytes());
+            .write_all((wallet_json + "\n").as_bytes())
+            .unwrap();
     }
 
     // recieve wallet IPC reponse for user info

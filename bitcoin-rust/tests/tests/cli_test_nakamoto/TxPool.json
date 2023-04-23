@@ -1,0 +1,32 @@
+{
+  "pool_tx_ids": [
+    "f3c4de7de2bea8f4cbc8f4b5130e2ed0f91b336135170a2ad2a61d52350a8782",
+    "9ca42c6d6d8d71562d75f7587e374432931b3744cb48b0c477f66f1ac9369b07",
+    "02755e70a678b781dfb7063a15d29764d93a56741c2185bc0ad0d7b2262e2f55"
+  ],
+  "pool_tx_map": {
+    "f3c4de7de2bea8f4cbc8f4b5130e2ed0f91b336135170a2ad2a61d52350a8782": {
+      "sender": "Bob",
+      "receiver": "Alice",
+      "message": "10",
+      "sig": "1241097"
+    },
+    "02755e70a678b781dfb7063a15d29764d93a56741c2185bc0ad0d7b2262e2f55": {
+      "sender": "Charle",
+      "receiver": "Alice",
+      "message": "8",
+      "sig": "657643"
+    },
+    "9ca42c6d6d8d71562d75f7587e374432931b3744cb48b0c477f66f1ac9369b07": {
+      "sender": "Alice",
+      "receiver": "Bob",
+      "message": "5",
+      "sig": "4557421"
+    }
+  },
+  "pool_tx_map_status": {
+    "f3c4de7de2bea8f4cbc8f4b5130e2ed0f91b336135170a2ad2a61d52350a8782": "Spare",
+    "9ca42c6d6d8d71562d75f7587e374432931b3744cb48b0c477f66f1ac9369b07": "Spare",
+    "02755e70a678b781dfb7063a15d29764d93a56741c2185bc0ad0d7b2262e2f55": "Spare"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "all_blocks": {
+    "d123719eadf5b84f536dbcc8bb5180032213d0dc29738485043f10c6f0c8df0f": {
+      "header": {
+        "parent": "787877b7e8cc8630353e3031dd68a02f1cda620af82fd4a2508cc95c96750d91",
+        "merkle_root": "one tx's hash",
+        "timestamp": 123,
+        "nonce": "nonce"
+      },
+      "transactions_block": {
+        "merkle_tree": {
+          "hashes": [
+            [
+              "one tx's hash"
+            ]
+          ]
+        },
+        "transactions": [
+          {
+            "sender": "hello",
+            "receiver": "hi",
+            "message": "msg",
+            "sig": "sig"
+          }
+        ]
+      }
+    },
+    "787877b7e8cc8630353e3031dd68a02f1cda620af82fd4a2508cc95c96750d91": {
+      "header": {
+        "parent": "hahaha",
+        "merkle_root": "one tx's hash",
+        "timestamp": 123,
+        "nonce": "nonce"
+      },
+      "transactions_block": {
+        "merkle_tree": {
+          "hashes": [
+            [
+              "one tx's hash"
+            ]
+          ]
+        },
+        "transactions": [
+          {
+            "sender": "hello",
+            "receiver": "hi",
+            "message": "msg",
+            "sig": "sig"
+          },
+          {
+            "sender": "hello",
+            "receiver": "hi",
+            "message": "msg",
+            "sig": "sig"
+          }
+        ]
+      }
+    },
+    "9d44eac1ec026d52b35fe9c8daa709296e6775877206ba3e6e60366357bb7fc9": {
+      "header": {
+        "parent": "787877b7e8cc8630353e3031dd68a02f1cda620af82fd4a2508cc95c96750d91",
+        "merkle_root": "one tx's hash",
+        "timestamp": 1234,
+        "nonce": "nonce"
+      },
+      "transactions_block": {
+        "merkle_tree": {
+          "hashes": [
+            [
+              "one tx's hash"
+            ]
+          ]
+        },
+        "transactions": [
+          {
+            "sender": "hello",
+            "receiver": "hi",
+            "message": "msg",
+            "sig": "sig"
+          }
+        ]
+      }
+    }
+  },
+  "children_map": {
+    "787877b7e8cc8630353e3031dd68a02f1cda620af82fd4a2508cc95c96750d91": [
+      "d123719eadf5b84f536dbcc8bb5180032213d0dc29738485043f10c6f0c8df0f",
+      "9d44eac1ec026d52b35fe9c8daa709296e6775877206ba3e6e60366357bb7fc9"
+    ]
+  },
+  "block_depth": {
+    "d123719eadf5b84f536dbcc8bb5180032213d0dc29738485043f10c6f0c8df0f": 2,
+    "9d44eac1ec026d52b35fe9c8daa709296e6775877206ba3e6e60366357bb7fc9": 2,
+    "787877b7e8cc8630353e3031dd68a02f1cda620af82fd4a2508cc95c96750d91": 1
+  },
+  "root_id": "787877b7e8cc8630353e3031dd68a02f1cda620af82fd4a2508cc95c96750d91",
+  "working_block_id": "d123719eadf5b84f536dbcc8bb5180032213d0dc29738485043f10c6f0c8df0f",
+  "orphans": {}
+}
