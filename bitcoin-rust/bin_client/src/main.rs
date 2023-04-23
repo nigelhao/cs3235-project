@@ -133,7 +133,7 @@ fn main() {
     if command_line_args.len() < 6 {
         panic!("not enough arguments")
     }
-    let client_seccomp_path = &command_line_args[1];
+    //let client_seccomp_path = &command_line_args[1];
     let nakamoto_config_path = &command_line_args[2];
     let nakamoto_seccomp_path = &command_line_args[3];
     let wallet_config_path = &command_line_args[4];
@@ -144,27 +144,43 @@ fn main() {
         bot_command_path = &command_line_args[6];
     }
 
-    let mut nakamoto_process = Command::new("cargo")
-        .arg("run")
-        .arg("--bin")
-        .arg("bin_nakamoto")
+    let mut nakamoto_process = Command::new("./target/debug/bin_nakamoto")
+        .arg(nakamoto_seccomp_path)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
         .expect("failed to start nakamoto_process");
 
+    // let mut nakamoto_process = Command::new("cargo")
+    // .arg("run")
+    // .arg("--bin")
+    // .arg("bin_nakamoto")
+    // .stdin(Stdio::piped())
+    // .stdout(Stdio::piped())
+    // .stderr(Stdio::piped())
+    // .spawn()
+    // .expect("failed to start nakamoto_process");
+
     thread::sleep(Duration::from_millis(500));
 
-    let mut bin_wallet_process = Command::new("cargo")
-        .arg("run")
-        .arg("--bin")
-        .arg("bin_wallet")
+    let mut bin_wallet_process = Command::new("./target/debug/bin_wallet")
+        .arg(&wallet_seccomp_path)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
         .expect("failed to start wallet_process");
+
+    // let mut bin_wallet_process = Command::new("cargo")
+    // .arg("run")
+    // .arg("--bin")
+    // .arg("bin_wallet")
+    // .stdin(Stdio::piped())
+    // .stdout(Stdio::piped())
+    // .stderr(Stdio::piped())
+    // .spawn()
+    // .expect("failed to start wallet_process");
 
     thread::sleep(Duration::from_millis(500));
 
@@ -268,20 +284,20 @@ fn main() {
 
     seccompiler::apply_filter(&filter).unwrap();
 
-    let client_seccomp_path = std::env::args()
-        .nth(1)
-        .expect("Please specify client seccomp path");
-    // Please fill in the blank
-    // sandboxing the bin_client (For part B). Leave it blank for part A.
-    let policy_str = read_string_from_file(&client_seccomp_path);
-    let filter_map: BpfMap = seccompiler::compile_from_json(
-        policy_str.as_bytes(),
-        std::env::consts::ARCH.try_into().unwrap(),
-    )
-    .unwrap();
-    let filter = filter_map.get("main_thread").unwrap();
+    // let client_seccomp_path = std::env::args()
+    //     .nth(1)
+    //     .expect("Please specify client seccomp path");
+    // // Please fill in the blank
+    // // sandboxing the bin_client (For part B). Leave it blank for part A.
+    // let policy_str = read_string_from_file(&client_seccomp_path);
+    // let filter_map: BpfMap = seccompiler::compile_from_json(
+    //     policy_str.as_bytes(),
+    //     std::env::consts::ARCH.try_into().unwrap(),
+    // )
+    // .unwrap();
+    // let filter = filter_map.get("main_thread").unwrap();
 
-    seccompiler::apply_filter(&filter).unwrap();
+    // seccompiler::apply_filter(&filter).unwrap();
 
     let mut user_name: String = "".to_string();
     let mut user_id: String = "".to_string();
@@ -433,9 +449,11 @@ fn main() {
 
                 wallet_sign_buffer.clear();
             }
+
             if app_ui_ref_wallet_status.lock().unwrap().should_quit == true {
                 break;
             }
+
             // send publishTx to nakamoto
             let wallet_sign_response: IPCMessageRespWallet =
                 serde_json::from_str(&wallet_sign_buffer).unwrap();

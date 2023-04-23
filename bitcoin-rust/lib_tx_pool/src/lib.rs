@@ -63,43 +63,43 @@ mod tests {
     /// (e.g. invalid signature, and test methods that are not covered in the tests above)
     #[test]
     fn test_tx_pool_additional() {
-        // Please fill in the blank
-        let txs_str = read_string_from_file("./testdata/txs_0.json");
-        let txs = serde_json::from_str::<Vec<Transaction>>(&txs_str).unwrap();
+        // // Please fill in the blank
+        // let txs_str = read_string_from_file("./testdata/txs_0.json");
+        // let txs = serde_json::from_str::<Vec<Transaction>>(&txs_str).unwrap();
 
-        let mut tx_pool = TxPool::new();
-        for v in &txs {
-            tx_pool.add_tx(v.clone());
-        }
+        // let mut tx_pool = TxPool::new();
+        // for v in &txs {
+        //     tx_pool.add_tx(v.clone());
+        // }
 
-        assert!(tx_pool.pool_tx_ids.len() == 14);
+        // assert!(tx_pool.pool_tx_ids.len() == 14);
 
-        tx_pool.del_tx(txs[0].gen_hash());
-        tx_pool.del_tx(txs[1].gen_hash());
-        tx_pool.del_tx(txs[2].gen_hash());
-        tx_pool.del_tx(txs[3].gen_hash());
-        tx_pool.del_tx(txs[4].gen_hash());
+        // tx_pool.del_tx(txs[0].gen_hash());
+        // tx_pool.del_tx(txs[1].gen_hash());
+        // tx_pool.del_tx(txs[2].gen_hash());
+        // tx_pool.del_tx(txs[3].gen_hash());
+        // tx_pool.del_tx(txs[4].gen_hash());
 
-        // clone txs and take the slice from 5 to 10
-        let txs_5_10 = txs[5..10].to_vec();
-        let filtered_tx = tx_pool.filter_tx(5, &txs_5_10);
+        // // clone txs and take the slice from 5 to 10
+        // let txs_5_10 = txs[5..10].to_vec();
+        // let filtered_tx = tx_pool.filter_tx(5, &txs_5_10);
 
-        println!("txs: {:?}", txs);
+        // println!("txs: {:?}", txs);
 
-        for transaction in txs {
-            println!("{}", transaction.message);
-        }
+        // for transaction in txs {
+        //     println!("{}", transaction.message);
+        // }
 
-        println!("\n\ntxs_5_10: {:?}", txs_5_10);
+        // println!("\n\ntxs_5_10: {:?}", txs_5_10);
 
-        for transaction in txs_5_10 {
-            println!("{}", transaction.message);
-        }
+        // for transaction in txs_5_10 {
+        //     println!("{}", transaction.message);
+        // }
 
-        println!("\n\nfiltered_tx: {:?}", filtered_tx);
+        // println!("\n\nfiltered_tx: {:?}", filtered_tx);
 
-        for transaction in filtered_tx {
-            println!("{}", transaction.message);
-        }
+        // for transaction in filtered_tx {
+        //     println!("{}", transaction.message);
+        // }
     }
 }

@@ -1,0 +1,14 @@
+{
+  "main_thread": {
+      "mismatch_action": "kill_process",
+      "match_action": "allow",
+      "filter": [
+        {"syscall": "exit_group"}, 
+        {"syscall": "getrandom"},
+        {"syscall": "munmap"},
+        {"syscall": "read"},
+        {"syscall": "sigaltstack"},
+        {"syscall": "write"}
+      ]
+  }
+}

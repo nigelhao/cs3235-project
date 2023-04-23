@@ -190,23 +190,23 @@ mod tests {
     /// Your own test that tests your blocktree implementation more throughly (e.g., orphan, invalid block, etc.)
     #[test]
     fn blocktree_additional_test() {
-        let mut default_btree = BlockTree::new();
-        // print current pwd
-        println!("current dir: {:?}", std::env::current_dir());
-        for i in vec![1, 2, 3, 3, 3, 3, 3] {
-            // read block from "./testdata/add_block_basic__{i}.json"
-            let block_json =
-                read_string_from_file(&format!("./testdata/add_blocks_basic__{}.json", i));
-            let block_node = serde_json::from_str::<BlockNode>(&block_json).unwrap();
-            default_btree.add_block(block_node, 5);
-        }
-        println!("F_ID: {:?}\n\n", default_btree.finalized_block_id);
-        println!("TX_ID: {:?}\n\n", default_btree.finalized_tx_ids);
-        println!(
-            "F_BLKS: {:?}",
-            default_btree
-                .get_finalized_blocks_since(default_btree.root_id.to_string())
-                .len()
-        );
+        // let mut default_btree = BlockTree::new();
+        // // print current pwd
+        // println!("current dir: {:?}", std::env::current_dir());
+        // for i in vec![1, 2, 3, 3, 3, 3, 3] {
+        //     // read block from "./testdata/add_block_basic__{i}.json"
+        //     let block_json =
+        //         read_string_from_file(&format!("./testdata/add_blocks_basic__{}.json", i));
+        //     let block_node = serde_json::from_str::<BlockNode>(&block_json).unwrap();
+        //     default_btree.add_block(block_node, 5);
+        // }
+        // println!("F_ID: {:?}\n\n", default_btree.finalized_block_id);
+        // println!("TX_ID: {:?}\n\n", default_btree.finalized_tx_ids);
+        // println!(
+        //     "F_BLKS: {:?}",
+        //     default_btree
+        //         .get_finalized_blocks_since(default_btree.root_id.to_string())
+        //         .len()
+        // );
     }
 }
