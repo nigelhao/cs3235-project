@@ -5,9 +5,7 @@
       "filter": [
         {"syscall": "exit_group"}, 
         {"syscall": "getrandom"},
-        {"syscall": "munmap"},
         {"syscall": "read"},
-        {"syscall": "sigaltstack"},
         {"syscall": "write"}
       ]
   }

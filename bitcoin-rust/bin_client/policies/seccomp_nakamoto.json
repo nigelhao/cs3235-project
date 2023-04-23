@@ -31,7 +31,6 @@
         {"syscall": "rt_sigprocmask"},
         {"syscall": "clone3"},
 
-        {"syscall": "statx"},
         {"syscall": "socket"},
         {"syscall": "setsockopt"},
         {"syscall": "prctl"},
