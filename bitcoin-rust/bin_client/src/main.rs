@@ -34,7 +34,6 @@ use std::{
     time::{Duration, Instant},
 };
 
-use std::io::BufWriter;
 use std::{fs, string};
 
 mod app;
@@ -134,7 +133,7 @@ fn main() {
     if command_line_args.len() < 6 {
         panic!("not enough arguments")
     }
-    let client_seccomp_path = &command_line_args[1];
+    //let client_seccomp_path = &command_line_args[1];
     let nakamoto_config_path = &command_line_args[2];
     let nakamoto_seccomp_path = &command_line_args[3];
     let wallet_config_path = &command_line_args[4];
@@ -145,27 +144,43 @@ fn main() {
         bot_command_path = &command_line_args[6];
     }
 
-    let mut nakamoto_process = Command::new("cargo")
-        .arg("run")
-        .arg("--bin")
-        .arg("bin_nakamoto")
+    let mut nakamoto_process = Command::new("./target/debug/bin_nakamoto")
+        .arg(nakamoto_seccomp_path)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
         .expect("failed to start nakamoto_process");
 
+    // let mut nakamoto_process = Command::new("cargo")
+    // .arg("run")
+    // .arg("--bin")
+    // .arg("bin_nakamoto")
+    // .stdin(Stdio::piped())
+    // .stdout(Stdio::piped())
+    // .stderr(Stdio::piped())
+    // .spawn()
+    // .expect("failed to start nakamoto_process");
+
     thread::sleep(Duration::from_millis(500));
 
-    let mut bin_wallet_process = Command::new("cargo")
-        .arg("run")
-        .arg("--bin")
-        .arg("bin_wallet")
+    let mut bin_wallet_process = Command::new("./target/debug/bin_wallet")
+        .arg(&wallet_seccomp_path)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
         .expect("failed to start wallet_process");
+
+    // let mut bin_wallet_process = Command::new("cargo")
+    // .arg("run")
+    // .arg("--bin")
+    // .arg("bin_wallet")
+    // .stdin(Stdio::piped())
+    // .stdout(Stdio::piped())
+    // .stderr(Stdio::piped())
+    // .spawn()
+    // .expect("failed to start wallet_process");
 
     thread::sleep(Duration::from_millis(500));
 
@@ -198,11 +213,10 @@ fn main() {
     );
     let nakamoto_json = serde_json::to_string(&nakamoto_initialization_message).unwrap();
     {
-        nakamoto_stdin_mutex
+        let _result = nakamoto_stdin_mutex
             .lock()
             .unwrap()
-            .write_all((nakamoto_json + "\n").as_bytes())
-            .unwrap();
+            .write_all((nakamoto_json + "\n").as_bytes());
     }
 
     // receive initialization response from nakamoto
@@ -229,11 +243,10 @@ fn main() {
         serde_json::to_string(&IPCMessageReqWallet::Initialize(initialize_wallet_string)).unwrap();
     to_send_wallet.push_str("\n");
     {
-        wallet_stdin_mutex
+        let _result = wallet_stdin_mutex
             .lock()
             .unwrap()
-            .write_all(to_send_wallet.as_bytes())
-            .unwrap();
+            .write_all(to_send_wallet.as_bytes());
     }
 
     // receive initialization response from wallet
@@ -271,20 +284,20 @@ fn main() {
 
     seccompiler::apply_filter(&filter).unwrap();
 
-    let client_seccomp_path = std::env::args()
-        .nth(1)
-        .expect("Please specify client seccomp path");
-    // Please fill in the blank
-    // sandboxing the bin_client (For part B). Leave it blank for part A.
-    let policy_str = read_string_from_file(&client_seccomp_path);
-    let filter_map: BpfMap = seccompiler::compile_from_json(
-        policy_str.as_bytes(),
-        std::env::consts::ARCH.try_into().unwrap(),
-    )
-    .unwrap();
-    let filter = filter_map.get("main_thread").unwrap();
+    // let client_seccomp_path = std::env::args()
+    //     .nth(1)
+    //     .expect("Please specify client seccomp path");
+    // // Please fill in the blank
+    // // sandboxing the bin_client (For part B). Leave it blank for part A.
+    // let policy_str = read_string_from_file(&client_seccomp_path);
+    // let filter_map: BpfMap = seccompiler::compile_from_json(
+    //     policy_str.as_bytes(),
+    //     std::env::consts::ARCH.try_into().unwrap(),
+    // )
+    // .unwrap();
+    // let filter = filter_map.get("main_thread").unwrap();
 
-    seccompiler::apply_filter(&filter).unwrap();
+    // seccompiler::apply_filter(&filter).unwrap();
 
     let mut user_name: String = "".to_string();
     let mut user_id: String = "".to_string();
@@ -295,11 +308,10 @@ fn main() {
     let wallet_get_info_message = IPCMessageReqWallet::GetUserInfo;
     wallet_json = serde_json::to_string(&wallet_get_info_message).unwrap();
     {
-        wallet_stdin_mutex
+        let _result = wallet_stdin_mutex
             .lock()
             .unwrap()
-            .write_all((wallet_json + "\n").as_bytes())
-            .unwrap();
+            .write_all((wallet_json + "\n").as_bytes());
     }
 
     // recieve wallet IPC reponse for user info
@@ -360,6 +372,7 @@ fn main() {
 
         let user_id_clone = user_id.clone();
         let wallet_stdin_clone = wallet_stdin_mutex.clone();
+        let app_ui_ref_bot = app_arc.clone();
 
         // link and open the bot file as stated in `bot_command_path`
         let bot_command_path_clone = bot_command_path.to_string();
@@ -367,12 +380,15 @@ fn main() {
         // create thread
         let _bot_handle = thread::spawn(move || {
             let bot_command_path_clone_clone = bot_command_path_clone.clone();
-            loop {
+            while app_ui_ref_bot.lock().unwrap().should_quit == false {
                 let fifo_file = File::open(bot_command_path_clone_clone.to_string())
                     .expect("Failed to open named pipe");
                 let reader = BufReader::new(fifo_file);
 
                 for line in reader.lines() {
+                    if app_ui_ref_bot.lock().unwrap().should_quit == true {
+                        break;
+                    }
                     if let Ok(line) = line {
                         if !line.contains("SleepMs") && !line.contains("Send") {
                             continue;
@@ -393,12 +409,10 @@ fn main() {
                                 );
                                 // send sign request to wallet
                                 {
-                                    wallet_stdin_clone
+                                    let _result = wallet_stdin_clone
                                         .lock()
                                         .unwrap()
-                                        .write_all(sign_req_str.as_bytes())
-                                        .unwrap();
-                                    wallet_stdin_clone.lock().unwrap().flush();
+                                        .write_all(sign_req_str.as_bytes());
                                 }
                             }
                         }
@@ -415,12 +429,13 @@ fn main() {
 
     let wallet_stdout_clone = wallet_stdout_mutex.clone();
     let nakamoto_stdin_clone = nakamoto_stdin_mutex.clone();
+    let app_ui_ref_wallet_status = app_arc.clone();
 
     // read wallet stdout to receive sign response, send to nakamoto to publish tx
     let handle_wallet_nakamoto_publish_tx = thread::spawn(move || {
-        loop {
+        while app_ui_ref_wallet_status.lock().unwrap().should_quit == false {
             let mut wallet_sign_buffer = String::new();
-            loop {
+            while app_ui_ref_wallet_status.lock().unwrap().should_quit == false {
                 {
                     wallet_stdout_clone
                         .lock()
@@ -435,6 +450,10 @@ fn main() {
                 wallet_sign_buffer.clear();
             }
 
+            if app_ui_ref_wallet_status.lock().unwrap().should_quit == true {
+                break;
+            }
+
             // send publishTx to nakamoto
             let wallet_sign_response: IPCMessageRespWallet =
                 serde_json::from_str(&wallet_sign_buffer).unwrap();
@@ -443,11 +462,10 @@ fn main() {
                 let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
                 nakamoto_json.push_str("\n");
                 //let mut nakamoto_stdin_clone_lock = nakamoto_stdin_clone.lock().unwrap();
-                nakamoto_stdin_clone
+                let _result = nakamoto_stdin_clone
                     .lock()
                     .unwrap()
-                    .write_all(nakamoto_json.as_bytes())
-                    .unwrap();
+                    .write_all(nakamoto_json.as_bytes());
             }
         }
     });
@@ -456,9 +474,10 @@ fn main() {
     let user_id_clone2 = user_id.clone();
     let nakamoto_stdin_clone = nakamoto_stdin_mutex.clone();
     let nakamoto_config_path_clone = nakamoto_config_path.clone();
+    let app_ui_ref_send_status = app_arc.clone();
 
     let handle_send_status_updates = thread::spawn(move || {
-        loop {
+        while app_ui_ref_send_status.lock().unwrap().should_quit == false {
             thread::sleep(Duration::from_millis(500));
 
             // send ipc request message to nakamoto to get address balance
@@ -467,22 +486,20 @@ fn main() {
             let mut nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                nakamoto_stdin_clone
+                let _result = nakamoto_stdin_clone
                     .lock()
                     .unwrap()
-                    .write_all(nakamoto_json.as_bytes())
-                    .unwrap();
+                    .write_all(nakamoto_json.as_bytes());
             }
             // send ipc request message to nakamoto to get netStatus
             nakamoto_ipc_req = IPCMessageReqNakamoto::RequestNetStatus;
             nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                nakamoto_stdin_clone
+                let _result = nakamoto_stdin_clone
                     .lock()
                     .unwrap()
-                    .write_all(nakamoto_json.as_bytes())
-                    .unwrap();
+                    .write_all(nakamoto_json.as_bytes());
             }
 
             // send ipc request message to nakamoto to get chainStatus
@@ -490,11 +507,10 @@ fn main() {
             nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                nakamoto_stdin_clone
+                let _result = nakamoto_stdin_clone
                     .lock()
                     .unwrap()
-                    .write_all(nakamoto_json.as_bytes())
-                    .unwrap();
+                    .write_all(nakamoto_json.as_bytes());
             }
 
             // send ipc request message to nakamoto to get minerStatus
@@ -502,11 +518,10 @@ fn main() {
             nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                nakamoto_stdin_clone
+                let _result = nakamoto_stdin_clone
                     .lock()
                     .unwrap()
-                    .write_all(nakamoto_json.as_bytes())
-                    .unwrap();
+                    .write_all(nakamoto_json.as_bytes());
             }
 
             // send ipc request message to nakamoto to get txPoolStatus
@@ -514,11 +529,10 @@ fn main() {
             nakamoto_json = serde_json::to_string(&nakamoto_ipc_req).unwrap();
             nakamoto_json.push_str("\n");
             {
-                nakamoto_stdin_clone
+                let _result = nakamoto_stdin_clone
                     .lock()
                     .unwrap()
-                    .write_all(nakamoto_json.as_bytes())
-                    .unwrap();
+                    .write_all(nakamoto_json.as_bytes());
             }
         }
     });
@@ -527,9 +541,9 @@ fn main() {
     let app_ui_ref_status = app_arc.clone();
 
     let handle_read_nakamoto_stdout = thread::spawn(move || {
-        loop {
+        while app_ui_ref_status.lock().unwrap().should_quit == false {
             let mut nakamoto_reply = String::new();
-            loop {
+            while app_ui_ref_status.lock().unwrap().should_quit == false {
                 {
                     nakamoto_stdout_clone
                         .lock()
@@ -549,7 +563,6 @@ fn main() {
                     || nakamoto_reply.contains("Quitting")
                     || nakamoto_reply.contains("Notify")
                 {
-                    // println!("{}", nakamoto_reply);
                     break;
                 }
                 nakamoto_reply.clear();
@@ -748,7 +761,7 @@ fn main() {
 
     let handle_nakamoto_stderr = thread::spawn(move || {
         let mut nakamoto_err_ignore = String::new();
-        loop {
+        while app_ui_ref_err.lock().unwrap().should_quit == false {
             {
                 nakamoto_stderr_clone
                     .lock()
@@ -757,15 +770,15 @@ fn main() {
                     .unwrap();
             }
             if nakamoto_err_ignore
-            .contains("To only capture error messages from nakamoto from this instance onwards")
+                .contains("To only capture error messages from nakamoto from this instance onwards")
             {
                 break;
             }
             nakamoto_err_ignore.clear();
         }
-        loop {
+        while app_ui_ref_err.lock().unwrap().should_quit == false {
             let mut nakamoto_err_message = String::new();
-            loop {
+            while app_ui_ref_err.lock().unwrap().should_quit == false {
                 {
                     nakamoto_stderr_clone
                         .lock()
@@ -838,11 +851,10 @@ fn main() {
                             } else {
                                 let (sender, receiver, message) = app.on_enter();
                                 let sign_req_str = create_sign_req(sender, receiver, message);
-                                bin_wallet_stdin_p_cloned
+                                let _result = bin_wallet_stdin_p_cloned
                                     .lock()
                                     .unwrap()
-                                    .write_all(sign_req_str.as_bytes())
-                                    .unwrap();
+                                    .write_all(sign_req_str.as_bytes());
                             }
                         }
                         // on control + s, request Nakamoto to serialize its state
@@ -854,11 +866,10 @@ fn main() {
                             let serialize_req = IPCMessageReqNakamoto::RequestStateSerialization;
                             let mut to_send = serde_json::to_string(&serialize_req).unwrap();
                             to_send.push_str("\n");
-                            nakamoto_stdin_p_cloned
+                            let _result = nakamoto_stdin_p_cloned
                                 .lock()
                                 .unwrap()
-                                .write_all(to_send.as_bytes())
-                                .unwrap();
+                                .write_all(to_send.as_bytes());
                         }
                         input => {
                             app.on_textarea_input(input);

@@ -2,9 +2,9 @@ System calls needed for wallet:
            
             {"syscall": "exit_group"}, 
             {"syscall": "getrandom"},
-            {"syscall": "munmap"},
+            //{"syscall": "munmap"},
             {"syscall": "read"},
-            {"syscall": "sigaltstack"},
+            //{"syscall": "sigaltstack"},
             {"syscall": "write"}
 
 
@@ -50,15 +50,26 @@ syscall needed for client:
             {"syscall": "rt_sigreturn"},
             {"syscall": "sigaltstack"},
             {"syscall": "socketpair"},
-            {"syscall": "statx"},
+            //{"syscall": "statx"},
             {"syscall": "write"},
             {"syscall": "epoll_create1"},
             {"syscall": "epoll_ctl"},
             {"syscall": "epoll_wait"},
-            {"syscall": "exit_group"},
+            //{"syscall": "exit_group"},
             {"syscall": "sendto"},
             {"syscall": "recvfrom"},
             {"syscall": "clone3"},
             {"syscall": "prctl"},
             {"syscall": "rseq"},
-            {"syscall": "rt_sigprocmask"}
+            {"syscall": "rt_sigprocmask"},
+            //{"syscall": "madvise"},
+            //{"syscall": "mremap"}
+           // {"syscall": "exit"}
+
+
+{"syscall": "exit_group"}, 
+{"syscall": "getrandom"},
+{"syscall": "munmap"},
+{"syscall": "read"},
+{"syscall": "sigaltstack"},
+{"syscall": "write"}

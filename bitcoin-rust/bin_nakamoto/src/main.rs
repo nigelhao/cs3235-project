@@ -12,12 +12,12 @@ use lib_chain::block::{BlockTree, Signature, Transaction};
 use lib_tx_pool::pool::TxPool;
 use nakamoto::{Config, Nakamoto};
 
+use seccompiler::BpfMap;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use std::convert::TryInto;
 use std::fs;
 use std::io::{self, Write};
-use seccompiler::BpfMap;
-use std::convert::TryInto;
 
 // Read a string from a file (to help you debug)
 fn read_string_from_file(filepath: &str) -> String {
@@ -109,8 +109,8 @@ fn main() {
         )
         .unwrap();
         let filter = filter_map.get("main_thread").unwrap();
-        
-        seccompiler::apply_filter(&filter).unwrap();
+
+        let seccompiler = seccompiler::apply_filter(&filter).unwrap();
     }
 
     // The main logic of the bin_nakamoto starts here

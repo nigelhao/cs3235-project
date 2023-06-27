@@ -1,0 +1,46 @@
+To only capture error messages from nakamoto from this instance onwards
+{"Notify":"# Waiting for IPC Requests ..."}
+{"Notify":"[Main] Start receiving trans thread"}
+{"Notify":"[P2PNetwork] Starting processing received messages thread"}
+{"Notify":"[P2PNetwork] All neighbors connected"}
+"Initialized"
+{"ChainStatus":{"#blocks":"1","#orphans":"0","finalized_id":"0","root_id":"0","working_depth":"0","working_id":"0"}}
+{"Notify":"[P2PNetwork] Starting broadcasting blocks thread"}
+{"NetStatus":{"#address":"ip: 127.0.0.1 port: 9011","#recv_msg":"0","#send_msg":"0"}}
+{"MinerStatus":{"#thread":"0","difficulty":"0","is_running":"false"}}
+{"TxPoolStatus":{"#pool_tx_ids":"0","#pool_tx_map":"0","#removed_tx_ids":"0"}}
+{"AddressBalance":["MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",299792458]}
+{"Notify":"[P2PNetwork] Starting broadcasting transactions thread"}
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+{"Notify":"[Miner] Start solving puzzle"}
+{"Notify":"{\"parent\":\"0\",\"merkle_root\":\"ec7eb0a7fbf5c44a84b1979ab0ab79712e506b79b2af0ee39364269d8ccafd1a\",\"reward_receiver\":\"MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==\"}"}
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+"PublishTxDone"
+[TxPool] Transaction invalid or already exist
+"PublishTxDone"
+[TxPool] Transaction invalid or already exist
+"PublishTxDone"
+[TxPool] Transaction invalid or already exist
+"PublishTxDone"
+[TxPool] Transaction invalid or already exist
+"PublishTxDone"
+[TxPool] Transaction invalid or already exist
+"PublishTxDone"
+{"ChainStatus":{"#blocks":"1","#orphans":"0","finalized_id":"0","root_id":"0","working_depth":"0","working_id":"0"}}
+{"NetStatus":{"#address":"ip: 127.0.0.1 port: 9011","#recv_msg":"0","#send_msg":"0"}}
+{"MinerStatus":{"#thread":"4","difficulty":"5","is_running":"true"}}
+{"TxPoolStatus":{"#pool_tx_ids":"10","#pool_tx_map":"10","#removed_tx_ids":"0"}}
+{"AddressBalance":["MDgCMQCqrJ1yIJ7cDQIdTuS+4CkKn/tQPN7bZFbbGCBhvjQxs71f6Vu+sD9eh8JGpfiZSckCAwEAAQ==",299792458]}
+"Quitting"
+To only capture error messages from nakamoto from this instance onwards
+{"Notify":"# Waiting for IPC Requests ..."}
+{"Notify":"[Main] Start receiving trans thread"}
+thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: Error("EOF while parsing a value", line: 1, column: 0)', bin_nakamoto/./src/main.rs:132:78
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

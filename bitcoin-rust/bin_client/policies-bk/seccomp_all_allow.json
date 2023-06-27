@@ -1,0 +1,8 @@
+{
+    "main_thread": {
+        "mismatch_action": "allow",
+        "match_action": "kill_process",
+        "filter": [
+        ]
+    }
+}
